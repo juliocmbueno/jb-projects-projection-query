@@ -1,4 +1,4 @@
-package br.com.jbProjects.testModel.city.domain;
+package br.com.jbProjects.config.testModel.customer.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class City {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,5 +18,8 @@ public class City {
 
     @Column
     private String name;
+
+    @Column
+    private String email;
 
 }

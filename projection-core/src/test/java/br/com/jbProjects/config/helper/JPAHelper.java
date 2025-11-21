@@ -1,4 +1,4 @@
-package br.com.jbProjects.helper;
+package br.com.jbProjects.config.helper;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

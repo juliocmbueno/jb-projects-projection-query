@@ -1,4 +1,4 @@
-package br.com.jbProjects.helper;
+package br.com.jbProjects.config.helper;
 
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterAll;
@@ -20,18 +20,6 @@ public class BaseJpaTest {
     }
 
     protected void onBeforeAll() {}
-
-/*    @BeforeEach
-    void beforeEach() {
-        entityManager.getTransaction().begin();
-    }
-
-    @AfterEach
-    void afterEach() {
-        if (entityManager.getTransaction().isActive()) {
-            entityManager.getTransaction().rollback();
-        }
-    }*/
 
     @AfterAll
     void afterAll() {

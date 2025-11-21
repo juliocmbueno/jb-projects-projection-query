@@ -37,7 +37,7 @@ public class ProjectionMappers {
     public static <T> T tupleToRecord(Tuple tuple, Class<T> projectionClass){
         try{
             RecordComponent[] components = projectionClass.getRecordComponents();
-            Constructor<?> constructor = projectionClass.getDeclaredConstructor(
+            Constructor<T> constructor = projectionClass.getDeclaredConstructor(
                     Arrays.stream(components).map(RecordComponent::getType).toArray(Class[]::new)
             );
             Object[] args = Arrays.stream(components)
@@ -49,7 +49,7 @@ public class ProjectionMappers {
                         }
                     })
                     .toArray();
-            return (T) constructor.newInstance(args);
+            return constructor.newInstance(args);
         }catch (Exception e){
             throw new RuntimeException("Error creating projection record instance", e);
         }

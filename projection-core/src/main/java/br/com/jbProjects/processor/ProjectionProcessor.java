@@ -2,15 +2,13 @@ package br.com.jbProjects.processor;
 
 import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.mapper.ProjectionMappers;
+import br.com.jbProjects.processor.query.ProjectionQuery;
 import br.com.jbProjects.util.ProjectionUtils;
 import br.com.jbProjects.validations.ProjectionValidations;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Selection;
+import jakarta.persistence.criteria.*;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -31,35 +29,68 @@ public class ProjectionProcessor {
         ProjectionValidations.validateProjectionClass(projectionClass);
 
         Projection projection = projectionClass.getAnnotation(Projection.class);
-        Class<?> entityClass = projection.of();
 
+        return execute(ProjectionQuery.fromTo(projection.of(), projectionClass));
+    }
+
+    public <FROM, TO> List<TO> execute(ProjectionQuery<FROM, TO> projectionQuery){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
-        Root<?> from = criteriaQuery.from(entityClass);
+        Root<FROM> from = criteriaQuery.from(projectionQuery.fromClass());
 
+        addSelects(projectionQuery.toClass(), criteriaQuery, from);
+        applySpecifications(projectionQuery, criteriaBuilder, criteriaQuery, from);
+
+        TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
+        applyPaging(projectionQuery, typedQuery);
+        List<Tuple> tuples = typedQuery.getResultList();
+
+        return mapTuplesToProjectionClass(tuples, projectionQuery.toClass());
+    }
+
+    private static <T> void addSelects(Class<T> projectionClass, CriteriaQuery<Tuple> criteriaQuery, Root<?> from) {
         List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionClass);
         criteriaQuery.multiselect(
-                fields.stream()
+                fields
+                        .stream()
                         .map(field -> {
                             String fieldColumnName = ProjectionUtils.getFieldColumnName(field);
                             return from.get(fieldColumnName).alias(field.getName());
                         })
                         .toArray(Selection[]::new)
         );
+    }
 
-        TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
-        List<Tuple> tuples = typedQuery.getResultList();
+    private static <FROM, TO> void applySpecifications(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {
+        List<Predicate> predicates = projectionQuery
+                .getSpecifications()
+                .stream()
+                .map(specification -> specification.toPredicate(criteriaBuilder, criteriaQuery, from)).toList();
 
+        if(!predicates.isEmpty()){
+            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+        }
+    }
 
+    private static <FROM, TO> void applyPaging(ProjectionQuery<FROM, TO> projectionQuery, TypedQuery<Tuple> typedQuery) {
+        if(projectionQuery.hasPaging()){
+            int first = projectionQuery.getPaging().first();
+            int size = projectionQuery.getPaging().size();
+            typedQuery.setFirstResult(first);
+            typedQuery.setMaxResults(size);
+        }
+    }
 
-        return tuples.stream().map(tuple -> {
-            if(projectionClass.isRecord()){
-                return ProjectionMappers.tupleToRecord(tuple, projectionClass);
+    private static <T> List<T> mapTuplesToProjectionClass(List<Tuple> tuples, Class<T> projectionClass) {
+        return tuples
+                .stream()
+                .map(tuple -> {
+                    if (projectionClass.isRecord()) {
+                        return ProjectionMappers.tupleToRecord(tuple, projectionClass);
+                    }
 
-            } else {
-                return ProjectionMappers.tupleToClass(tuple, projectionClass);
-
-            }
-        }).collect(Collectors.toList());
+                    return ProjectionMappers.tupleToClass(tuple, projectionClass);
+                })
+                .collect(Collectors.toList());
     }
 }

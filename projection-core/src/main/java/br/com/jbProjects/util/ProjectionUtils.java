@@ -1,5 +1,6 @@
 package br.com.jbProjects.util;
 
+import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.annotations.ProjectionField;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -23,6 +24,10 @@ public class ProjectionUtils {
             return projectionField.value();
         }
         return field.getName();
+    }
+
+    public Projection getProjectionAnnotation(Class<?> clazz) {
+        return clazz.getAnnotation(Projection.class);
     }
 
 }

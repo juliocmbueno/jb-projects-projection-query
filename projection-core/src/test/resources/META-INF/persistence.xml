@@ -5,8 +5,8 @@
     <persistence-unit name="testPU">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>br.com.jbProjects.testModel.customer.domain.Customer</class>
-        <class>br.com.jbProjects.testModel.city.domain.City</class>
+        <class>br.com.jbProjects.config.testModel.customer.domain.Customer</class>
+        <class>br.com.jbProjects.config.testModel.city.domain.City</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
@@ -17,6 +17,8 @@
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+
         </properties>
     </persistence-unit>
 
