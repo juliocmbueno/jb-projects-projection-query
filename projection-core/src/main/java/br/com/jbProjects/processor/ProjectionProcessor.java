@@ -38,6 +38,7 @@ public class ProjectionProcessor {
         CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
         Root<FROM> from = criteriaQuery.from(projectionQuery.fromClass());
 
+        criteriaQuery.distinct(projectionQuery.isDistinct());
         addSelects(projectionQuery.toClass(), criteriaQuery, from);
         applySpecifications(projectionQuery, criteriaBuilder, criteriaQuery, from);
 

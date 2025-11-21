@@ -21,6 +21,7 @@ public class ProjectionQuery<FROM, TO> {
 
     private final List<ProjectionSpecification<FROM>> specifications = new ArrayList<>();
 
+    private boolean distinct = false;
     private ProjectionPaging paging;
 
     private ProjectionQuery(Class<FROM> fromClass, Class<TO> toClass) {
@@ -40,6 +41,11 @@ public class ProjectionQuery<FROM, TO> {
 
     public ProjectionQuery<FROM, TO> specification(ProjectionSpecification<FROM> specification) {
         this.specifications.add(specification);
+        return this;
+    }
+
+    public ProjectionQuery<FROM, TO> distinct(){
+        this.distinct = true;
         return this;
     }
 

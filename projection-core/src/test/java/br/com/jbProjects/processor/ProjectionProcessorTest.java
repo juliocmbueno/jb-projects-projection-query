@@ -4,6 +4,7 @@ import br.com.jbProjects.config.helper.BaseJpaTest;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerAutoCompleteClass;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerAutoCompleteRecord;
+import br.com.jbProjects.config.testModel.customer.projections.CustomerName;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -113,4 +114,25 @@ class ProjectionProcessorTest extends BaseJpaTest {
         }
     }
 
+    @Test
+    void execute_withProjectionQueryDistinct() {
+        Customer otherCustomer = new Customer();
+        otherCustomer.setName(customer.getName());
+        persist(otherCustomer);
+
+        try{
+            List<CustomerName> result = processor.execute(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerName.class)
+                            .distinct()
+            );
+
+            Assertions.assertEquals(1, result.size());
+            Assertions.assertEquals(result.getFirst().name(), otherCustomer.getName());
+
+        }finally {
+            remove(otherCustomer);
+
+        }
+    }
 }
