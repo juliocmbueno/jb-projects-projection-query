@@ -34,8 +34,8 @@ public class ProjectionQuery<FROM, TO> {
         return new ProjectionQuery<>(fromClass, toClass);
     }
 
-    public ProjectionQuery<FROM, TO> paging(int page, int size) {
-        this.paging = new ProjectionPaging(page, size);
+    public ProjectionQuery<FROM, TO> paging(int first, int size) {
+        this.paging = new ProjectionPaging(first, size);
         return this;
     }
 

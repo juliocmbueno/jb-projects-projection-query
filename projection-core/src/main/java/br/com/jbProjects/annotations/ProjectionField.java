@@ -15,4 +15,12 @@ public @interface ProjectionField {
 
     String value() default "";
 
+    boolean sum() default false;
+
+    boolean max() default false;
+
+    boolean min() default false;
+
+    boolean count() default false;
+
 }

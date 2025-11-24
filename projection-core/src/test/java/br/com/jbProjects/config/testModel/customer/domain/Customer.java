@@ -22,4 +22,7 @@ public class Customer {
     @Column
     private String email;
 
+    @Column
+    private Integer age;
+
 }

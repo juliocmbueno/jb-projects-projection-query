@@ -1,7 +1,9 @@
 package br.com.jbProjects.processor;
 
 import br.com.jbProjects.annotations.Projection;
+import br.com.jbProjects.annotations.ProjectionField;
 import br.com.jbProjects.mapper.ProjectionMappers;
+import br.com.jbProjects.processor.operatorHandler.*;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import br.com.jbProjects.util.ProjectionUtils;
 import br.com.jbProjects.validations.ProjectionValidations;
@@ -21,6 +23,13 @@ public class ProjectionProcessor {
 
     private final EntityManager entityManager;
 
+    private final List<ProjectionOperatorHandler> operatorHandlers = List.of(
+            new CountHandler(),
+            new MinHandler(),
+            new MaxHandler(),
+            new SumHandler()
+    );
+
     public ProjectionProcessor(EntityManager entityManager){
         this.entityManager = entityManager;
     }
@@ -39,7 +48,7 @@ public class ProjectionProcessor {
         Root<FROM> from = criteriaQuery.from(projectionQuery.fromClass());
 
         criteriaQuery.distinct(projectionQuery.isDistinct());
-        addSelects(projectionQuery.toClass(), criteriaQuery, from);
+        addSelects(projectionQuery, criteriaQuery, from);
         applySpecifications(projectionQuery, criteriaBuilder, criteriaQuery, from);
 
         TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
@@ -49,14 +58,22 @@ public class ProjectionProcessor {
         return mapTuplesToProjectionClass(tuples, projectionQuery.toClass());
     }
 
-    private static <T> void addSelects(Class<T> projectionClass, CriteriaQuery<Tuple> criteriaQuery, Root<?> from) {
-        List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionClass);
+    private <FROM, TO> void addSelects(ProjectionQuery<FROM, TO> projectionQuery, CriteriaQuery<Tuple> criteriaQuery, Root<?> from) {
+        List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionQuery.toClass());
         criteriaQuery.multiselect(
                 fields
                         .stream()
                         .map(field -> {
+                            ProjectionField projectionField = field.getAnnotation(ProjectionField.class);
                             String fieldColumnName = ProjectionUtils.getFieldColumnName(field);
-                            return from.get(fieldColumnName).alias(field.getName());
+
+                            return operatorHandlers
+                                    .stream()
+                                    .filter(operator -> operator.supports(projectionField))
+                                    .findFirst()
+                                    .map(operator -> operator.apply(entityManager.getCriteriaBuilder(), from, fieldColumnName))
+                                    .orElse(from.get(fieldColumnName))
+                                    .alias(field.getName());
                         })
                         .toArray(Selection[]::new)
         );
