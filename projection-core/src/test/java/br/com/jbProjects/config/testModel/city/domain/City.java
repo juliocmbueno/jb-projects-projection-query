@@ -1,5 +1,6 @@
 package br.com.jbProjects.config.testModel.city.domain;
 
+import br.com.jbProjects.config.testModel.state.domain.State;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,9 @@ public class City {
 
     @Column
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private State state;
 
 }
