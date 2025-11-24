@@ -1,18 +1,18 @@
 package br.com.jbProjects.processor;
 
 import br.com.jbProjects.annotations.Projection;
-import br.com.jbProjects.annotations.ProjectionField;
 import br.com.jbProjects.mapper.ProjectionMappers;
-import br.com.jbProjects.processor.operatorHandler.*;
 import br.com.jbProjects.processor.query.ProjectionQuery;
-import br.com.jbProjects.util.ProjectionUtils;
+import br.com.jbProjects.processor.query.ProjectionSelectInfo;
 import br.com.jbProjects.validations.ProjectionValidations;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +22,6 @@ import java.util.stream.Collectors;
 public class ProjectionProcessor {
 
     private final EntityManager entityManager;
-
-    private final List<ProjectionOperatorHandler> operatorHandlers = List.of(
-            new CountHandler(),
-            new MinHandler(),
-            new MaxHandler(),
-            new SumHandler()
-    );
 
     public ProjectionProcessor(EntityManager entityManager){
         this.entityManager = entityManager;
@@ -59,24 +52,9 @@ public class ProjectionProcessor {
     }
 
     private <FROM, TO> void addSelects(ProjectionQuery<FROM, TO> projectionQuery, CriteriaQuery<Tuple> criteriaQuery, Root<?> from) {
-        List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionQuery.toClass());
-        criteriaQuery.multiselect(
-                fields
-                        .stream()
-                        .map(field -> {
-                            ProjectionField projectionField = field.getAnnotation(ProjectionField.class);
-                            String fieldColumnName = ProjectionUtils.getFieldColumnName(field);
-
-                            return operatorHandlers
-                                    .stream()
-                                    .filter(operator -> operator.supports(projectionField))
-                                    .findFirst()
-                                    .map(operator -> operator.apply(entityManager.getCriteriaBuilder(), from, fieldColumnName))
-                                    .orElse(from.get(fieldColumnName))
-                                    .alias(field.getName());
-                        })
-                        .toArray(Selection[]::new)
-        );
+        ProjectionSelectInfo selectInfo = new ProjectionSelectInfo(projectionQuery, entityManager.getCriteriaBuilder(), from);
+        criteriaQuery.multiselect(selectInfo.getSelections());
+        criteriaQuery.groupBy(selectInfo.getGroupByFields());
     }
 
     private static <FROM, TO> void applySpecifications(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -239,6 +240,53 @@ class ProjectionProcessorTest extends BaseJpaTest {
 
             Long expected = customer_1.getId() + customer_2.getId() + customer_3.getId();
             Assertions.assertEquals(expected, result.getFirst().sumId());
+
+        }finally {
+            remove(customer_3);
+            remove(customer_2);
+            remove(customer_1);
+
+        }
+    }
+
+    @Test
+    void execute_withProjectionQuery_countByAgeResult() {
+        Customer customer_1 = new Customer();
+        customer_1.setName("count by age");
+        customer_1.setAge(10);
+        persist(customer_1);
+
+        Customer customer_2 = new Customer();
+        customer_2.setName("count by age");
+        customer_2.setAge(10);
+        persist(customer_2);
+
+        Customer customer_3 = new Customer();
+        customer_3.setName("count by age");
+        customer_3.setAge(20);
+        persist(customer_3);
+
+        try{
+            List<CustomerCountByAge> results = processor
+                    .execute(
+                            ProjectionQuery
+                                    .fromTo(Customer.class, CustomerCountByAge.class)
+                                    .specification((criteriaBuilder, query, root) ->
+                                            criteriaBuilder.equal(root.get("name"), "count by age"))
+                    )
+                    .stream()
+                    .sorted(Comparator.comparing(CustomerCountByAge::age))
+                    .toList();
+
+            Assertions.assertEquals(2, results.size());
+
+            CustomerCountByAge countByAge = results.getFirst();
+            Assertions.assertEquals(10, countByAge.age());
+            Assertions.assertEquals(2, countByAge.quantity(), "Exists two customers with age equals 10");
+
+            countByAge = results.get(1);
+            Assertions.assertEquals(20, countByAge.age());
+            Assertions.assertEquals(1, countByAge.quantity(), "Exists two customers with age equals 1");
 
         }finally {
             remove(customer_3);
