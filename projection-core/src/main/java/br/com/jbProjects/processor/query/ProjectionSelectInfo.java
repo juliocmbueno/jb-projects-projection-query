@@ -1,6 +1,8 @@
 package br.com.jbProjects.processor.query;
 
 import br.com.jbProjects.annotations.ProjectionField;
+import br.com.jbProjects.processor.joinResolver.DefaultPathResolver;
+import br.com.jbProjects.processor.joinResolver.PathResolver;
 import br.com.jbProjects.processor.operatorHandler.ProjectionOperatorProvider;
 import br.com.jbProjects.util.ProjectionUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -20,11 +22,13 @@ public class ProjectionSelectInfo {
 
     private final Selection<?>[] selections;
     private final Path<?>[] groupByFields;
+    private final PathResolver pathResolver;
 
     public ProjectionSelectInfo(ProjectionQuery<?, ?> projectionQuery, CriteriaBuilder criteriaBuilder, Root<?> from){
         List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionQuery.toClass());
+        pathResolver = new DefaultPathResolver(projectionQuery.getDeclaredJoins());
         selections = processSelections(fields, criteriaBuilder, from);
-        groupByFields = processGroupByFields(fields, criteriaBuilder, from);
+        groupByFields = processGroupByFields(fields, from);
     }
 
     private Selection<?>[] processSelections(List<Field> fields, CriteriaBuilder criteriaBuilder, Root<?> from) {
@@ -34,19 +38,21 @@ public class ProjectionSelectInfo {
                     ProjectionField projectionField = field.getAnnotation(ProjectionField.class);
                     String fieldColumnName = ProjectionUtils.getFieldColumnName(field);
 
+                    Path path = pathResolver.resolve(from, fieldColumnName);
+
                     return ProjectionOperatorProvider
                             .operators()
                             .stream()
                             .filter(operator -> operator.supports(projectionField))
                             .findFirst()
                             .map(operator -> operator.apply(criteriaBuilder, from, fieldColumnName))
-                            .orElse(from.get(fieldColumnName))
+                            .orElse(path)
                             .alias(field.getName());
                 })
                 .toArray(Selection<?>[]::new);
     }
 
-    private Path<?>[] processGroupByFields(List<Field> fields, CriteriaBuilder criteriaBuilder, Root<?> from) {
+    private Path<?>[] processGroupByFields(List<Field> fields, Root<?> from) {
         boolean hasAnyOperator = fields
                 .stream()
                 .map(field -> field.getAnnotation(ProjectionField.class))

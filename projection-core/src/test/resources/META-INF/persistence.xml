@@ -5,9 +5,10 @@
     <persistence-unit name="testPU">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>br.com.jbProjects.config.testModel.customer.domain.Customer</class>
-        <class>br.com.jbProjects.config.testModel.city.domain.City</class>
         <class>br.com.jbProjects.config.testModel.state.domain.State</class>
+        <class>br.com.jbProjects.config.testModel.city.domain.City</class>
+        <class>br.com.jbProjects.config.testModel.address.domain.Address</class>
+        <class>br.com.jbProjects.config.testModel.customer.domain.Customer</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>

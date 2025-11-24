@@ -1,8 +1,11 @@
 package br.com.jbProjects.processor;
 
 import br.com.jbProjects.config.helper.BaseJpaTest;
+import br.com.jbProjects.config.testModel.address.domain.Address;
+import br.com.jbProjects.config.testModel.city.domain.City;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.*;
+import br.com.jbProjects.config.testModel.state.domain.State;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,25 +19,74 @@ import java.util.List;
  */
 class ProjectionProcessorTest extends BaseJpaTest {
 
+    private State state;
+    private City cityGoiania;
+    private City cityAnapolis;
+    private Address mainAddress;
+    private Address secondaryAddress;
     private Customer customer;
     private ProjectionProcessor processor;
 
     @Override
     protected void onBeforeAll() {
         this.processor = new ProjectionProcessor(entityManager);
+        persistState();
+        persistCityGoiania();
+        persistCityAnapolis();
+        persistMainAddress();
+        persisSecondaryAddress();
         persistCustomer();
+    }
+
+    private void persistState() {
+        state = new State();
+        state.setName("Goiás");
+        persist(state);
+    }
+
+    private void persistCityGoiania() {
+        cityGoiania = new City();
+        cityGoiania.setName("Goiânia");
+        cityGoiania.setState(state);
+        persist(cityGoiania);
+    }
+
+
+    private void persistCityAnapolis() {
+        cityAnapolis = new City();
+        cityAnapolis.setName("Anapolis");
+        cityAnapolis.setState(state);
+        persist(cityAnapolis);
+    }
+
+    private void persistMainAddress() {
+        mainAddress = new Address();
+        mainAddress.setCity(cityGoiania);
+        persist(mainAddress);
+    }
+
+    private void persisSecondaryAddress() {
+        secondaryAddress = new Address();
+        secondaryAddress.setCity(cityAnapolis);
+        persist(secondaryAddress);
     }
 
     private void persistCustomer() {
         customer = new Customer();
         customer.setName("John Doe");
         customer.setEmail("john.doe@example.com");
+        customer.setMainAddress(mainAddress);
         persist(customer);
     }
 
     @Override
     protected void onAfterAll() {
         remove(customer);
+        remove(mainAddress);
+        remove(secondaryAddress);
+        remove(cityGoiania);
+        remove(cityAnapolis);
+        remove(state);
     }
 
     @Test
@@ -294,5 +346,25 @@ class ProjectionProcessorTest extends BaseJpaTest {
             remove(customer_1);
 
         }
+    }
+
+    @Test
+    void execute_withProjectionQuery_nextEntityAttributes() {
+        List<CustomerNameAndCityAttributes> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerNameAndCityAttributes.class)
+                                .specification((criteriaBuilder, query, root) ->
+                                        criteriaBuilder.equal(root.get("id"), customer.getId()))
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerNameAndCityAttributes result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getState().getName(), result.state());
+        Assertions.assertNull(result.secondaryCidy());
+        Assertions.assertNull(result.secondaryState());
     }
 }

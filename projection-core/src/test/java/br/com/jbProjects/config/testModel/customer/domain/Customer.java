@@ -1,5 +1,6 @@
 package br.com.jbProjects.config.testModel.customer.domain;
 
+import br.com.jbProjects.config.testModel.address.domain.Address;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,5 +25,13 @@ public class Customer {
 
     @Column
     private Integer age;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Address mainAddress;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Address secondaryAddress;
 
 }

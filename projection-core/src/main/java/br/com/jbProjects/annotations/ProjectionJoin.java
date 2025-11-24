@@ -17,8 +17,6 @@ public @interface ProjectionJoin {
 
     String path();
 
-    String alias() default "";
-
     JoinType type() default JoinType.INNER;
 
 }
