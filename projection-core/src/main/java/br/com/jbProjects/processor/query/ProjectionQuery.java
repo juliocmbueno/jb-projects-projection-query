@@ -1,8 +1,14 @@
 package br.com.jbProjects.processor.query;
 
 import br.com.jbProjects.annotations.ProjectionJoin;
+import br.com.jbProjects.processor.filter.ProjectionFilter;
+import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.joinResolver.DefaultPathResolver;
+import br.com.jbProjects.processor.joinResolver.PathResolver;
 import br.com.jbProjects.util.ProjectionUtils;
 import br.com.jbProjects.validations.ProjectionValidations;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Root;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
@@ -21,7 +27,9 @@ public class ProjectionQuery<FROM, TO> {
     @Accessors(fluent = true)
     private final Class<TO> toClass;
 
+    private final PathResolver pathResolver;
     private final List<ProjectionSpecification<FROM>> specifications = new ArrayList<>();
+    private final List<ProjectionFilter> filters = new ArrayList<>();
 
     private boolean distinct = false;
     private ProjectionPaging paging;
@@ -30,6 +38,7 @@ public class ProjectionQuery<FROM, TO> {
         ProjectionValidations.validateProjectionClass(toClass);
         this.fromClass = fromClass;
         this.toClass = toClass;
+        this.pathResolver = new DefaultPathResolver(getDeclaredJoins());
     }
 
     public static <FROM, TO> ProjectionQuery<FROM, TO> fromTo(Class<FROM> fromClass, Class<TO> toClass) {
@@ -46,6 +55,16 @@ public class ProjectionQuery<FROM, TO> {
         return this;
     }
 
+    public ProjectionQuery<FROM, TO> filter(String path, ProjectionFilterOperator operator, Object value) {
+        filter(path, operator.name(), value);
+        return this;
+    }
+
+    public ProjectionQuery<FROM, TO> filter(String path, String operator, Object value) {
+        this.filters.add(new ProjectionFilter(path, operator, value));
+        return this;
+    }
+
     public ProjectionQuery<FROM, TO> distinct(){
         this.distinct = true;
         return this;
@@ -57,5 +76,9 @@ public class ProjectionQuery<FROM, TO> {
 
     public List<ProjectionJoin> getDeclaredJoins(){
         return ProjectionUtils.getDeclaredJoins(toClass);
+    }
+
+    public Path<?> resolvePath(Root<FROM> from, String path){
+        return this.pathResolver.resolve(from, path);
     }
 }

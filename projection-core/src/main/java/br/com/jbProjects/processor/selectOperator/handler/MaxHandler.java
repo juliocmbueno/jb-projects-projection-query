@@ -1,11 +1,11 @@
-package br.com.jbProjects.processor.operatorHandler;
+package br.com.jbProjects.processor.selectOperator.handler;
 
 import br.com.jbProjects.annotations.ProjectionField;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 
-public class MaxHandler implements ProjectionOperatorHandler {
+public class MaxHandler implements ProjectionSelectOperatorHandler {
 
     @Override
     public boolean supports(ProjectionField annotation) {

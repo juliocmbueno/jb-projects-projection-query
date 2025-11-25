@@ -6,6 +6,8 @@ import br.com.jbProjects.config.testModel.city.domain.City;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.*;
 import br.com.jbProjects.config.testModel.state.domain.State;
+import br.com.jbProjects.processor.filter.BetweenValues;
+import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by julio.bueno on 21/11/2025.
@@ -384,5 +387,257 @@ class ProjectionProcessorTest extends BaseJpaTest {
         Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
         Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
         Assertions.assertEquals(customer.getMainAddress().getCity().getState().getName(), result.state());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterEqual() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("name", ProjectionFilterOperator.EQUAL, customer.getName())
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("name", ProjectionFilterOperator.EQUAL, UUID.randomUUID().toString())
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterBetween() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.BETWEEN, BetweenValues.of(0, customer.getId()))
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.BETWEEN, BetweenValues.of(-1, 0))
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterGreaterThen() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.GREATER_THAN, customer.getId() - 1)
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.GREATER_THAN, customer.getId())
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterGreaterThenOrEqual() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.GREATER_THAN_OR_EQUAL, customer.getId())
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.GREATER_THAN_OR_EQUAL, customer.getId() + 1)
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterIn() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.IN, List.of(customer.getId()))
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.IN, List.of(-1L, -2L))
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterLessThan() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.LESS_THAN, customer.getId() + 1)
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.LESS_THAN, customer.getId())
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterLessThanOrEqual() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.LESS_THAN_OR_EQUAL, customer.getId())
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.LESS_THAN_OR_EQUAL, customer.getId() - 1)
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterLike() {
+        String value = customer.getName().substring(0, 4);
+
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("name", ProjectionFilterOperator.LIKE, value+"%")
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("name", ProjectionFilterOperator.LIKE, "%"+value)
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterNotEqual() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("name", ProjectionFilterOperator.NOT_EQUAL, UUID.randomUUID().toString())
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("name", ProjectionFilterOperator.NOT_EQUAL, customer.getName())
+                );
+
+        Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_filterNotIn() {
+        // filter valid
+        List<CustomerName> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.NOT_IN, List.of(-1L, -2L))
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerName result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+
+        // filter not valid
+        results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerName.class)
+                                .filter("id", ProjectionFilterOperator.NOT_IN, List.of(customer.getId()))
+                );
+
+        Assertions.assertTrue(results.isEmpty());
     }
 }

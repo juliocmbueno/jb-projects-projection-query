@@ -1,4 +1,4 @@
-package br.com.jbProjects.processor.operatorHandler;
+package br.com.jbProjects.processor.selectOperator.handler;
 
 import br.com.jbProjects.annotations.ProjectionField;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -13,14 +13,14 @@ import org.mockito.Mockito;
  * Created by julio.bueno on 25/11/2025.
  */
 @SuppressWarnings("unchecked")
-class MaxHandlerTest {
+class MinHandlerTest {
 
-    private final MaxHandler handler = new MaxHandler();
+    private final MinHandler handler = new MinHandler();
 
     @Test
     public void supports(){
         ProjectionField fieldSupported = Mockito.mock(ProjectionField.class);
-        Mockito.doReturn(true).when(fieldSupported).max();
+        Mockito.doReturn(true).when(fieldSupported).min();
         Assertions.assertTrue(handler.supports(fieldSupported));
 
         ProjectionField fieldNotSupported = Mockito.mock(ProjectionField.class);
@@ -36,7 +36,7 @@ class MaxHandlerTest {
 
         CriteriaBuilder cb = Mockito.mock(CriteriaBuilder.class);
         Expression<?> expression = Mockito.mock(Expression.class);
-        Mockito.doReturn(expression).when(cb).max(pathAge);
+        Mockito.doReturn(expression).when(cb).min(pathAge);
 
         Expression<?> result = handler.apply(cb, root, "age");
         Assertions.assertEquals(expression, result);

@@ -1,9 +1,8 @@
 package br.com.jbProjects.processor.query;
 
 import br.com.jbProjects.annotations.ProjectionField;
-import br.com.jbProjects.processor.joinResolver.DefaultPathResolver;
 import br.com.jbProjects.processor.joinResolver.PathResolver;
-import br.com.jbProjects.processor.operatorHandler.ProjectionOperatorProvider;
+import br.com.jbProjects.processor.selectOperator.ProjectionSelectOperatorProvider;
 import br.com.jbProjects.util.ProjectionUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Path;
@@ -24,9 +23,13 @@ public class ProjectionSelectInfo {
     private final Path<?>[] groupByFields;
     private final PathResolver pathResolver;
 
-    public ProjectionSelectInfo(ProjectionQuery<?, ?> projectionQuery, CriteriaBuilder criteriaBuilder, Root<?> from){
+    public ProjectionSelectInfo(
+            ProjectionQuery<?, ?> projectionQuery,
+            CriteriaBuilder criteriaBuilder,
+            Root<?> from
+    ){
         List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionQuery.toClass());
-        pathResolver = new DefaultPathResolver(projectionQuery.getDeclaredJoins());
+        pathResolver = projectionQuery.getPathResolver();
         selections = processSelections(fields, criteriaBuilder, from);
         groupByFields = processGroupByFields(fields, from);
     }
@@ -40,7 +43,8 @@ public class ProjectionSelectInfo {
 
                     Path path = pathResolver.resolve(from, fieldColumnName);
 
-                    return ProjectionOperatorProvider
+                    return ProjectionSelectOperatorProvider
+                            .getInstance()
                             .operators()
                             .stream()
                             .filter(operator -> operator.supports(projectionField))
@@ -56,7 +60,8 @@ public class ProjectionSelectInfo {
         boolean hasAnyOperator = fields
                 .stream()
                 .map(field -> field.getAnnotation(ProjectionField.class))
-                .anyMatch(projectionField -> ProjectionOperatorProvider
+                .anyMatch(projectionField -> ProjectionSelectOperatorProvider
+                        .getInstance()
                         .operators()
                         .stream()
                         .anyMatch(operator -> operator.supports(projectionField))
@@ -69,7 +74,8 @@ public class ProjectionSelectInfo {
         return fields
                 .stream()
                 .filter(field -> {
-                    boolean isOperator = ProjectionOperatorProvider
+                    boolean isOperator = ProjectionSelectOperatorProvider
+                            .getInstance()
                             .operators()
                             .stream()
                             .anyMatch(operator -> operator.supports(field.getAnnotation(ProjectionField.class)));

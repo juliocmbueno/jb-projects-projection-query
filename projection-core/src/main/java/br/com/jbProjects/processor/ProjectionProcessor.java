@@ -2,17 +2,18 @@ package br.com.jbProjects.processor;
 
 import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.mapper.ProjectionMappers;
+import br.com.jbProjects.processor.filter.ProjectionFilterOperatorProvider;
+import br.com.jbProjects.processor.filter.handler.ProjectionFilterOperatorHandler;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import br.com.jbProjects.processor.query.ProjectionSelectInfo;
+import br.com.jbProjects.processor.query.ProjectionSpecification;
 import br.com.jbProjects.validations.ProjectionValidations;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class ProjectionProcessor {
 
         criteriaQuery.distinct(projectionQuery.isDistinct());
         addSelects(projectionQuery, criteriaQuery, from);
-        applySpecifications(projectionQuery, criteriaBuilder, criteriaQuery, from);
+        applyFilters(projectionQuery, criteriaBuilder, criteriaQuery, from);
 
         TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
         applyPaging(projectionQuery, typedQuery);
@@ -57,11 +58,20 @@ public class ProjectionProcessor {
         criteriaQuery.groupBy(selectInfo.getGroupByFields());
     }
 
-    private static <FROM, TO> void applySpecifications(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {
-        List<Predicate> predicates = projectionQuery
-                .getSpecifications()
-                .stream()
-                .map(specification -> specification.toPredicate(criteriaBuilder, criteriaQuery, from)).toList();
+    private static <FROM, TO> void applyFilters(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        for (ProjectionSpecification<FROM> spec : projectionQuery.getSpecifications()) {
+            predicates.add(spec.toPredicate(criteriaBuilder, criteriaQuery, from));
+        }
+
+        for (var filter : projectionQuery.getFilters()) {
+            Path<?> path = projectionQuery.resolvePath(from, filter.path());
+            ProjectionFilterOperatorHandler operator = ProjectionFilterOperatorProvider.getInstance().get(filter.operator());
+
+            Predicate predicate = operator.toPredicate(criteriaBuilder, path, filter.value());
+            predicates.add(predicate);
+        }
 
         if(!predicates.isEmpty()){
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));

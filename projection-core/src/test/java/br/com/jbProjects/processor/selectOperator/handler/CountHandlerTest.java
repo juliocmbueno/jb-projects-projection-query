@@ -1,4 +1,4 @@
-package br.com.jbProjects.processor.operatorHandler;
+package br.com.jbProjects.processor.selectOperator.handler;
 
 import br.com.jbProjects.annotations.ProjectionField;
 import jakarta.persistence.criteria.CriteriaBuilder;
