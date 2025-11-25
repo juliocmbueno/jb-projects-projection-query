@@ -2,6 +2,12 @@ package br.com.jbProjects.processor.filter;
 
 /**
  * Created by julio.bueno on 25/11/2025.
+ * <p>
+ *     Represents a range with a start and end value for "between" comparisons.
+ * </p>
+ *
+ * @param start The start value of the range.
+ * @param end   The end value of the range.
  */
 public record BetweenValues(
         Comparable<?> start,
