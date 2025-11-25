@@ -80,13 +80,7 @@ public class ProjectionProcessor {
     private static <T> List<T> mapTuplesToProjectionClass(List<Tuple> tuples, Class<T> projectionClass) {
         return tuples
                 .stream()
-                .map(tuple -> {
-                    if (projectionClass.isRecord()) {
-                        return ProjectionMappers.tupleToRecord(tuple, projectionClass);
-                    }
-
-                    return ProjectionMappers.tupleToClass(tuple, projectionClass);
-                })
+                .map(tuple -> ProjectionMappers.tupleToObject(tuple, projectionClass))
                 .collect(Collectors.toList());
     }
 }

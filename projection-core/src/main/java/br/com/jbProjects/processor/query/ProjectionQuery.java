@@ -1,13 +1,12 @@
 package br.com.jbProjects.processor.query;
 
-import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.annotations.ProjectionJoin;
+import br.com.jbProjects.util.ProjectionUtils;
 import br.com.jbProjects.validations.ProjectionValidations;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -57,8 +56,6 @@ public class ProjectionQuery<FROM, TO> {
     }
 
     public List<ProjectionJoin> getDeclaredJoins(){
-        return Arrays
-                .stream(toClass.getAnnotation(Projection.class).joins())
-                .toList();
+        return ProjectionUtils.getDeclaredJoins(toClass);
     }
 }

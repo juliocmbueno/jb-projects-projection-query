@@ -1,9 +1,12 @@
 package br.com.jbProjects.util;
 
+import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.annotations.ProjectionField;
+import br.com.jbProjects.annotations.ProjectionJoin;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,4 +28,14 @@ public class ProjectionUtils {
         return field.getName();
     }
 
+    public static List<ProjectionJoin> getDeclaredJoins(Class<?> clazz) {
+        Projection annotation = clazz.getAnnotation(Projection.class);
+        if(annotation == null){
+            return List.of();
+        }
+
+        return Arrays
+                .stream(clazz.getAnnotation(Projection.class).joins())
+                .toList();
+    }
 }

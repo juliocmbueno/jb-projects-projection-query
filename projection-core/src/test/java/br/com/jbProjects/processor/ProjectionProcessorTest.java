@@ -367,4 +367,22 @@ class ProjectionProcessorTest extends BaseJpaTest {
         Assertions.assertNull(result.secondaryCidy());
         Assertions.assertNull(result.secondaryState());
     }
+
+    @Test
+    void execute_withProjectionQuery_joinWithAlias() {
+        List<CustomerNameAndCityJoinWithAlias> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerNameAndCityJoinWithAlias.class)
+                                .specification((criteriaBuilder, query, root) ->
+                                        criteriaBuilder.equal(root.get("id"), customer.getId()))
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerNameAndCityJoinWithAlias result = results.getFirst();
+        Assertions.assertEquals(customer.getName(), result.name());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getState().getName(), result.state());
+    }
 }

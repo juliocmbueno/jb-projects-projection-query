@@ -16,7 +16,15 @@ public class ProjectionMappers {
 
     private ProjectionMappers(){}
 
-    public static <T> T tupleToClass(Tuple tuple, Class<T> projectionClass){
+    public static <T> T tupleToObject(Tuple tuple, Class<T> projectionObject){
+        if(projectionObject.isRecord()){
+            return tupleToRecord(tuple, projectionObject);
+        }
+
+        return tupleToClass(tuple, projectionObject);
+    }
+
+    private static <T> T tupleToClass(Tuple tuple, Class<T> projectionClass){
         try{
             T projectionInstance = projectionClass.getDeclaredConstructor().newInstance();
             List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionClass);
@@ -31,10 +39,9 @@ public class ProjectionMappers {
         } catch (Exception e) {
             throw new RuntimeException("Error creating projection instance", e);
         }
-
     }
 
-    public static <T> T tupleToRecord(Tuple tuple, Class<T> projectionClass){
+    private static <T> T tupleToRecord(Tuple tuple, Class<T> projectionClass){
         try{
             RecordComponent[] components = projectionClass.getRecordComponents();
             Constructor<T> constructor = projectionClass.getDeclaredConstructor(
