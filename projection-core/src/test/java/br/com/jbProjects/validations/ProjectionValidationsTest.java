@@ -71,7 +71,7 @@ class ProjectionValidationsTest {
     void validateProjectionClass_aliasDuplicated() {
         try{
             ProjectionValidations.validateProjectionClass(ProjectionValidationsAliasDuplicated.class);
-            Assertions.fail("Theres is an alias duplicated");
+            Assertions.fail("Theres is an alias duplicated");// teste
 
         }catch (IllegalArgumentException e){
             Assertions.assertEquals("Duplicate alias detected: 'mainCity'", e.getMessage());
