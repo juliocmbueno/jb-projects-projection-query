@@ -44,12 +44,28 @@ public class ProjectionProcessor {
         criteriaQuery.distinct(projectionQuery.isDistinct());
         addSelects(projectionQuery, criteriaQuery, from);
         applyFilters(projectionQuery, criteriaBuilder, criteriaQuery, from);
+        applyOrders(projectionQuery, criteriaBuilder, criteriaQuery, from);
 
         TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
         applyPaging(projectionQuery, typedQuery);
         List<Tuple> tuples = typedQuery.getResultList();
 
         return mapTuplesToProjectionClass(tuples, projectionQuery.toClass());
+    }
+
+    private <TO, FROM> void applyOrders(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {
+        List<Order> orders = projectionQuery
+                .getOrders()
+                .stream()
+                .map(order -> {
+                    Path<?> path = projectionQuery.resolvePath(from, order.path());
+                    return order.direction().toOrder(criteriaBuilder, path);
+                })
+                .toList();
+
+        if(!orders.isEmpty()){
+            criteriaQuery.orderBy(orders);
+        }
     }
 
     private <FROM, TO> void addSelects(ProjectionQuery<FROM, TO> projectionQuery, CriteriaQuery<Tuple> criteriaQuery, Root<?> from) {

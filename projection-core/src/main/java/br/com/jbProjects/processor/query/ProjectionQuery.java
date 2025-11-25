@@ -5,6 +5,8 @@ import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.joinResolver.DefaultPathResolver;
 import br.com.jbProjects.processor.joinResolver.PathResolver;
+import br.com.jbProjects.processor.order.OrderDirection;
+import br.com.jbProjects.processor.order.ProjectionOrder;
 import br.com.jbProjects.util.ProjectionUtils;
 import br.com.jbProjects.validations.ProjectionValidations;
 import jakarta.persistence.criteria.Path;
@@ -30,6 +32,7 @@ public class ProjectionQuery<FROM, TO> {
     private final PathResolver pathResolver;
     private final List<ProjectionSpecification<FROM>> specifications = new ArrayList<>();
     private final List<ProjectionFilter> filters = new ArrayList<>();
+    private final List<ProjectionOrder> orders = new ArrayList<>();
 
     private boolean distinct = false;
     private ProjectionPaging paging;
@@ -67,6 +70,11 @@ public class ProjectionQuery<FROM, TO> {
 
     public ProjectionQuery<FROM, TO> distinct(){
         this.distinct = true;
+        return this;
+    }
+
+    public ProjectionQuery<FROM, TO> order(String path, OrderDirection direction){
+        this.orders.add(new ProjectionOrder(path, direction));
         return this;
     }
 

@@ -8,6 +8,7 @@ import br.com.jbProjects.config.testModel.customer.projections.*;
 import br.com.jbProjects.config.testModel.state.domain.State;
 import br.com.jbProjects.processor.filter.BetweenValues;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
     private State state;
     private City cityGoiania;
     private City cityAnapolis;
-    private Address mainAddress;
-    private Address secondaryAddress;
+    private Address mainAddressGoiania;
+    private Address secondaryAddressAnapolis;
     private Customer customer;
     private ProjectionProcessor processor;
 
@@ -63,30 +64,30 @@ class ProjectionProcessorTest extends BaseJpaTest {
     }
 
     private void persistMainAddress() {
-        mainAddress = new Address();
-        mainAddress.setCity(cityGoiania);
-        persist(mainAddress);
+        mainAddressGoiania = new Address();
+        mainAddressGoiania.setCity(cityGoiania);
+        persist(mainAddressGoiania);
     }
 
     private void persisSecondaryAddress() {
-        secondaryAddress = new Address();
-        secondaryAddress.setCity(cityAnapolis);
-        persist(secondaryAddress);
+        secondaryAddressAnapolis = new Address();
+        secondaryAddressAnapolis.setCity(cityAnapolis);
+        persist(secondaryAddressAnapolis);
     }
 
     private void persistCustomer() {
         customer = new Customer();
         customer.setName("John Doe");
         customer.setEmail("john.doe@example.com");
-        customer.setMainAddress(mainAddress);
+        customer.setMainAddress(mainAddressGoiania);
         persist(customer);
     }
 
     @Override
     protected void onAfterAll() {
         remove(customer);
-        remove(mainAddress);
-        remove(secondaryAddress);
+        remove(mainAddressGoiania);
+        remove(secondaryAddressAnapolis);
         remove(cityGoiania);
         remove(cityAnapolis);
         remove(state);
@@ -639,5 +640,57 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void execute_withProjectionQuery_order() {
+        Customer customerFromGoiania = new Customer();
+        customerFromGoiania.setName("Customer from Goiania");
+        customerFromGoiania.setMainAddress(mainAddressGoiania);
+        persist(customerFromGoiania);
+
+        Customer customerFromAnapolis = new Customer();
+        customerFromAnapolis.setName("Customer from Anapolis");
+        customerFromAnapolis.setMainAddress(secondaryAddressAnapolis);
+        persist(customerFromAnapolis);
+
+        try{
+            // ASC
+            List<CustomerNameAndCityAttributes> results = processor
+                    .execute(
+                            ProjectionQuery
+                                    .fromTo(Customer.class, CustomerNameAndCityAttributes.class)
+                                    .filter("id", ProjectionFilterOperator.IN, List.of(customerFromGoiania.getId(), customerFromAnapolis.getId()))
+                                    .order("mainAddress.city.name", OrderDirection.ASC)
+                    );
+
+            Assertions.assertEquals(2, results.size());
+            CustomerNameAndCityAttributes result = results.getFirst();
+            Assertions.assertEquals(customerFromAnapolis.getName(), result.name());
+
+            result = results.get(1);
+            Assertions.assertEquals(customerFromGoiania.getName(), result.name());
+
+            // DESC
+            results = processor
+                    .execute(
+                            ProjectionQuery
+                                    .fromTo(Customer.class, CustomerNameAndCityAttributes.class)
+                                    .filter("id", ProjectionFilterOperator.IN, List.of(customerFromGoiania.getId(), customerFromAnapolis.getId()))
+                                    .order("mainAddress.city.name", OrderDirection.DESC)
+                    );
+
+            Assertions.assertEquals(2, results.size());
+            result = results.getFirst();
+            Assertions.assertEquals(customerFromGoiania.getName(), result.name());
+
+            result = results.get(1);
+            Assertions.assertEquals(customerFromAnapolis.getName(), result.name());
+
+        }finally {
+            remove(customerFromAnapolis);
+            remove(customerFromGoiania);
+        }
+
     }
 }

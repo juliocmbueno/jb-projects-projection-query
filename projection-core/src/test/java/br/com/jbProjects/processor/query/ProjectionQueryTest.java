@@ -4,6 +4,10 @@ import br.com.jbProjects.annotations.ProjectionJoin;
 import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerName;
+import br.com.jbProjects.processor.filter.ProjectionFilter;
+import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.order.OrderDirection;
+import br.com.jbProjects.processor.order.ProjectionOrder;
 import br.com.jbProjects.util.ProjectionUtils;
 import org.junit.jupiter.api.Test;
 
@@ -71,5 +75,46 @@ class ProjectionQueryTest {
         List<ProjectionJoin> declaredJoins = projectionQuery.getDeclaredJoins();
         List<ProjectionJoin> expected = ProjectionUtils.getDeclaredJoins(Customer.class);
         assertEquals(expected, declaredJoins);
+    }
+
+    @Test
+    public void order(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .order("name", OrderDirection.ASC);
+
+        List<ProjectionOrder> orders = (List<ProjectionOrder>) ReflectionTestUtils.getField(projectionQuery, "orders");
+        assertEquals(1, orders.size());
+        ProjectionOrder order = orders.getFirst();
+        assertEquals("name", order.path());
+        assertEquals(OrderDirection.ASC, order.direction());
+    }
+
+    @Test
+    public void filter_enumOperator(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .filter("name", ProjectionFilterOperator.EQUAL, "John Doe");
+
+        List<ProjectionFilter> filters = (List<ProjectionFilter>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        assertEquals(1, filters.size());
+        ProjectionFilter filter = filters.getFirst();
+        assertEquals("name", filter.path());
+        assertEquals("EQUAL", filter.operator());
+        assertEquals("John Doe", filter.value());
+    }
+
+    @Test
+    public void filter_stringOperator(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .filter("name", "EQUAL", "John Doe");
+
+        List<ProjectionFilter> filters = (List<ProjectionFilter>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        assertEquals(1, filters.size());
+        ProjectionFilter filter = filters.getFirst();
+        assertEquals("name", filter.path());
+        assertEquals("EQUAL", filter.operator());
+        assertEquals("John Doe", filter.value());
     }
 }
