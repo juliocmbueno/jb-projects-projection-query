@@ -14,7 +14,11 @@ import static java.lang.annotation.ElementType.FIELD;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProjectionField {
 
-    /** The path to the field in the entity to be projected. */
+    /**
+     * The path to the field in the entity to be projected.
+     * <p>It's possible to use nested paths to access fields in related entities.</p>
+     * <p> ex: "name" or "address.city.name" </p>
+     * */
     String value() default "";
 
     /** Aggregation functions to be applied to the field. */

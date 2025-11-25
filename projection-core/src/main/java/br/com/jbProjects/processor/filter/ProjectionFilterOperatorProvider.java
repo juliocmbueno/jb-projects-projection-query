@@ -10,11 +10,18 @@ import java.util.Set;
 
 /**
  * Created by julio.bueno on 25/11/2025.
+ * <p>Provider for Projection Filter Operator Handlers</p>
+ * <p>By default, the class is created with all operations of {@link ProjectionFilterOperator}</p>
  */
 public class ProjectionFilterOperatorProvider {
 
     private static final ProjectionFilterOperatorProvider INSTANCE = new ProjectionFilterOperatorProvider();
 
+    /**
+     * <p>Returns the singleton instance of ProjectionFilterOperatorProvider.</p>
+     *
+     * @return Singleton instance of ProjectionFilterOperatorProvider
+     */
     public static ProjectionFilterOperatorProvider getInstance() {
         return INSTANCE;
     }
@@ -38,6 +45,13 @@ public class ProjectionFilterOperatorProvider {
         register(operator.name(), handler);
     }
 
+    /**
+     * <p>Registers a new ProjectionFilterOperatorHandler for the specified operator.</p>
+     *
+     * @param operator The operator as a String
+     * @param handler The handler to be registered
+     * @throws IllegalArgumentException if the operator is already registered
+     */
     public void register(String operator, @NonNull ProjectionFilterOperatorHandler handler){
         if(operators.containsKey(operator)){
             throw new IllegalArgumentException("Operator already registered: " + operator);
@@ -46,10 +60,24 @@ public class ProjectionFilterOperatorProvider {
         operators.put(operator.toUpperCase(), handler);
     }
 
+    /**
+     * <p>Retrieves the ProjectionFilterOperatorHandler for the specified operator.</p>
+     *
+     * @param operator The operator as a ProjectionFilterOperator enum
+     * @return The corresponding ProjectionFilterOperatorHandler
+     * @throws IllegalArgumentException if the operator is not found
+     */
     public ProjectionFilterOperatorHandler get(ProjectionFilterOperator operator){
         return get(operator.name());
     }
 
+    /**
+     * <p>Retrieves the ProjectionFilterOperatorHandler for the specified operator.</p>
+     *
+     * @param operator The operator as a String
+     * @return The corresponding ProjectionFilterOperatorHandler
+     * @throws IllegalArgumentException if the operator is not found
+     */
     public ProjectionFilterOperatorHandler get(String operator){
         ProjectionFilterOperatorHandler handler = operators.get(operator.toUpperCase());
         if(handler == null){
@@ -62,8 +90,12 @@ public class ProjectionFilterOperatorProvider {
         return handler;
     }
 
+    /**
+     * <p>Returns an unmodifiable set of available operator names.</p>
+     *
+     * @return Set of available operator names
+     */
     public Set<String> availableOperators(){
         return Collections.unmodifiableSet(operators.keySet());
     }
-
 }

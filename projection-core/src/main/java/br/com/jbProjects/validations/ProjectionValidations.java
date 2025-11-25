@@ -12,11 +12,19 @@ import java.util.stream.Collectors;
 
 /**
  * Created by julio.bueno on 21/11/2025.
+ * <p>Utility class for validating projection classes and their configurations.</p>
  */
 public class ProjectionValidations {
 
     private ProjectionValidations() {}
 
+    /**
+     * Validates a projection class to ensure it meets the necessary criteria.
+     *
+     * @param clazz the projection class to validate
+     * @throws IllegalArgumentException if the class is null, lacks the @Projection annotation,
+     *                                  or if the 'of' attribute is not an entity class, or if there are alias issues
+     */
     public static void validateProjectionClass(Class<?> clazz) {
         projectionClassCanNotBeNull(clazz);
         needsToHaveProjectionAnnotation(clazz);

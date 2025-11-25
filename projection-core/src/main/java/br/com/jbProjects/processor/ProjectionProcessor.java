@@ -19,15 +19,58 @@ import java.util.stream.Collectors;
 
 /**
  * Created by julio.bueno on 21/11/2025.
+ * <p>Core engine for executing projection queries.</p>
+ * <p>
+ * The {@code ProjectionProcessor} is responsible for transforming a {@link ProjectionQuery}
+ * into a list of results of the target projection class. It handles filtering,
+ * specifications, ordering, pagination, and mapping from database tuples to DTOs.
+ *
+ * <p>It can be used in two main ways:
+ * <ul>
+ *     <li>Directly executing a projection class annotated with {@link Projection}.</li>
+ *     <li>Executing a fully configured {@link ProjectionQuery} with custom filters, orders, and paging.</li>
+ * </ul>
+ *
+ * <p><b>Example using a projection class:</b>
+ * <pre>{@code
+ * List<AuthorDTO> authors = processor.execute(AuthorDTO.class);
+ * }</pre>
+ *
+ * <p><b>Example using a fully configured ProjectionQuery:</b>
+ * <pre>{@code
+ * ProjectionQuery<Author, AuthorDTO> query = ProjectionQuery.fromTo(Author.class, AuthorDTO.class)
+ *     .filter("name", ProjectionFilterOperator.LIKE, "Júlio")
+ *     .order("birthDate", OrderDirection.ASC)
+ *     .paging(0, 20)
+ *     .distinct();
+ *
+ * List<AuthorDTO> authors = processor.execute(query);
+ * }</pre>
+ *
+ * <p>All internal query transformations, such as selecting fields, resolving paths,
+ * applying filters, and mapping tuples, are handled transparently by this class.
  */
 public class ProjectionProcessor {
 
     private final EntityManager entityManager;
 
+    /**
+     * Constructs a ProjectionProcessor with the given EntityManager.
+     *
+     * @param entityManager The EntityManager used for executing queries.
+     */
     public ProjectionProcessor(EntityManager entityManager){
         this.entityManager = entityManager;
     }
 
+    /**
+     * Executes a projection query based on the provided projection class.
+     *
+     * @param projectionClass The class annotated with {@link Projection} defining the projection.
+     * @param <T>             The type of the projection class.
+     * @return A list of results mapped to the projection class.
+     * @throws IllegalArgumentException if the projection class is not properly annotated.
+     */
     public <T> List<T> execute(Class<T> projectionClass){
         ProjectionValidations.validateProjectionClass(projectionClass);
 
@@ -36,6 +79,14 @@ public class ProjectionProcessor {
         return execute(ProjectionQuery.fromTo(projection.of(), projectionClass));
     }
 
+    /**
+     * Executes a fully configured projection query.
+     *
+     * @param projectionQuery The projection query containing all configurations.
+     * @param <FROM>          The source entity type.
+     * @param <TO>            The target projection type.
+     * @return A list of results mapped to the target projection class.
+     */
     public <FROM, TO> List<TO> execute(ProjectionQuery<FROM, TO> projectionQuery){
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();

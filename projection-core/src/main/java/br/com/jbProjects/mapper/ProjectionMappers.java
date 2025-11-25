@@ -11,11 +11,20 @@ import java.util.List;
 
 /**
  * Created by julio.bueno on 21/11/2025.
+ * <p>Class responsible for mapping JPA Tuples to projection objects (classes or records).</p>
  */
 public class ProjectionMappers {
 
     private ProjectionMappers(){}
 
+    /**
+     * Maps a JPA Tuples to a projection object.
+     *
+     * @param tuple                 JPA Tuples to be mapped.
+     * @param projectionObject      Class of the projection object (can be a class or a record).
+     * @param <T>                   Type of the projection object.
+     * @return                      An instance of the projection object populated with data from the Tuples.
+     */
     public static <T> T tupleToObject(Tuple tuple, Class<T> projectionObject){
         if(projectionObject.isRecord()){
             return tupleToRecord(tuple, projectionObject);
@@ -24,6 +33,14 @@ public class ProjectionMappers {
         return tupleToClass(tuple, projectionObject);
     }
 
+    /**
+     * Maps a JPA Tuples to a projection class instance.
+     *
+     * @param tuple                 JPA Tuples to be mapped.
+     * @param projectionClass       Class of the projection object.
+     * @param <T>                   Type of the projection object.
+     * @return                      An instance of the projection class populated with data from the Tuples.
+     */
     private static <T> T tupleToClass(Tuple tuple, Class<T> projectionClass){
         try{
             T projectionInstance = projectionClass.getDeclaredConstructor().newInstance();
@@ -41,6 +58,14 @@ public class ProjectionMappers {
         }
     }
 
+    /**
+     * Maps a JPA Tuples to a projection record instance.
+     *
+     * @param tuple                 JPA Tuples to be mapped.
+     * @param projectionClass       Class of the projection record.
+     * @param <T>                   Type of the projection record.
+     * @return                      An instance of the projection record populated with data from the Tuples.
+     */
     private static <T> T tupleToRecord(Tuple tuple, Class<T> projectionClass){
         try{
             RecordComponent[] components = projectionClass.getRecordComponents();

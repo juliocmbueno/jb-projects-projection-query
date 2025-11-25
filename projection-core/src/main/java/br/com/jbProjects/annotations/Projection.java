@@ -15,5 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Projection {
     /** The entity class that this projection maps to. */
     Class<?> of();
+
+    /** Specifies join conditions for the projection. */
     ProjectionJoin[] joins() default {};
 }
