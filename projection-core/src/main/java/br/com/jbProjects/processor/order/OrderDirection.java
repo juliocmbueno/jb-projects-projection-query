@@ -9,12 +9,15 @@ import jakarta.persistence.criteria.Path;
  * <p>Enumeration representing the direction of ordering in projection queries.</p>
  */
 public enum OrderDirection {
+    /** Ascending order direction */
     ASC {
         @Override
         public Order toOrder(CriteriaBuilder cb, Path<?> path) {
             return cb.asc(path);
         }
     },
+
+    /** Descending order direction */
     DESC {
         @Override
         public Order toOrder(CriteriaBuilder cb, Path<?> path) {

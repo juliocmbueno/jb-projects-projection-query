@@ -13,31 +13,31 @@ public enum ProjectionFilterOperator {
 
     /**
      * Not equal operator.
-     * <p>equivalent to "path <> value"</p>
+     * <p>equivalent to "path &lt;&gt; value"</p>
      */
     NOT_EQUAL,
 
     /**
      * Greater than operator.
-     * <p>equivalent to "path > value"</p>
+     * <p>equivalent to "path &gt; value"</p>
      */
     GREATER_THAN,
 
     /**
      * Less than operator.
-     * <p>equivalent to "path < value"</p>
+     * <p>equivalent to "path &lt; value"</p>
      */
     LESS_THAN,
 
     /**
      * Greater than or equal operator.
-     * <p>equivalent to "path >= value"</p>
+     * <p>equivalent to "path &gt;= value"</p>
      */
     GREATER_THAN_OR_EQUAL,
 
     /**
      * Less than or equal operator.
-     * <p>equivalent to "path <= value"</p>
+     * <p>equivalent to "path &lt;= value"</p>
      */
     LESS_THAN_OR_EQUAL,
 

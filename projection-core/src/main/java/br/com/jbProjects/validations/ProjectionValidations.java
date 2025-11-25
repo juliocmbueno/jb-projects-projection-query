@@ -52,6 +52,12 @@ public class ProjectionValidations {
         }
     }
 
+    /**
+     * Validates that aliases in ProjectionJoin annotations are unique and do not conflict with paths.
+     *
+     * @param clazz the projection class to validate
+     * @throws IllegalArgumentException if duplicate aliases are found or if an alias matches a path
+     */
     public static void validateAliases(Class<?> clazz) {
         Projection projection = clazz.getAnnotation(Projection.class);
 

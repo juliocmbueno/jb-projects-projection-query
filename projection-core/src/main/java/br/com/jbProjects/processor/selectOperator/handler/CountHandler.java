@@ -12,6 +12,11 @@ import jakarta.persistence.criteria.Root;
 public class CountHandler implements ProjectionSelectOperatorHandler {
 
     /**
+     * <p>Default constructor for CountHandler.</p>
+     */
+    public CountHandler() {}
+
+    /**
      * <p>Checks if the COUNT operation is supported based on the provided annotation.</p>
      *
      * @param annotation ProjectionField annotation containing operation details

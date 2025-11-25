@@ -9,13 +9,19 @@ import jakarta.persistence.criteria.Predicate;
  * <p>Handler responsible for generating Predicate for LESS THAN operations in projection queries</p>
  */
 public class LessThanHandler implements ProjectionFilterOperatorHandler {
+
+    /**
+     * <p>Default constructor for LessThanHandler.</p>
+     */
+    public LessThanHandler() {}
+
     /**
      * <p>Handler responsible for generating Predicate for LESS THAN operations in projection queries.</p>
      *
      * @param cb CriteriaBuilder used to create the Predicate
      * @param path Target property path
      * @param value Value for comparison
-     * @return Predicate equivalent to "path < value"
+     * @return Predicate equivalent to "path &lt; value"
      */
     @Override
     public Predicate toPredicate(CriteriaBuilder cb, Path<?> path, Object value) {

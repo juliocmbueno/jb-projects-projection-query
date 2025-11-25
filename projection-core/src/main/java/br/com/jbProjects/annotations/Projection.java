@@ -13,9 +13,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({TYPE})
 @Retention(RUNTIME)
 public @interface Projection {
-    /** The entity class that this projection maps to. */
+    /**
+     * The entity class that this projection maps to.
+     * @return Class of the entity
+     * */
     Class<?> of();
 
-    /** Specifies join conditions for the projection. */
+    /**
+     * Specifies join conditions for the projection.
+     * @return Array of ProjectionJoin annotations
+     * */
     ProjectionJoin[] joins() default {};
 }

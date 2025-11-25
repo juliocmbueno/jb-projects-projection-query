@@ -11,6 +11,11 @@ import jakarta.persistence.criteria.Predicate;
 public class LikeHandler implements ProjectionFilterOperatorHandler {
 
     /**
+     * <p>Default constructor for LikeHandler.</p>
+     */
+    public LikeHandler() {}
+
+    /**
      * <p>Handler responsible for generating Predicate for LIKE operations in projection queries.</p>
      *
      * @param cb CriteriaBuilder used to create the Predicate

@@ -18,19 +18,36 @@ public @interface ProjectionField {
      * The path to the field in the entity to be projected.
      * <p>It's possible to use nested paths to access fields in related entities.</p>
      * <p> ex: "name" or "address.city.name" </p>
-     * */
+     * @return String path;
+     */
     String value() default "";
 
-    /** Aggregation functions to be applied to the field. */
+    /**
+     * Aggregation functions to be applied to the field.
+     *
+     * @return boolean indicating if sum aggregation is applied
+     */
     boolean sum() default false;
 
-    /** The maximum value of the field. */
+    /**
+     * The maximum value of the field.
+     *
+     * @return boolean indicating if max aggregation is applied
+     */
     boolean max() default false;
 
-    /** The minimum value of the field. */
+    /**
+     * The minimum value of the field.
+     *
+     * @return boolean indicating if min aggregation is applied
+     */
     boolean min() default false;
 
-    /** The count of the field. */
+    /**
+     * The count of the field.
+     *
+     * @return boolean indicating if count aggregation is applied
+     */
     boolean count() default false;
 
 }

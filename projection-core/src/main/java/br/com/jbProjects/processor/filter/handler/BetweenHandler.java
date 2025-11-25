@@ -12,6 +12,11 @@ import jakarta.persistence.criteria.Predicate;
 public class BetweenHandler implements ProjectionFilterOperatorHandler {
 
     /**
+     * <p>Default constructor for BetweenHandler.</p>
+     */
+    public BetweenHandler() {}
+
+    /**
      * <p>Handler responsible for generating Predicate for BETWEEN operations in projection queries.</p>
      * <p>Requires that the received value be an instance of BetweenValues {@link BetweenValues} containing the start and end values for the range.</p>
      *

@@ -12,6 +12,11 @@ import jakarta.persistence.criteria.Root;
 public class MaxHandler implements ProjectionSelectOperatorHandler {
 
     /**
+     * <p>Default constructor for MaxHandler.</p>
+     */
+    public MaxHandler() {}
+
+    /**
      * <p>Checks if the MAX operation is supported based on the provided annotation.</p>
      *
      * @param annotation ProjectionField annotation containing operation details

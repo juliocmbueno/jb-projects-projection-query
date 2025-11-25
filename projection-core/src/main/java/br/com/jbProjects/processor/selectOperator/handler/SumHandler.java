@@ -12,6 +12,11 @@ import jakarta.persistence.criteria.Root;
 public class SumHandler implements ProjectionSelectOperatorHandler {
 
     /**
+     * <p>Default constructor for SumHandler.</p>
+     */
+    public SumHandler() {}
+
+    /**
      * <p>Checks if the handler supports SUM operation based on the ProjectionField annotation.</p>
      *
      * @param annotation ProjectionField annotation to check

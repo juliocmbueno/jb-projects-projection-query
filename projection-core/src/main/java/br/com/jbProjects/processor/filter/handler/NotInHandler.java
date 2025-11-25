@@ -13,6 +13,11 @@ public class NotInHandler implements ProjectionFilterOperatorHandler {
     private final InHandler inHandler = new InHandler();
 
     /**
+     * <p>Default constructor for NotInHandler.</p>
+     */
+    public NotInHandler() {}
+
+    /**
      * <p>Handler responsible for generating Predicate for NOT IN operations in projection queries.</p>
      *
      * @param cb CriteriaBuilder used to create the Predicate

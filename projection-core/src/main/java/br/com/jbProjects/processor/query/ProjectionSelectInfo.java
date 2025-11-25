@@ -14,7 +14,26 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * Created by julio.bueno on 24/11/2025.
+ * Created by julio.bueno on 21/11/2025.
+ *
+ * <p>Encapsulates the selections and group-by paths for a projection query.</p>
+ * <p>
+ * {@code ProjectionSelectInfo} analyzes the fields of a projection class annotated with
+ * {@link ProjectionField} and constructs:
+ * <ul>
+ *     <li>{@link #selections} - the fields to be selected in the query, with aliases and operators applied</li>
+ *     <li>{@link #groupByFields} - the fields that need to be included in GROUP BY clauses</li>
+ * </ul>
+ * <p>
+ * This class uses the {@link PathResolver} from the {@link ProjectionQuery} to resolve field paths,
+ * and it automatically applies any supported operators from {@link ProjectionSelectOperatorProvider}.
+ *
+ * <p><b>Usage example:</b>
+ * <pre>{@code
+ * ProjectionSelectInfo selectInfo = new ProjectionSelectInfo(projectionQuery, criteriaBuilder, root);
+ * criteriaQuery.multiselect(selectInfo.getSelections());
+ * criteriaQuery.groupBy(selectInfo.getGroupByFields());
+ * }</pre>
  */
 @Getter
 public class ProjectionSelectInfo {
@@ -23,6 +42,13 @@ public class ProjectionSelectInfo {
     private final Path<?>[] groupByFields;
     private final PathResolver pathResolver;
 
+    /**
+     * Constructs a {@code ProjectionSelectInfo} by analyzing the fields of the provided projection query.
+     *
+     * @param projectionQuery  The projection query containing the projection class and path resolver.
+     * @param criteriaBuilder  The CriteriaBuilder used to create selections.
+     * @param from             The root entity from which paths are resolved.
+     */
     public ProjectionSelectInfo(
             ProjectionQuery<?, ?> projectionQuery,
             CriteriaBuilder criteriaBuilder,

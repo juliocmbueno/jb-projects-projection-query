@@ -10,6 +10,14 @@ import jakarta.persistence.criteria.Predicate;
  */
 public interface ProjectionFilterOperatorHandler {
 
+    /**
+     * <p>Generates a Predicate for the specified filter operation.</p>
+     *
+     * @param cb CriteriaBuilder used to create the Predicate
+     * @param path Target property path
+     * @param value Value for comparison
+     * @return Generated Predicate
+     */
     Predicate toPredicate(CriteriaBuilder cb, Path<?> path, Object value);
 
 }

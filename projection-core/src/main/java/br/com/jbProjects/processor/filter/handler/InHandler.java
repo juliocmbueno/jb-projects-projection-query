@@ -11,8 +11,13 @@ import jakarta.persistence.criteria.Predicate;
 public class InHandler implements ProjectionFilterOperatorHandler {
 
     /**
+     * <p>Default constructor for InHandler.</p>
+     */
+    public InHandler() {}
+
+    /**
      * <p>Handler responsible for generating Predicate for IN operations in projection queries.</p>
-     * <p>Requires that the received value be an Iterable {@link}. Each item will be converted into an equality expression using the CriteriaBuilder.</p>
+     * <p>Requires that the received value be an Iterable. Each item will be converted into an equality expression using the CriteriaBuilder.</p>
      *
      * @param cb CriteriaBuilder used to create the Predicate
      * @param path Target property path

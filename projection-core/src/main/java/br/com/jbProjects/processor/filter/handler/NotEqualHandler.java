@@ -9,13 +9,19 @@ import jakarta.persistence.criteria.Predicate;
  * <p>Handler responsible for generating Predicate for NOT EQUAL operations in projection queries</p>
  */
 public class NotEqualHandler implements ProjectionFilterOperatorHandler {
+
+    /**
+     * <p>Default constructor for NotEqualHandler.</p>
+     */
+    public NotEqualHandler() {}
+
     /**
      * <p>Handler responsible for generating Predicate for NOT EQUAL operations in projection queries.</p>
      *
      * @param cb CriteriaBuilder used to create the Predicate
      * @param path Target property path
      * @param value Value for comparison
-     * @return Predicate equivalent to "path <> value"
+     * @return Predicate equivalent to "path &lt;&gt; value"
      */
     @Override
     public Predicate toPredicate(CriteriaBuilder cb, Path<?> path, Object value) {

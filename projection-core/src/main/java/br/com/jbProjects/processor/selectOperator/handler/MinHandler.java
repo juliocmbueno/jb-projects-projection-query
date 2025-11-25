@@ -12,6 +12,11 @@ import jakarta.persistence.criteria.Root;
 public class MinHandler implements ProjectionSelectOperatorHandler {
 
     /**
+     * <p>Default constructor for MinHandler.</p>
+     */
+    public MinHandler() {}
+
+    /**
      * <p>Checks if the MIN operation is supported based on the provided annotation.</p>
      *
      * @param annotation ProjectionField annotation containing operation details

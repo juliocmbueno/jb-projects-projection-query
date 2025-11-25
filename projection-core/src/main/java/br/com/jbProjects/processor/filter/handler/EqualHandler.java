@@ -11,6 +11,11 @@ import jakarta.persistence.criteria.Predicate;
 public class EqualHandler implements ProjectionFilterOperatorHandler {
 
     /**
+     * <p>Default constructor for EqualHandler.</p>
+     */
+    public EqualHandler() {}
+
+    /**
      * <p>Handler responsible for generating Predicate for EQUAL operations in projection queries.</p>
      *
      * @param cb CriteriaBuilder used to create the Predicate

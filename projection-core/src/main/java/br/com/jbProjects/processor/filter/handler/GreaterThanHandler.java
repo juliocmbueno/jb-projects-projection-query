@@ -11,6 +11,11 @@ import jakarta.persistence.criteria.Predicate;
 public class GreaterThanHandler implements ProjectionFilterOperatorHandler {
 
     /**
+     * <p>Default constructor for GreaterThanHandler.</p>
+     */
+    public GreaterThanHandler() {}
+
+    /**
      * <p>Handler responsible for generating Predicate for GREATER THAN operations in projection queries.</p>
      *
      * @param cb CriteriaBuilder used to create the Predicate

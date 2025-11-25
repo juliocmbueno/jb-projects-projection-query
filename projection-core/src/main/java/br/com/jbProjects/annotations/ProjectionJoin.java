@@ -23,13 +23,22 @@ public @interface ProjectionJoin {
      * <p>It's possible to use nested paths to access fields in related entities.</p>
      * <p> ex: "name" or "address.city.name" </p>
      * <p>If you define for example the following path "address.city.state" of type LEFT. The entire join hierarchy from address will be applied with LEFT</p>
-     * */
+     * @return The path to the association to be joined.
+     */
     String path();
 
-    /** The alias to be used for the joined association. */
+    /**
+     * The alias to be used for the joined association.
+     *
+     * @return The alias for the joined association.
+     */
     String alias() default "";
 
-    /** The type of join to be performed. Default is INNER JOIN. */
+    /**
+     * The type of join to be performed. Default is INNER JOIN.
+     *
+     * @return The type of join to be performed.
+     */
     JoinType type() default JoinType.INNER;
 
 }

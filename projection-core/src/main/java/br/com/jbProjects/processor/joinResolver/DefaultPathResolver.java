@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * engine and is not expected to be used directly by application code in most
  * scenarios.</p>
  *
- * <h3>Responsibilities:</h3>
+ * <b>Responsibilities:</b>
  * <ul>
  *   <li>Resolve property paths like {@code "address.city"} into valid
  *   Criteria API {@code Path} references.</li>
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  *   <li>Cache resolved joins per root to avoid unnecessary re-processing.</li>
  * </ul>
  *
- * <h3>Typical Usage:</h3>
+ * <b>Typical Usage:</b>
  * Used internally by the projection processor when evaluating
  * {@code ProjectionField}, {@code ProjectionFilter}, or Specification-based
  * criteria.
