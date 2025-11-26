@@ -6,14 +6,15 @@
     <parent>
         <groupId>io.github.juliocmbueno</groupId>
         <artifactId>projectionQuery</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
     <packaging>jar</packaging>
     <name>ProjectionQuery Core</name>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>Type-safe dynamic projection engine for Java</description>
     <url>https://github.com/juliocmbueno/jb-projects-projection-query</url>
 
