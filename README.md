@@ -87,7 +87,7 @@ ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery.fromTo(Cust
     .paging(0, 20)
     .distinct();
 
-List<CustomerBasicData> authors = processor.execute(query);
+List<CustomerBasicData> customers = processor.execute(query);
 ```
 
 ---

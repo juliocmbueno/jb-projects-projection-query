@@ -19,11 +19,11 @@ import java.util.List;
 
 /**
  * Created by julio.bueno on 21/11/2025.
- * <p>Represents a projection query between a source entity and a target DTO.</p>
+ * <p>Represents a projection query between a source entity and a target object.</p>
  * <p>
  * {@code ProjectionQuery} serves as the entry point for the projection engine,
  * allowing you to define filters, specifications, ordering, and pagination
- * in a fluent way. It encapsulates all the configuration needed to execute a projection.
+ * in a fluent way. It encapsulates all the configuration required to execute a projection.
  *
  * <p><b>Usage example:</b>
  * <pre>{@code
