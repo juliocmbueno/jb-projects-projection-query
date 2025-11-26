@@ -4,11 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.jbprojects</groupId>
+        <groupId>io.github.juliocmbueno</groupId>
         <artifactId>projectionQuery</artifactId>
         <version>1.0.0</version>
     </parent>
 
+    <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
     <packaging>jar</packaging>
     <name>ProjectionQuery Core</name>
@@ -80,11 +81,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite-engine</artifactId>
+            <version>${junit.platform.suite.engine}</version>
             <scope>test</scope>
         </dependency>
 
@@ -135,6 +138,17 @@
                         <goals><goal>sign</goal></goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Sonatype Central -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.9.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
             </plugin>
 
         </plugins>
