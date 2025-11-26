@@ -54,8 +54,8 @@ Provides integration with Spring Data:
 
 ```xml
 <dependency>
-    <groupId>TODO</groupId>
-    <artifactId>TODO</artifactId>
+    <groupId>io.github.juliocmbueno</groupId>
+    <artifactId>projection-core</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
