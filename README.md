@@ -49,9 +49,6 @@ Provides integration with Spring Data:
 
 ##  Installation (Maven)
 
-> Publishing to Maven Central is in progress.  
-> Once available, this section will contain the official coordinates.
-
 ```xml
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
