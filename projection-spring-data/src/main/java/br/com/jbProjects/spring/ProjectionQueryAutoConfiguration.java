@@ -43,7 +43,6 @@ import org.springframework.context.annotation.Bean;
  * across the application to use ProjectionQuery automatically, consistently,
  * and with minimal setup.</p>
  */
-
 @AutoConfiguration
 public class ProjectionQueryAutoConfiguration {
 
