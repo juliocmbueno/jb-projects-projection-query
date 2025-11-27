@@ -21,12 +21,12 @@
         <maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
         <junit.jupiter.version>5.12.2</junit.jupiter.version>
         <junit.platform.suite.engine>1.12.2</junit.platform.suite.engine>
-        <hibernate.version>6.3.0.Final</hibernate.version>
+        <hibernate.version>6.6.22.Final</hibernate.version>
     </properties>
 
     <modules>
         <module>projection-core</module>
-        <module>projection-spring</module>
+        <module>projection-spring-data</module>
         <module>projection-examples</module>
     </modules>
 

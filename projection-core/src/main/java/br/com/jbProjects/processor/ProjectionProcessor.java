@@ -98,10 +98,19 @@ public class ProjectionProcessor {
         applyOrders(projectionQuery, criteriaBuilder, criteriaQuery, from);
 
         TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
+        applyComment(typedQuery, projectionQuery);
+
         applyPaging(projectionQuery, typedQuery);
         List<Tuple> tuples = typedQuery.getResultList();
 
         return mapTuplesToProjectionClass(tuples, projectionQuery.toClass());
+    }
+
+    private <TO, FROM> void applyComment(TypedQuery<Tuple> typedQuery, ProjectionQuery<FROM, TO> projectionQuery) {
+        try{
+            org.hibernate.query.Query<?> hibernateQuery = typedQuery.unwrap(org.hibernate.query.Query.class);
+            hibernateQuery.setComment("ProjectionQuery created from " + projectionQuery.fromClass().getSimpleName() + " to " + projectionQuery.toClass().getSimpleName());
+        }catch (Exception ignored){}
     }
 
     private <TO, FROM> void applyOrders(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {
