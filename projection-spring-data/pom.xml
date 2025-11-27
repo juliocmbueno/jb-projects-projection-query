@@ -4,11 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>io.github.juliocmbueno</groupId>
+        <artifactId>projectionQuery</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-spring-data</artifactId>
     <packaging>jar</packaging>
     <name>ProjectionQuery Spring Data</name>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <description>Type-safe dynamic projection spring data for Java</description>
     <url>https://github.com/juliocmbueno/jb-projects-projection-query</url>
 
@@ -35,14 +41,9 @@
     </scm>
 
     <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
         <spring.boot.starter.data.jpa.version>3.5.6</spring.boot.starter.data.jpa.version>
         <spring.boot.autoconfigure>3.5.4</spring.boot.autoconfigure>
         <spring.context.version>6.2.11</spring.context.version>
-        <junit.jupiter.version>5.12.2</junit.jupiter.version>
-        <junit.platform.suite.engine>1.12.2</junit.platform.suite.engine>
     </properties>
 
     <dependencies>
@@ -95,58 +96,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Sources -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals><goal>jar</goal></goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Javadoc -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals><goal>jar</goal></goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- GPG signing -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals><goal>sign</goal></goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Sonatype Central -->
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.9.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <publishingServerId>central</publishingServerId>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
