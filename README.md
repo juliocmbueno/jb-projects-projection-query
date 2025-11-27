@@ -6,8 +6,8 @@ It provides an API for building database projections dynamically — without exp
 The project is split into multiple modules:
 
 - **projection-core** — The core engine containing the projection API.
-- **projection-spring** — Spring Data integration (optional - coming soon).
-- **projection-examples** — Sample use cases and demonstration scenarios (coming soon).
+- **projection-spring** — Spring Data integration.
+- **projection-examples** — Sample use cases and demonstration scenarios.
 
 ---
 
@@ -49,11 +49,21 @@ Provides integration with Spring Data:
 
 ##  Installation (Maven)
 
+### standalone usage
 ```xml
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.1</version>
+</dependency>
+```
+
+### spring usage
+```xml
+<dependency>
+    <groupId>io.github.juliocmbueno</groupId>
+    <artifactId>projection-spring-data</artifactId>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -86,6 +96,22 @@ ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery.fromTo(Cust
 
 List<CustomerBasicData> customers = processor.execute(query);
 ```
+
+---
+## Examples
+
+The `projection-examples` module contains sample use cases and demonstration scenarios for using Projection Query.
+
+### Explore the examples
+
+- **All examples of projections:**  
+  Browse all classes in the [projections package](https://github.com/juliocmbueno/jb-projects-projection-query/tree/main/projection-examples/src/main/java/br/com/jbProjects/domain/projections).
+
+- **Standalone usage (without Spring):**  
+  See the [ProjectionsStandaloneExample](https://github.com/juliocmbueno/jb-projects-projection-query/blob/main/projection-examples/src/main/java/br/com/jbProjects/standalone/ProjectionsStandaloneExample.java) class for examples using `ProjectionProcessor` directly with an `EntityManager`.
+
+- **Spring integration:**  
+  See the [ProjectionsSpringExample](https://github.com/juliocmbueno/jb-projects-projection-query/blob/main/projection-examples/src/main/java/br/com/jbProjects/spring/ProjectionsSpringExample.java) class for examples using Spring-managed beans.
 
 ---
 ## Documentation

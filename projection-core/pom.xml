@@ -3,18 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>io.github.juliocmbueno</groupId>
-        <artifactId>projectionQuery</artifactId>
-        <version>1.0.1</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
 
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
     <packaging>jar</packaging>
     <name>ProjectionQuery Core</name>
-    <version>1.0.1</version>
+    <version>1.1.1</version>
     <description>Type-safe dynamic projection engine for Java</description>
     <url>https://github.com/juliocmbueno/jb-projects-projection-query</url>
 
@@ -41,10 +35,17 @@
     </developers>
 
     <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jakarta.persistence.api.version>3.1.0</jakarta.persistence.api.version>
         <commons.lang3.version>3.18.0</commons.lang3.version>
         <h2.version>2.3.232</h2.version>
         <mockito.version>4.5.1</mockito.version>
+        <hibernate.version>6.6.22.Final</hibernate.version>
+        <junit.jupiter.version>5.12.2</junit.jupiter.version>
+        <junit.platform.suite.engine>1.12.2</junit.platform.suite.engine>
     </properties>
 
     <dependencies>
