@@ -14,7 +14,7 @@
     <artifactId>projection-core</artifactId>
     <packaging>jar</packaging>
     <name>ProjectionQuery Core</name>
-    <version>1.1.2</version>
+    <version>1.2.0</version>
     <description>Type-safe dynamic projection engine for Java</description>
     <url>https://github.com/juliocmbueno/jb-projects-projection-query</url>
 

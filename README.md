@@ -54,7 +54,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
-    <version>1.1.2</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -63,7 +63,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-spring-data</artifactId>
-    <version>1.1.2</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
