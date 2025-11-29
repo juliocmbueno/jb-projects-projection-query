@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI Test with Maven
+name: Test Pipeline
 
 on:
   push:
