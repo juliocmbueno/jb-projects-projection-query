@@ -38,7 +38,7 @@ The main module containing:
 
 This module is fully independent and can be used in **any** Java application — with or without frameworks.
 
-### **projection-spring** (coming soon)
+### **projection-spring**
 Provides integration with Spring Data:
 
 - Automatic projection query execution
@@ -88,7 +88,8 @@ List<CustomerBasicData> customers = processor.execute(CustomerBasicData.class);
 
 Example using a fully configured ProjectionQuery:
 ```java
-ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery.fromTo(Customer.class, CustomerBasicData.class)
+ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery
+    .fromTo(Customer.class, CustomerBasicData.class)
     .filter("address.city.name", ProjectionFilterOperator.EQUAL, "São Paulo")
     .order("name", OrderDirection.ASC)
     .paging(0, 20)
