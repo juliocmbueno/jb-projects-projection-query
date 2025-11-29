@@ -70,6 +70,10 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+             
+    </dependencies>
+         
     <build>
         <plugins>
             <!-- Sources -->
