@@ -46,7 +46,7 @@ class ProjectionUtilsTest {
         List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(ProjectionUtilsTestField.class);
         assertEquals(1, declaredJoins.size());
 
-        ProjectionJoin first = declaredJoins.getFirst();
+        ProjectionJoin first = declaredJoins.get(0);
         assertEquals("mainAddress", first.path());
         assertEquals(JoinType.LEFT, first.type());
     }

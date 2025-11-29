@@ -98,7 +98,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
         List<CustomerAutoCompleteClass> customers = processor.execute(CustomerAutoCompleteClass.class);
         Assertions.assertEquals(1, customers.size());
 
-        CustomerAutoCompleteClass result = customers.getFirst();
+        CustomerAutoCompleteClass result = customers.get(0);
         Assertions.assertEquals(result.getId(), customer.getId());
         Assertions.assertEquals(result.getName(), customer.getName());
         Assertions.assertEquals(result.getCustomerEmail(), customer.getEmail());
@@ -110,7 +110,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
         List<CustomerAutoCompleteRecord> customers = processor.execute(CustomerAutoCompleteRecord.class);
         Assertions.assertEquals(1, customers.size());
 
-        CustomerAutoCompleteRecord result = customers.getFirst();
+        CustomerAutoCompleteRecord result = customers.get(0);
         Assertions.assertEquals(result.id(), customer.getId());
         Assertions.assertEquals(result.name(), customer.getName());
         Assertions.assertEquals(result.customerEmail(), customer.getEmail());
@@ -132,7 +132,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
             );
             Assertions.assertEquals(1, customers.size());
 
-            CustomerAutoCompleteRecord result = customers.getFirst();
+            CustomerAutoCompleteRecord result = customers.get(0);
             Assertions.assertEquals(result.id(), otherCustomer.getId());
             Assertions.assertEquals(result.name(), otherCustomer.getName());
             Assertions.assertEquals(result.customerEmail(), otherCustomer.getEmail());
@@ -183,7 +183,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
             );
 
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(result.getFirst().name(), otherCustomer.getName());
+            Assertions.assertEquals(result.get(0).name(), otherCustomer.getName());
 
         }finally {
             remove(otherCustomer);
@@ -210,7 +210,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
             );
 
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(5, result.getFirst().quantity());
+            Assertions.assertEquals(5, result.get(0).quantity());
 
         }finally {
             customers.forEach(this::remove);
@@ -235,7 +235,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
         try{
             List<CustomerMinAge> result = processor.execute(CustomerMinAge.class);
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(1, result.getFirst().minAge());
+            Assertions.assertEquals(1, result.get(0).minAge());
 
         }finally {
             remove(customer_age_3);
@@ -262,7 +262,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
         try{
             List<CustomerMaxAge> result = processor.execute(CustomerMaxAge.class);
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(3, result.getFirst().maxAge());
+            Assertions.assertEquals(3, result.get(0).maxAge());
 
         }finally {
             remove(customer_age_3);
@@ -295,7 +295,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
             Assertions.assertEquals(1, result.size());
 
             Long expected = customer_1.getId() + customer_2.getId() + customer_3.getId();
-            Assertions.assertEquals(expected, result.getFirst().sumId());
+            Assertions.assertEquals(expected, result.get(0).sumId());
 
         }finally {
             remove(customer_3);
@@ -336,7 +336,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
 
             Assertions.assertEquals(2, results.size());
 
-            CustomerCountByAge countByAge = results.getFirst();
+            CustomerCountByAge countByAge = results.get(0);
             Assertions.assertEquals(10, countByAge.age());
             Assertions.assertEquals(2, countByAge.quantity(), "Exists two customers with age equals 10");
 
@@ -363,7 +363,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerNameAndCityAttributes result = results.getFirst();
+        CustomerNameAndCityAttributes result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
         Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
         Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
@@ -383,7 +383,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerNameAndCityJoinWithAlias result = results.getFirst();
+        CustomerNameAndCityJoinWithAlias result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
         Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
         Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
@@ -401,7 +401,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -426,7 +426,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -451,7 +451,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -476,7 +476,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -501,7 +501,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -526,7 +526,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -551,7 +551,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -578,7 +578,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -603,7 +603,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -628,7 +628,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -665,7 +665,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                     );
 
             Assertions.assertEquals(2, results.size());
-            CustomerNameAndCityAttributes result = results.getFirst();
+            CustomerNameAndCityAttributes result = results.get(0);
             Assertions.assertEquals(customerFromAnapolis.getName(), result.name());
 
             result = results.get(1);
@@ -681,7 +681,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                     );
 
             Assertions.assertEquals(2, results.size());
-            result = results.getFirst();
+            result = results.get(0);
             Assertions.assertEquals(customerFromGoiania.getName(), result.name());
 
             result = results.get(1);

@@ -85,7 +85,7 @@ class ProjectionQueryTest {
 
         List<ProjectionOrder> orders = (List<ProjectionOrder>) ReflectionTestUtils.getField(projectionQuery, "orders");
         assertEquals(1, orders.size());
-        ProjectionOrder order = orders.getFirst();
+        ProjectionOrder order = orders.get(0);
         assertEquals("name", order.path());
         assertEquals(OrderDirection.ASC, order.direction());
     }
@@ -98,7 +98,7 @@ class ProjectionQueryTest {
 
         List<ProjectionFilter> filters = (List<ProjectionFilter>) ReflectionTestUtils.getField(projectionQuery, "filters");
         assertEquals(1, filters.size());
-        ProjectionFilter filter = filters.getFirst();
+        ProjectionFilter filter = filters.get(0);
         assertEquals("name", filter.path());
         assertEquals("EQUAL", filter.operator());
         assertEquals("John Doe", filter.value());
@@ -112,7 +112,7 @@ class ProjectionQueryTest {
 
         List<ProjectionFilter> filters = (List<ProjectionFilter>) ReflectionTestUtils.getField(projectionQuery, "filters");
         assertEquals(1, filters.size());
-        ProjectionFilter filter = filters.getFirst();
+        ProjectionFilter filter = filters.get(0);
         assertEquals("name", filter.path());
         assertEquals("EQUAL", filter.operator());
         assertEquals("John Doe", filter.value());
