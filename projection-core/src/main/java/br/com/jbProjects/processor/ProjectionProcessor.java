@@ -12,6 +12,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,7 @@ import java.util.stream.Collectors;
  * <p>All internal query transformations, such as selecting fields, resolving paths,
  * applying filters, and mapping tuples, are handled transparently by this class.
  */
+@Slf4j
 public class ProjectionProcessor {
 
     private final EntityManager entityManager;
@@ -97,6 +99,7 @@ public class ProjectionProcessor {
         applyFilters(projectionQuery, criteriaBuilder, criteriaQuery, from);
         applyOrders(projectionQuery, criteriaBuilder, criteriaQuery, from);
 
+        log.debug("teste 11111111111111");
         TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
         applyComment(typedQuery, projectionQuery);
 
