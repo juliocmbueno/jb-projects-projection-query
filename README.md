@@ -1,4 +1,4 @@
-# ProjectionQuery
+# ProjectionQuery [![Test Pipeline](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml/badge.svg)](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml)
 
 **ProjectionQuery** is a lightweight, type-safe, and framework-agnostic query projection library for Java.  
 It provides an API for building database projections dynamically — without exposing entity models and without relying on complicated frameworks.
