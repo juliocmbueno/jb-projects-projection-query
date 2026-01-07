@@ -691,6 +691,14 @@ class ProjectionProcessorTest extends BaseJpaTest {
             remove(customerFromAnapolis);
             remove(customerFromGoiania);
         }
+    }
 
+    @Test()
+    public void execute_withIdProjectionAndFilterProperty(){
+        processor.execute(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerWithCityId.class)
+                        .filter("secondaryAddress.city.id", ProjectionFilterOperator.EQUAL, 1)
+        );
     }
 }

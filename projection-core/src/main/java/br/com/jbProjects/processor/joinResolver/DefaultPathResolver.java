@@ -46,6 +46,7 @@ public class DefaultPathResolver implements PathResolver {
     private final Map<String, Join<?,?>> joinCache = new HashMap<>();
     private final Map<String, JoinType> annotationJoins;
     private final Map<String, String> pathsByAlias;
+    private final IdentifierResolver identifierResolver = new DefaultIdentifierResolver();
 
     /**
      * Constructs a DefaultPathResolver with the provided projection join definitions.
@@ -87,12 +88,36 @@ public class DefaultPathResolver implements PathResolver {
     @Override
     public Path<?> resolve(Root<?> root, String path) {
         String resolved = resolveAlias(path);
-
         String[] parts = resolved.split("\\.");
         From<?, ?> current = root;
 
+        if (parts.length == 1) {
+            return root.get(parts[0]);
+        }
+
         for (int i = 0; i < parts.length - 1; i++) {
-            current = joinPart(current, resolved, parts[i]);
+            String attribute = parts[i];
+            String nextAttribute = parts[i + 1];
+            boolean isLastStep = (i == parts.length - 2);
+
+            if (isLastStep) {
+                String joinPath = String.join(".", Arrays.copyOfRange(parts, 0, i + 1));
+                boolean joinExplicitlyDeclared = annotationJoins.containsKey(joinPath);
+
+                if (!joinExplicitlyDeclared) {
+                    Class<?> targetType = current
+                            .get(attribute)
+                            .getJavaType();
+
+                    boolean nextIsIdentifier = identifierResolver.isIdentifier(targetType, nextAttribute);
+
+                    if (nextIsIdentifier) {
+                        return current.get(attribute).get(nextAttribute);
+                    }
+                }
+            }
+
+            current = joinPart(current, resolved, attribute);
         }
 
         return current.get(parts[parts.length - 1]);
