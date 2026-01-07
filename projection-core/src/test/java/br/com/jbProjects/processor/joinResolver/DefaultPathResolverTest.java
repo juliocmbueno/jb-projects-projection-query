@@ -2,6 +2,7 @@ package br.com.jbProjects.processor.joinResolver;
 
 import br.com.jbProjects.annotations.ProjectionJoin;
 import br.com.jbProjects.config.helper.ReflectionTestUtils;
+import br.com.jbProjects.config.testModel.city.domain.City;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerNameAndCityAttributes;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerNameAndCityJoinWithAlias;
 import br.com.jbProjects.util.ProjectionUtils;
@@ -193,10 +194,22 @@ class DefaultPathResolverTest {
         Join<?, ?> joinCity = Mockito.mock(Join.class);
         Path<?> pathId = Mockito.mock(Path.class);
 
+        // configure root returns
         Mockito.doReturn(joinMainAddress).when(root).join("mainAddress", JoinType.INNER);
-        Mockito.doReturn(joinCity).when(joinMainAddress).join("city", JoinType.INNER);
-        Mockito.doReturn(pathId).when(joinCity).get("id");
         Mockito.doReturn("root-to-string").when(root).toString();
+
+        // configure mainAddress join returns
+        Mockito.doReturn(joinCity).when(joinMainAddress).join("city", JoinType.INNER);
+        Mockito.doReturn(joinCity).when(joinMainAddress).get("city");
+        Mockito.doReturn("join-main-address-to-string").when(joinMainAddress).toString();
+
+        // configure city join returns
+        Mockito.doReturn(pathId).when(joinCity).get("id");
+        Mockito.doReturn(City.class).when(joinCity).getJavaType();
+        Mockito.doReturn("join-city-to-string").when(joinCity).toString();
+
+        // configure id path returns
+        Mockito.doReturn("path-id-to-string").when(pathId).toString();
 
         //
         Path<?> resolve = resolver.resolve(root, "mainAddress.city.id");
