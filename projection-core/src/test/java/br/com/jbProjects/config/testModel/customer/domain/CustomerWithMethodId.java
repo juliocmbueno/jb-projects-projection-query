@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "customers_with_code_id")
+@Table(name = "customers_with_method_id")
 public class CustomerWithMethodId {
 
     private Long code;

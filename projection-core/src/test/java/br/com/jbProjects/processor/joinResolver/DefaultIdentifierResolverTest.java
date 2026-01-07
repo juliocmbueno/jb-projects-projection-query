@@ -4,9 +4,11 @@ import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.domain.CustomerWithCodeId;
 import br.com.jbProjects.config.testModel.customer.domain.CustomerWithMethodId;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,8 +55,7 @@ class DefaultIdentifierResolverTest {
     public void propertyName_startWithGet(){
         DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
 
-        Method method = Mockito.mock(Method.class);
-        Mockito.doReturn("getId").when(method).getName();
+        Method method = ReflectionTestUtils.findMethodAssignable(DefaultIdentifierResolverTestUtils.class, "getId");
 
         String result = ReflectionTestUtils.invokeMethod(resolver, "propertyName", method);
         assertEquals("id", result);
@@ -64,8 +65,7 @@ class DefaultIdentifierResolverTest {
     public void propertyName_startWithIs(){
         DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
 
-        Method method = Mockito.mock(Method.class);
-        Mockito.doReturn("isActive").when(method).getName();
+        Method method = ReflectionTestUtils.findMethodAssignable(DefaultIdentifierResolverTestUtils.class, "isActive");
 
         String result = ReflectionTestUtils.invokeMethod(resolver, "propertyName", method);
         assertEquals("active", result);
@@ -75,21 +75,20 @@ class DefaultIdentifierResolverTest {
     public void propertyName_other() {
         DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
 
-        Method method = Mockito.mock(Method.class);
-        Mockito.doReturn("calculateValue").when(method).getName();
+        Method method = ReflectionTestUtils.findMethodAssignable(DefaultIdentifierResolverTestUtils.class, "calculateValue");
 
         String result = ReflectionTestUtils.invokeMethod(resolver, "propertyName", method);
         assertEquals("calculateValue", result);
     }
 
+
     @Test
     public void isAnnotatedWithId_IdClass() {
         DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
 
-        Method method = Mockito.mock(Method.class);
-        Mockito.doReturn(true).when(method).isAnnotationPresent(jakarta.persistence.Id.class);
+        Field field = ReflectionTestUtils.findField(DefaultIdentifierResolverTestUtils.class, "fieldWithId");
 
-        boolean result = ReflectionTestUtils.invokeMethod(resolver, "isAnnotatedWithId", method);
+        boolean result = ReflectionTestUtils.invokeMethod(resolver, "isAnnotatedWithId", field);
         assertTrue(result);
     }
 
@@ -97,10 +96,43 @@ class DefaultIdentifierResolverTest {
     public void isAnnotatedWithId_EmbeddedIdClass() {
         DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
 
-        Method method = Mockito.mock(Method.class);
-        Mockito.doReturn(true).when(method).isAnnotationPresent(jakarta.persistence.EmbeddedId.class);
+        Field field = ReflectionTestUtils.findField(DefaultIdentifierResolverTestUtils.class, "fieldWithEmbeddedId");
 
-        boolean result = ReflectionTestUtils.invokeMethod(resolver, "isAnnotatedWithId", method);
+        boolean result = ReflectionTestUtils.invokeMethod(resolver, "isAnnotatedWithId", field);
         assertTrue(result);
+    }
+
+    @Test
+    public void isAnnotatedWithId_normalField() {
+        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+
+        Field field = ReflectionTestUtils.findField(DefaultIdentifierResolverTestUtils.class, "normalField");
+
+        boolean result = ReflectionTestUtils.invokeMethod(resolver, "isAnnotatedWithId", field);
+        assertFalse(result);
+    }
+}
+
+@SuppressWarnings("unused")
+class DefaultIdentifierResolverTestUtils {
+
+    @Id
+    private Integer fieldWithId;
+
+    @EmbeddedId
+    private Integer fieldWithEmbeddedId;
+
+    private Integer normalField;
+
+    public String getId() {
+        return "123";
+    }
+
+    public boolean isActive() {
+        return true;
+    }
+
+    public int calculateValue() {
+        return 42;
     }
 }

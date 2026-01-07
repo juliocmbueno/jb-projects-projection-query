@@ -5,6 +5,7 @@ import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.city.domain.City;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerNameAndCityAttributes;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerNameAndCityJoinWithAlias;
+import br.com.jbProjects.config.testModel.customer.projections.CustomerWithCityId;
 import br.com.jbProjects.util.ProjectionUtils;
 import jakarta.persistence.criteria.*;
 import org.junit.jupiter.api.Test;
@@ -193,6 +194,7 @@ class DefaultPathResolverTest {
         Join<?, ?> joinMainAddress = Mockito.mock(Join.class);
         Join<?, ?> joinCity = Mockito.mock(Join.class);
         Path<?> pathId = Mockito.mock(Path.class);
+        Path<?> pathName = Mockito.mock(Path.class);
 
         // configure root returns
         Mockito.doReturn(joinMainAddress).when(root).join("mainAddress", JoinType.INNER);
@@ -205,6 +207,50 @@ class DefaultPathResolverTest {
 
         // configure city join returns
         Mockito.doReturn(pathId).when(joinCity).get("id");
+        Mockito.doReturn(pathName).when(joinCity).get("name");
+        Mockito.doReturn(City.class).when(joinCity).getJavaType();
+        Mockito.doReturn("join-city-to-string").when(joinCity).toString();
+
+        // configure id path returns
+        Mockito.doReturn("path-id-to-string").when(pathId).toString();
+
+        // configure pathName path returns
+        Mockito.doReturn("path-name-to-string").when(pathName).toString();
+
+        //
+        Path<?> resolve = resolver.resolve(root, "mainAddress.city.id");
+        assertEquals(pathId, resolve);
+
+        resolve = resolver.resolve(root, "mainAddress.city.name");
+        assertEquals(pathName, resolve);
+    }
+
+    @Test
+    public void resolve_withExplicitJoin(){
+        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerWithCityId.class);
+        DefaultPathResolver resolver = Mockito.spy(new DefaultPathResolver(declaredJoins));
+
+        Root<?> root = Mockito.mock(Root.class);
+        Join<?, ?> joinMainAddress = Mockito.mock(Join.class);
+        Join<?, ?> joinSecondaryAddress = Mockito.mock(Join.class);
+        Join<?, ?> joinCity = Mockito.mock(Join.class);
+        Path<?> pathId = Mockito.mock(Path.class);
+
+        // configure root returns
+        Mockito.doReturn(joinMainAddress).when(root).join("mainAddress", JoinType.INNER);
+        Mockito.doReturn(joinSecondaryAddress).when(root).join("secondaryAddress", JoinType.INNER);
+        Mockito.doReturn("root-to-string").when(root).toString();
+
+        // configure mainAddress join returns
+        Mockito.doReturn(joinCity).when(joinMainAddress).join("city", JoinType.INNER);
+        Mockito.doReturn("join-main-address-to-string").when(joinMainAddress).toString();
+
+        // configure secondaryAddress join returns
+        Mockito.doReturn("join-secondary-address-to-string").when(joinSecondaryAddress).toString();
+        Mockito.doReturn(joinCity).when(joinSecondaryAddress).get("city");
+
+        // configure city join returns
+        Mockito.doReturn(pathId).when(joinCity).get("id");
         Mockito.doReturn(City.class).when(joinCity).getJavaType();
         Mockito.doReturn("join-city-to-string").when(joinCity).toString();
 
@@ -213,6 +259,9 @@ class DefaultPathResolverTest {
 
         //
         Path<?> resolve = resolver.resolve(root, "mainAddress.city.id");
+        assertEquals(pathId, resolve);
+
+        resolve = resolver.resolve(root, "secondaryAddress.city.id");
         assertEquals(pathId, resolve);
     }
 }

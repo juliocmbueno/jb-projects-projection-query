@@ -89,7 +89,6 @@ public class DefaultPathResolver implements PathResolver {
     public Path<?> resolve(Root<?> root, String path) {
         String resolved = resolveAlias(path);
         String[] parts = resolved.split("\\.");
-
         From<?, ?> current = root;
 
         if (parts.length == 1) {
@@ -97,21 +96,24 @@ public class DefaultPathResolver implements PathResolver {
         }
 
         for (int i = 0; i < parts.length - 1; i++) {
-
             String attribute = parts[i];
             String nextAttribute = parts[i + 1];
-
             boolean isLastStep = (i == parts.length - 2);
 
             if (isLastStep) {
-                Class<?> targetType = current
-                        .get(attribute)
-                        .getJavaType();
+                String joinPath = String.join(".", Arrays.copyOfRange(parts, 0, i + 1));
+                boolean joinExplicitlyDeclared = annotationJoins.containsKey(joinPath);
 
-                boolean nextIsIdentifier = identifierResolver.isIdentifier(targetType, nextAttribute);
+                if (!joinExplicitlyDeclared) {
+                    Class<?> targetType = current
+                            .get(attribute)
+                            .getJavaType();
 
-                if (nextIsIdentifier) {
-                    return current.get(attribute).get(nextAttribute);
+                    boolean nextIsIdentifier = identifierResolver.isIdentifier(targetType, nextAttribute);
+
+                    if (nextIsIdentifier) {
+                        return current.get(attribute).get(nextAttribute);
+                    }
                 }
             }
 
