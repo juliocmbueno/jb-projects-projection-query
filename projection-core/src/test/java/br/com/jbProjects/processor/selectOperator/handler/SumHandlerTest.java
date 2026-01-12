@@ -1,6 +1,6 @@
 package br.com.jbProjects.processor.selectOperator.handler;
 
-import br.com.jbProjects.annotations.ProjectionField;
+import br.com.jbProjects.processor.joinResolver.PathResolver;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
@@ -18,26 +18,22 @@ class SumHandlerTest {
 
     @Test
     public void supports(){
-        ProjectionField fieldSupported = Mockito.mock(ProjectionField.class);
-        Mockito.doReturn(true).when(fieldSupported).sum();
-        Assertions.assertTrue(handler.supports(fieldSupported));
-
-        ProjectionField fieldNotSupported = Mockito.mock(ProjectionField.class);
-        Assertions.assertFalse(handler.supports(fieldNotSupported));
+        Assertions.assertTrue(handler.aggregate());
     }
 
     @Test
     public void apply(){
         Root<?> root = Mockito.mock(Root.class);
-        Path<Number> pathAge = Mockito.mock(Path.class);
+        Path<Number> pathPrice = Mockito.mock(Path.class);
 
-        Mockito.doReturn(pathAge).when(root).get("price");
+        PathResolver pathResolver = Mockito.mock(PathResolver.class);
+        Mockito.doReturn(pathPrice).when(pathResolver).resolve(root, "price");
 
         CriteriaBuilder cb = Mockito.mock(CriteriaBuilder.class);
         Expression<?> expression = Mockito.mock(Expression.class);
-        Mockito.doReturn(expression).when(cb).sum(pathAge);
+        Mockito.doReturn(expression).when(cb).sum(pathPrice);
 
-        Expression<?> result = handler.apply(cb, root, "price");
+        Expression<?> result = handler.apply(pathResolver, cb, root, "price");
         Assertions.assertEquals(expression, result);
     }
 

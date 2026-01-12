@@ -9,33 +9,30 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-
 /**
- * Created by julio.bueno on 25/11/2025.
+ * Created by julio.bueno on 12/01/2026.
  */
-class CountHandlerTest {
+@SuppressWarnings("unchecked")
+class DefaultSelectOperatorHandlerTest {
 
-    private final CountHandler handler = new CountHandler();
+    private final DefaultSelectOperatorHandler handler = new DefaultSelectOperatorHandler();
 
     @Test
     public void aggregate(){
-        Assertions.assertTrue(handler.aggregate());
+        Assertions.assertFalse(handler.aggregate());
     }
 
     @Test
     public void apply(){
         Root<?> root = Mockito.mock(Root.class);
-        Path<?> pathId = Mockito.mock(Path.class);
+        Path<Number> pathAge = Mockito.mock(Path.class);
 
         PathResolver pathResolver = Mockito.mock(PathResolver.class);
-        Mockito.doReturn(pathId).when(pathResolver).resolve(root, "id");
+        Mockito.doReturn(pathAge).when(pathResolver).resolve(root, "age");
 
         CriteriaBuilder cb = Mockito.mock(CriteriaBuilder.class);
-        Expression<?> expression = Mockito.mock(Expression.class);
-        Mockito.doReturn(expression).when(cb).count(pathId);
 
-        Expression<?> result = handler.apply(pathResolver, cb, root, "id");
-        Assertions.assertEquals(expression, result);
+        Expression<?> result = handler.apply(pathResolver, cb, root, "age");
+        Assertions.assertEquals(pathAge, result);
     }
-
 }

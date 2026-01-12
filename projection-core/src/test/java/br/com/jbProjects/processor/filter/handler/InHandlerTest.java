@@ -35,4 +35,16 @@ class InHandlerTest {
         Mockito.verify(in, Mockito.times(1)).value(3);
         Mockito.verify(in, Mockito.times(1)).value(4);
     }
+
+    @Test
+    public void toPredicate_value_isNot_Iterable(){
+        CriteriaBuilder criteriaBuilder = Mockito.mock(CriteriaBuilder.class);
+        Path<?> path = Mockito.mock(Path.class);
+
+        try {
+            handler.toPredicate(criteriaBuilder, path, "notIterable");
+        } catch (IllegalArgumentException e){
+            assertEquals("Value for IN operator must be an instance of Iterable.", e.getMessage());
+        }
+    }
 }

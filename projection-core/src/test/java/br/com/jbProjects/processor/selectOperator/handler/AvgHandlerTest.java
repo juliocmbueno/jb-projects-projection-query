@@ -11,11 +11,12 @@ import org.mockito.Mockito;
 
 
 /**
- * Created by julio.bueno on 25/11/2025.
+ * Created by julio.bueno on 12/01/2026.
  */
-class CountHandlerTest {
+@SuppressWarnings("unchecked")
+class AvgHandlerTest {
 
-    private final CountHandler handler = new CountHandler();
+    private final AvgHandler handler = new AvgHandler();
 
     @Test
     public void aggregate(){
@@ -25,16 +26,16 @@ class CountHandlerTest {
     @Test
     public void apply(){
         Root<?> root = Mockito.mock(Root.class);
-        Path<?> pathId = Mockito.mock(Path.class);
+        Path<Number> pathAge = Mockito.mock(Path.class);
 
         PathResolver pathResolver = Mockito.mock(PathResolver.class);
-        Mockito.doReturn(pathId).when(pathResolver).resolve(root, "id");
+        Mockito.doReturn(pathAge).when(pathResolver).resolve(root, "age");
 
         CriteriaBuilder cb = Mockito.mock(CriteriaBuilder.class);
         Expression<?> expression = Mockito.mock(Expression.class);
-        Mockito.doReturn(expression).when(cb).count(pathId);
+        Mockito.doReturn(expression).when(cb).avg(pathAge);
 
-        Expression<?> result = handler.apply(pathResolver, cb, root, "id");
+        Expression<?> result = handler.apply(pathResolver, cb, root, "age");
         Assertions.assertEquals(expression, result);
     }
 
