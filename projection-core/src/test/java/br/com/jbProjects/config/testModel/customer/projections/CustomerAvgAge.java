@@ -3,13 +3,13 @@ package br.com.jbProjects.config.testModel.customer.projections;
 import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.annotations.ProjectionField;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
-import br.com.jbProjects.processor.selectOperator.handler.CountHandler;
+import br.com.jbProjects.processor.selectOperator.handler.AvgHandler;
 
 /**
  * Created by julio.bueno on 21/11/2025.
  */
 @Projection(of = Customer.class)
-public record CustomerCount(
-        @ProjectionField(value = "id", selectHandler = CountHandler.class) Long quantity
+public record CustomerAvgAge(
+        @ProjectionField(value = "age", selectHandler = AvgHandler.class) Double avgAge
 ) {
 }

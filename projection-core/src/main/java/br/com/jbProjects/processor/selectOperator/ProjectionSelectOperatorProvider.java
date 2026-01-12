@@ -7,7 +7,19 @@ import java.util.*;
 /**
  * Created by julio.bueno on 24/11/2025.
  * <p>Provider for Projection Select Operators and their corresponding handlers.</p>
- * <p>By default, the class is created with all operations of {@link ProjectionSelectOperator}</p>
+ * <p>By default, the class is created with all operations:</p>
+ * <ul>
+ *  <li>{@link DefaultSelectOperatorHandler}</li>
+ *  <li>{@link CountHandler}</li>
+ *  <li>{@link MinHandler}</li>
+ *  <li>{@link MaxHandler}</li>
+ *  <li>{@link SumHandler}</li>
+ *  <li>{@link AvgHandler}</li>
+ *  <li>{@link AbsHandler}</li>
+ * </ul>
+ *
+ *
+ * You can register new operators using the {@link #register(ProjectionSelectOperatorHandler)} method.
  */
 public class ProjectionSelectOperatorProvider {
 
@@ -25,29 +37,28 @@ public class ProjectionSelectOperatorProvider {
     private final Map<String, ProjectionSelectOperatorHandler> operators = new HashMap<>();
 
     private ProjectionSelectOperatorProvider(){
-        register(ProjectionSelectOperator.COUNT, new CountHandler());
-        register(ProjectionSelectOperator.MIN, new MinHandler());
-        register(ProjectionSelectOperator.MAX, new MaxHandler());
-        register(ProjectionSelectOperator.SUM, new SumHandler());
-    }
-
-    private void register(ProjectionSelectOperator projectionSelectOperator, ProjectionSelectOperatorHandler handler) {
-        register(projectionSelectOperator.name(), handler);
+        register(new DefaultSelectOperatorHandler());
+        register(new CountHandler());
+        register(new MinHandler());
+        register(new MaxHandler());
+        register(new SumHandler());
+        register(new AvgHandler());
+        register(new AbsHandler());
     }
 
     /**
      * <p>Registers a new ProjectionSelectOperatorHandler for the specified operator.</p>
      *
-     * @param operator The operator as a String
-     * @param sumHandler The handler to be registered
+     * @param operatorHandler The handler to be registered
      * @throws IllegalArgumentException if the operator is already registered
      */
-    public void register(String operator, ProjectionSelectOperatorHandler sumHandler) {
-        if(operators.containsKey(operator)){
-            throw new IllegalArgumentException("Operator already registered: " + operator);
+    public void register(ProjectionSelectOperatorHandler operatorHandler) {
+        String name = operatorHandler.getClass().getName();
+        if(operators.containsKey(name)){
+            throw new IllegalArgumentException("Operator already registered: " + name);
         }
 
-        operators.put(operator.toUpperCase(), sumHandler);
+        operators.put(name, operatorHandler);
     }
 
     /**
@@ -57,8 +68,8 @@ public class ProjectionSelectOperatorProvider {
      * @return The corresponding ProjectionSelectOperatorHandler
      * @throws IllegalArgumentException if the operator is not found
      */
-    public ProjectionSelectOperatorHandler get(ProjectionSelectOperator operator){
-        return get(operator.name());
+    public ProjectionSelectOperatorHandler get(Class<? extends ProjectionSelectOperatorHandler> operator){
+        return get(operator.getName());
     }
 
     /**
@@ -69,7 +80,7 @@ public class ProjectionSelectOperatorProvider {
      * @throws IllegalArgumentException if the operator is not found
      */
     public ProjectionSelectOperatorHandler get(String name) {
-        ProjectionSelectOperatorHandler handler = operators.get(name.toUpperCase());
+        ProjectionSelectOperatorHandler handler = operators.get(name);
         if(handler == null){
             throw new IllegalArgumentException(
                     "Operator not found: " + name +

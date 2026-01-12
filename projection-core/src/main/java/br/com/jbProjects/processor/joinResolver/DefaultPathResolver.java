@@ -86,7 +86,7 @@ public class DefaultPathResolver implements PathResolver {
      * @return The resolved Path object representing the property.
      */
     @Override
-    public Path<?> resolve(Root<?> root, String path) {
+    public <T> Path<T> resolve(Root<?> root, String path) {
         String resolved = resolveAlias(path);
         String[] parts = resolved.split("\\.");
         From<?, ?> current = root;

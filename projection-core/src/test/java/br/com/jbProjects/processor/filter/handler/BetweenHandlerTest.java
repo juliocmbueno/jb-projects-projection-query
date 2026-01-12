@@ -22,7 +22,7 @@ class BetweenHandlerTest {
     public void toPredicate(){
         CriteriaBuilder criteriaBuilder = Mockito.mock(CriteriaBuilder.class);
         Path<?> path = Mockito.mock(Path.class);
-        BetweenValues betweenValues = BetweenValues.of(1, 2);
+        BetweenValues betweenValues = BetweenValues.of(1L, 2L);
 
         Predicate expected = Mockito.mock(Predicate.class);
         Mockito
@@ -44,7 +44,7 @@ class BetweenHandlerTest {
         Path<?> path = Mockito.mock(Path.class);
 
         try{
-            handler.toPredicate(criteriaBuilder, path, 1);
+            handler.toPredicate(criteriaBuilder, path, 1L);
             fail("Value must be BetweenValues");
 
         }catch (Exception e){

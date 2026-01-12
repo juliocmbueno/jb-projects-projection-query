@@ -3,6 +3,7 @@ package br.com.jbProjects.domain.projections;
 import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.annotations.ProjectionField;
 import br.com.jbProjects.domain.Customer;
+import br.com.jbProjects.processor.selectOperator.handler.SumHandler;
 
 /**
  * Projection example demonstrating the use of aggregated attributes.
@@ -29,6 +30,6 @@ import br.com.jbProjects.domain.Customer;
 @Projection(of = Customer.class)
 public record CustomerWithAggregateAttribute(
         @ProjectionField Integer age,
-        @ProjectionField(value = "id", count = true) Long count
+        @ProjectionField(value = "id", selectHandler = SumHandler.class) Long count
 ) {
 }

@@ -6,15 +6,15 @@ import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 
 /**
- * Created by julio.bueno on 24/11/2025.
- * <p>Handler responsible for generating COUNT expressions in projection queries</p>
+ * Created by julio.bueno on 12/01/2026.
+ * <p>Handler responsible for generating AVG expressions in projection queries</p>
  */
-public class CountHandler implements ProjectionSelectOperatorHandler {
+public class AvgHandler implements ProjectionSelectOperatorHandler {
 
     /**
-     * <p>Default constructor for CountHandler.</p>
+     * <p>Default constructor for AvgHandler.</p>
      */
-    public CountHandler() {}
+    public AvgHandler() {}
 
     /**
      * Indicates whether the projection operation involves aggregation.
@@ -27,16 +27,16 @@ public class CountHandler implements ProjectionSelectOperatorHandler {
     }
 
     /**
-     * <p>Generates a COUNT expression for the specified field.</p>
+     * <p>Generates an AVG expression for the specified field.</p>
      *
      * @param pathResolver PathResolver to resolve the field path
      * @param cb CriteriaBuilder used to create the expression
      * @param root Root entity from which the field is selected
-     * @param fieldName Name of the field to apply COUNT on
-     * @return Expression representing COUNT(fieldName)
+     * @param fieldName Name of the field to apply AVG on
+     * @return Expression representing AVG(fieldName)
      */
     @Override
     public Expression<?> apply(PathResolver pathResolver, CriteriaBuilder cb, Root<?> root, String fieldName) {
-        return cb.count(pathResolver.resolve(root, fieldName));
+        return cb.avg(pathResolver.resolve(root, fieldName));
     }
 }

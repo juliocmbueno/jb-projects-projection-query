@@ -81,8 +81,37 @@ public class ProjectionMappers {
                         }
                     })
                     .toArray();
-            return constructor.newInstance(args);
-        }catch (Exception e){
+
+            try{
+                return constructor.newInstance(args);
+            }catch (IllegalArgumentException e){
+                List<String> expectedTypes = Arrays.stream(projectionClass.getRecordComponents())
+                        .map(rc -> rc.getType().getSimpleName())
+                        .toList();
+
+                List<String> resultTypes = Arrays.stream(args)
+                        .map(obj -> obj == null ? "null" : obj.getClass().getSimpleName())
+                        .toList();
+
+                throw new RuntimeException(
+                        """
+                        Error mapping query result to projection record: %s
+        
+                        Expected constructor types:
+                          %s
+        
+                        Query result types:
+                          %s
+                        """.formatted(
+                                projectionClass.getSimpleName(),
+                                expectedTypes,
+                                resultTypes
+                        ),
+                        e
+                );
+            }
+        }
+        catch (Exception e){
             throw new RuntimeException("Error creating projection record instance", e);
         }
     }

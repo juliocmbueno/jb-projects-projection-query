@@ -54,7 +54,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
-    <version>1.3.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -63,7 +63,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-spring-data</artifactId>
-    <version>1.3.0</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -81,13 +81,18 @@ public record CustomerBasicData(
 ) { }
 ```
 
+> In the following examples, we assume a JPA context in which the `ProjectionProcessor` receives an `EntityManager` instance, responsible for executing the queries.
+
 Example using a projection class:
 ```java
+ProjectionProcessor processor = new ProjectionProcessor(entityManager);
 List<CustomerBasicData> customers = processor.execute(CustomerBasicData.class);
 ```
 
 Example using a fully configured ProjectionQuery:
 ```java
+ProjectionProcessor processor = new ProjectionProcessor(entityManager);
+
 ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery
     .fromTo(Customer.class, CustomerBasicData.class)
     .filter("address.city.name", ProjectionFilterOperator.EQUAL, "São Paulo")

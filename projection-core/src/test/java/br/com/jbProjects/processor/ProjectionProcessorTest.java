@@ -273,6 +273,54 @@ class ProjectionProcessorTest extends BaseJpaTest {
     }
 
     @Test
+    void execute_withProjectionQuery_avgResult() {
+        Customer customer_age_1 = new Customer();
+        customer_age_1.setAge(10);
+        persist(customer_age_1);
+
+        Customer customer_age_2 = new Customer();
+        customer_age_2.setAge(20);
+        persist(customer_age_2);
+
+        Customer customer_age_3 = new Customer();
+        customer_age_3.setAge(60);
+        persist(customer_age_3);
+
+        try{
+            List<CustomerAvgAge> result = processor.execute(CustomerAvgAge.class);
+            Assertions.assertEquals(1, result.size());
+            Assertions.assertEquals(30.0, result.get(0).avgAge().doubleValue());
+
+        }finally {
+            remove(customer_age_3);
+            remove(customer_age_2);
+            remove(customer_age_1);
+
+        }
+    }
+
+    @Test
+    void execute_withProjectionQuery_absResult() {
+        Customer customer_age_1 = new Customer();
+        customer_age_1.setAge(-10);
+        persist(customer_age_1);
+
+        try{
+            List<CustomerAbsAge> result = processor.execute(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerAbsAge.class)
+                            .filter("id", ProjectionFilterOperator.EQUAL, customer_age_1.getId())
+            );
+            Assertions.assertEquals(1, result.size());
+            Assertions.assertEquals(10, result.get(0).absAge());
+
+        }finally {
+            remove(customer_age_1);
+
+        }
+    }
+
+    @Test
     void execute_withProjectionQuery_sumResult() {
         Customer customer_1 = new Customer();
         customer_1.setName("sum id");
