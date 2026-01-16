@@ -49,7 +49,8 @@ class ProjectionQueryTest {
     @Test
     public void specification(){
         ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery.fromTo(Customer.class, CustomerName.class);
-        ProjectionSpecification<Customer> specification = (criteriaBuilder, query, root) -> criteriaBuilder.equal(root.get("id"), 1);
+        ProjectionSpecification<Customer> specification = (criteriaBuilder, query, root,pathResolver) ->
+                criteriaBuilder.equal(pathResolver.resolve(root, "id"), 1);
 
         projectionQuery.specification(specification);
 

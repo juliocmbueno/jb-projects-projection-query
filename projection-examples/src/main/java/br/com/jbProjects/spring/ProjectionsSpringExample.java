@@ -96,7 +96,8 @@ public class ProjectionsSpringExample {
                 ProjectionQuery
                         .fromTo(Customer.class, CustomerBasicDataRecord.class)
                         .filter("name", ProjectionFilterOperator.LIKE, "John%")
-                        .specification((criteriaBuilder, query, root) -> criteriaBuilder.ge(root.get("age"), 18))
+                        .specification((criteriaBuilder, query, root, pathResolver) ->
+                                criteriaBuilder.ge(pathResolver.resolve(root, "age"), 18))
         );
     }
 

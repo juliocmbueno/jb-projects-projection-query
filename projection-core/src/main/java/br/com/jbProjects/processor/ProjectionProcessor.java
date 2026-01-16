@@ -138,7 +138,7 @@ public class ProjectionProcessor {
         List<Predicate> predicates = new ArrayList<>();
 
         for (ProjectionSpecification<FROM> spec : projectionQuery.getSpecifications()) {
-            predicates.add(spec.toPredicate(criteriaBuilder, criteriaQuery, from));
+            predicates.add(spec.toPredicate(criteriaBuilder, criteriaQuery, from, projectionQuery.getPathResolver()));
         }
 
         for (var filter : projectionQuery.getFilters()) {

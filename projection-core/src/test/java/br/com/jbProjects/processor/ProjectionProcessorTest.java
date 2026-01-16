@@ -128,7 +128,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
             List<CustomerAutoCompleteRecord> customers = processor.execute(
                     ProjectionQuery
                             .fromTo(Customer.class, CustomerAutoCompleteRecord.class)
-                            .specification((criteriaBuilder, query, root) -> criteriaBuilder.equal(root.get("name"), otherCustomer.getName()))
+                            .specification((criteriaBuilder, query, root, pathResolver) ->
+                                    criteriaBuilder.equal(pathResolver.resolve(root, "name"), otherCustomer.getName()))
             );
             Assertions.assertEquals(1, customers.size());
 
@@ -205,8 +206,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
             List<CustomerCount> result = processor.execute(
                     ProjectionQuery
                             .fromTo(Customer.class, CustomerCount.class)
-                            .specification((criteriaBuilder, query, root) ->
-                                    criteriaBuilder.like(root.get("name"), "Customer Count%"))
+                            .specification((criteriaBuilder, query, root, pathResolver) ->
+                                    criteriaBuilder.like(pathResolver.resolve(root, "name"), "Customer Count%"))
             );
 
             Assertions.assertEquals(1, result.size());
@@ -337,8 +338,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
         try{
             List<CustomerSumId> result = processor.execute(
                     ProjectionQuery.fromTo(Customer.class, CustomerSumId.class)
-                            .specification((criteriaBuilder, query, root) ->
-                                    criteriaBuilder.equal(root.get("name"), "sum id"))
+                            .specification((criteriaBuilder, query, root, pathResolver) ->
+                                    criteriaBuilder.equal(pathResolver.resolve(root, "name"), "sum id"))
             );
             Assertions.assertEquals(1, result.size());
 
@@ -375,8 +376,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
                     .execute(
                             ProjectionQuery
                                     .fromTo(Customer.class, CustomerCountByAge.class)
-                                    .specification((criteriaBuilder, query, root) ->
-                                            criteriaBuilder.equal(root.get("name"), "count by age"))
+                                    .specification((criteriaBuilder, query, root, pathResolver) ->
+                                            criteriaBuilder.equal(pathResolver.resolve(root, "name"), "count by age"))
                     )
                     .stream()
                     .sorted(Comparator.comparing(CustomerCountByAge::age))
@@ -406,8 +407,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 .execute(
                         ProjectionQuery
                                 .fromTo(Customer.class, CustomerNameAndCityAttributes.class)
-                                .specification((criteriaBuilder, query, root) ->
-                                        criteriaBuilder.equal(root.get("id"), customer.getId()))
+                                .specification((criteriaBuilder, query, root, pathResolver) ->
+                                        criteriaBuilder.equal(pathResolver.resolve(root, "id"), customer.getId()))
                 );
 
         Assertions.assertEquals(1, results.size());
@@ -426,8 +427,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 .execute(
                         ProjectionQuery
                                 .fromTo(Customer.class, CustomerNameAndCityJoinWithAlias.class)
-                                .specification((criteriaBuilder, query, root) ->
-                                        criteriaBuilder.equal(root.get("id"), customer.getId()))
+                                .specification((criteriaBuilder, query, root, pathResolver) ->
+                                        criteriaBuilder.equal(pathResolver.resolve(root, "id"), customer.getId()))
                 );
 
         Assertions.assertEquals(1, results.size());
