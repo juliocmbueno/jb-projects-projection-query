@@ -1,5 +1,6 @@
 package br.com.jbProjects.processor.query;
 
+import br.com.jbProjects.processor.joinResolver.PathResolver;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -19,12 +20,14 @@ public interface ProjectionSpecification<FROM> {
      * @param criteriaBuilder CriteriaBuilder used to create the Predicate
      * @param query The CriteriaQuery being constructed
      * @param root The root type in the "from" clause
+     * @param pathResolver Resolver for navigating entity paths and joins
      * @return A Predicate representing the specification
      */
     Predicate toPredicate(
             CriteriaBuilder criteriaBuilder,
             CriteriaQuery<Tuple> query,
-            Root<FROM> root
+            Root<FROM> root,
+            PathResolver pathResolver
     );
 
 }

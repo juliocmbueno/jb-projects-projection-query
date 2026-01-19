@@ -1,8 +1,7 @@
 package br.com.jbProjects.processor.query;
 
 import br.com.jbProjects.annotations.ProjectionJoin;
-import br.com.jbProjects.processor.filter.ProjectionFilter;
-import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.filter.*;
 import br.com.jbProjects.processor.joinResolver.DefaultPathResolver;
 import br.com.jbProjects.processor.joinResolver.PathResolver;
 import br.com.jbProjects.processor.order.OrderDirection;
@@ -48,7 +47,7 @@ public class ProjectionQuery<FROM, TO> {
 
     private final PathResolver pathResolver;
     private final List<ProjectionSpecification<FROM>> specifications = new ArrayList<>();
-    private final List<ProjectionFilter> filters = new ArrayList<>();
+    private final List<ProjectionFilterExpression> filters = new ArrayList<>();
     private final List<ProjectionOrder> orders = new ArrayList<>();
 
     private boolean distinct = false;
@@ -121,7 +120,19 @@ public class ProjectionQuery<FROM, TO> {
      * @return The current ProjectionQuery instance for method chaining
      */
     public ProjectionQuery<FROM, TO> filter(String path, String operator, Object value) {
-        this.filters.add(new ProjectionFilter(path, operator, value));
+        this.filters.add(ProjectionFilter.of(path, operator, value));
+        return this;
+    }
+
+    /**
+     * <p>Adds a compound filter to the projection query.</p>
+     *
+     * @param operator {@link CompoundOperator} (AND, OR)
+     * @param filters  Array of ProjectionFilterExpression to combine
+     * @return The current ProjectionQuery instance for method chaining
+     */
+    public ProjectionQuery<FROM, TO> filter(CompoundOperator operator, ProjectionFilterExpression... filters) {
+        this.filters.add(ProjectionCompoundFilter.of(operator, filters));
         return this;
     }
 
