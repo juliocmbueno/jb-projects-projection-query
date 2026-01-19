@@ -7,6 +7,8 @@ import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.*;
 import br.com.jbProjects.config.testModel.state.domain.State;
 import br.com.jbProjects.processor.filter.BetweenValues;
+import br.com.jbProjects.processor.filter.CompoundOperator;
+import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.query.ProjectionQuery;
@@ -742,12 +744,56 @@ class ProjectionProcessorTest extends BaseJpaTest {
         }
     }
 
-    @Test()
+    @Test
     public void execute_withIdProjectionAndFilterProperty(){
         processor.execute(
                 ProjectionQuery
                         .fromTo(Customer.class, CustomerWithCityId.class)
                         .filter("secondaryAddress.city.id", ProjectionFilterOperator.EQUAL, 1)
         );
+    }
+
+    @Test
+    public void execute_withCompoundFilter(){
+        Customer customer1 = new Customer();
+        customer1.setName("Customer withCompoundFilter - 1");
+        customer1.setAge(5);
+        persist(customer1);
+
+        Customer customer2 = new Customer();
+        customer2.setName("Customer withCompoundFilter - 2");
+        customer2.setAge(15);
+        persist(customer2);
+
+        Customer customer3 = new Customer();
+        customer3.setName("Customer withCompoundFilter - 3");
+        customer3.setAge(18);
+        persist(customer3);
+
+        try{
+            List<CustomerName> customers = processor.execute(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerName.class)
+                            .filter("name", "like", "Customer withCompoundFilter%")
+                            .filter(
+                                    CompoundOperator.OR,
+                                    ProjectionFilter.of("age", "equal", 15),
+                                    ProjectionFilter.of("age", "equal", 18)
+                            )
+            );
+
+            Assertions.assertEquals(2, customers.size());
+
+            CustomerName customerTemp = customers.stream().filter(temp -> temp.name().equals(customer2.getName())).findFirst().orElse(null);
+            Assertions.assertNotNull(customerTemp, "Customer 2 must be in the result");
+
+            customerTemp = customers.stream().filter(temp -> temp.name().equals(customer3.getName())).findFirst().orElse(null);
+            Assertions.assertNotNull(customerTemp, "Customer 3 must be in the result");
+
+        }finally {
+            remove(customer3);
+            remove(customer2);
+            remove(customer1);
+        }
     }
 }

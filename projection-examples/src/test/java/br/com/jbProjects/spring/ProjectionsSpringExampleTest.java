@@ -61,4 +61,9 @@ class ProjectionsSpringExampleTest extends BaseApplicationTest {
     public void fetchFilteringByAliasPath() {
         examples.fetchFilteringByAliasPath();
     }
+
+    @Test
+    public void fetchWithCompoundFilter(){
+        examples.fetchWithCompoundFilter();
+    }
 }

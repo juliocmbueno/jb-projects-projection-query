@@ -2,8 +2,6 @@ package br.com.jbProjects.processor;
 
 import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.mapper.ProjectionMappers;
-import br.com.jbProjects.processor.filter.ProjectionFilterOperatorProvider;
-import br.com.jbProjects.processor.filter.handler.ProjectionFilterOperatorHandler;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import br.com.jbProjects.processor.query.ProjectionSelectInfo;
 import br.com.jbProjects.processor.query.ProjectionSpecification;
@@ -142,11 +140,7 @@ public class ProjectionProcessor {
         }
 
         for (var filter : projectionQuery.getFilters()) {
-            Path<?> path = projectionQuery.resolvePath(from, filter.path());
-            ProjectionFilterOperatorHandler operator = ProjectionFilterOperatorProvider.getInstance().get(filter.operator());
-
-            Predicate predicate = operator.toPredicate(criteriaBuilder, path, filter.value());
-            predicates.add(predicate);
+            predicates.add(filter.toPredicate(criteriaBuilder, criteriaQuery, from, projectionQuery.getPathResolver()));
         }
 
         if(!predicates.isEmpty()){

@@ -3,6 +3,8 @@ package br.com.jbProjects.spring;
 import br.com.jbProjects.domain.Customer;
 import br.com.jbProjects.domain.projections.*;
 import br.com.jbProjects.processor.ProjectionProcessor;
+import br.com.jbProjects.processor.filter.CompoundOperator;
+import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.query.ProjectionQuery;
@@ -215,6 +217,40 @@ public class ProjectionsSpringExample {
                 ProjectionQuery
                         .fromTo(Customer.class, CustomerWithJoinAlias.class)
                         .filter("mainCityAlias.name", ProjectionFilterOperator.EQUAL, "São Paulo")
+        );
+    }
+
+    /**
+     * Example of fetching projections using a compound filter.
+     *
+     * <p>Simplified example of the SQL generated:</p>
+     *
+     * <pre>{@code
+     * select
+     *  customer.id,
+     *  customer.name,
+     *  customer.email
+     * from Customer customer
+     * inner join Address mainAddress on customer.mainAddress = mainAddress.id
+     * inner join Address secondaryAddress on customer.secondaryAddress = secondaryAddress.id
+     * where
+     *  customer.age >= 18
+     *  and (
+     *      mainAddress.city = 1
+     *      or secondaryAddress.city = 2
+     * )
+     * }</pre>
+     */
+    public void fetchWithCompoundFilter(){
+        List<CustomerBasicDataClass> example = projectionProcessor.execute(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerBasicDataClass.class)
+                        .filter("age", ProjectionFilterOperator.GREATER_THAN_OR_EQUAL, 18)
+                        .filter(
+                                CompoundOperator.OR,
+                                ProjectionFilter.of("mainAddress.city.id", ProjectionFilterOperator.EQUAL, 1),
+                                ProjectionFilter.of("secondaryAddress.city.id", ProjectionFilterOperator.EQUAL, 2)
+                        )
         );
     }
 }

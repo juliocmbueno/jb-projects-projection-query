@@ -4,6 +4,8 @@ import br.com.jbProjects.annotations.ProjectionJoin;
 import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerName;
+import br.com.jbProjects.processor.filter.CompoundOperator;
+import br.com.jbProjects.processor.filter.ProjectionCompoundFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.order.OrderDirection;
@@ -117,5 +119,24 @@ class ProjectionQueryTest {
         assertEquals("name", filter.path());
         assertEquals("EQUAL", filter.operator());
         assertEquals("John Doe", filter.value());
+    }
+
+    @Test
+    public void filter_compound(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .filter(
+                        CompoundOperator.AND,
+                        new ProjectionFilter("name", "EQUAL", "John Doe"),
+                        new ProjectionFilter("age", "GREATER_THAN", 18)
+                );
+
+        List<Object> filters = (List<Object>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        assertEquals(1, filters.size());
+        Object filterObj = filters.get(0);
+        assertInstanceOf(ProjectionCompoundFilter.class, filterObj);
+        ProjectionCompoundFilter compoundFilter = (ProjectionCompoundFilter) filterObj;
+        assertEquals(CompoundOperator.AND, compoundFilter.operator());
+        assertEquals(2, compoundFilter.filters().size());
     }
 }
