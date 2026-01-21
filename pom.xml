@@ -149,6 +149,13 @@
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <version>0.8.14</version>
 
+                        <configuration>
+                            <excludes>
+                                <exclude>br/com/jbProjects/Application.class</exclude>
+                                <exclude>br/com/jbProjects/domain/**</exclude>
+                            </excludes>
+                        </configuration>
+                        
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
@@ -156,24 +163,6 @@
                                     <goal>prepare-agent</goal>
                                 </goals>
 
-                            </execution>
-
-                            <execution>
-                                <id>report</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                                <configuration>
-                                    <excludes>
-                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/Application.java</exclude>
-                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerBasicDataClass.java</exclude>
-                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerBasicDataRecord.java</exclude>
-                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerWithNestedAttributes.java</exclude>
-                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerWithJoinAlias.java</exclude>
-                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerWithAggregateAttribute.java</exclude>
-                                    </excludes>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
