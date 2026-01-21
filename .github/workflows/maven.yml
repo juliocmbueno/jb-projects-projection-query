@@ -28,11 +28,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
         cache: maven
-    - name: Test with Maven
-      run: mvn -B test --file pom.xml
+
+    - name: Test & Coverage with Maven
+      run: mvn -B verify --file pom.xml
+
+    - name: Upload coverage to Coveralls
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: target/site/jacoco/jacoco.xml
