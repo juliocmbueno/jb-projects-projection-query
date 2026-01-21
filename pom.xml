@@ -141,10 +141,6 @@
                         <configuration>
                             <!--suppress UnresolvedMavenProperty -->
                             <repoToken>${env.COVERALLS_REPO_TOKEN}</repoToken>
-                            <sourceDirectories>
-                                <sourceDirectory>projection-core/src/main/java</sourceDirectory>
-                                <sourceDirectory>projection-spring-data/src/main/java</sourceDirectory>
-                            </sourceDirectories>
                         </configuration>
                     </plugin>
 
@@ -168,6 +164,16 @@
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/Application.java</exclude>
+                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerBasicDataClass.java</exclude>
+                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerBasicDataRecord.java</exclude>
+                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerWithNestedAttributes.java</exclude>
+                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerWithJoinAlias.java</exclude>
+                                        <exclude>/projection-examples/src/main/java/br/com/jbProjects/domain/projections/CustomerWithAggregateAttribute.java</exclude>
+                                    </excludes>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
