@@ -12,9 +12,9 @@ permissions:
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/configure-coverage" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "feature/configure-coverage" ]
 
 jobs:
   build:
