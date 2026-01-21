@@ -41,7 +41,7 @@ public class ProjectionFilterOperatorProvider {
         register(ProjectionFilterOperator.BETWEEN, new BetweenHandler());
     }
 
-    private void register(ProjectionFilterOperator operator, @NonNull ProjectionFilterOperatorHandler handler){
+    private void register(ProjectionFilterOperator operator, ProjectionFilterOperatorHandler handler){
         register(operator.name(), handler);
     }
 
