@@ -130,7 +130,7 @@
 
     <profiles>
         <profile>
-            <id>CI</id>
+            <id>ci</id>
             <build>
                 <plugins>
                     <!-- Code Coverage -->
