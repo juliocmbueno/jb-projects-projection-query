@@ -151,6 +151,7 @@
                         <configuration>
                             <excludes>
                                 <exclude>projection-examples/**</exclude>
+                                <exclude>**/projection-examples/**</exclude>
                             </excludes>
                         </configuration>
                         <executions>
