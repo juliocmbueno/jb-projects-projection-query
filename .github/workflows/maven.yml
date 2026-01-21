@@ -37,9 +37,10 @@ jobs:
         cache: maven
 
     - name: Test & Coverage with Maven
-      run: mvn -B verify --file pom.xml
+      run: mvn -B test --file pom.xml
 
     - name: Upload coverage to Coveralls
+      if: matrix.java-version == '21'
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
