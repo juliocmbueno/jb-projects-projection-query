@@ -150,8 +150,7 @@
                         <version>0.8.14</version>
                         <configuration>
                             <excludes>
-                                <exclude>projection-examples/**</exclude>
-                                <exclude>**/projection-examples/**</exclude>
+                                <exclude>**/examples/**</exclude>
                             </excludes>
                         </configuration>
                         <executions>
