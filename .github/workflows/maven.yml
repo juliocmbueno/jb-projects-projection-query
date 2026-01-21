@@ -38,7 +38,7 @@ jobs:
 
     - name: Test & Coverage with Maven
       run: |
-        if [ "${{ github.event_name }}" = "push" ] &&  "${{ matrix.java-version }}" = "21" ]; then
+        if [ "${{ github.event_name }}" = "push" ] && [ "${{ matrix.java-version }}" = "21" ]; then
           mvn -B test jacoco:report coveralls:report -Pci --file pom.xml
         else
           mvn -B test --file pom.xml
