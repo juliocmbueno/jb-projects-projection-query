@@ -32,7 +32,6 @@ class ProjectionMappersTest {
                 ProjectionMappers.tupleToObject(null, CustomerAutoCompleteClass.class));
     }
 
-
     @Test
     void tupleToObject_withRecord() {
         Tuple tuple = Mockito.mock(Tuple.class);
@@ -51,5 +50,27 @@ class ProjectionMappersTest {
     void tupleToObject_withRecord_exception() {
         Assertions.assertThrowsExactly(RuntimeException.class, () ->
                 ProjectionMappers.tupleToObject(null, CustomerAutoCompleteRecord.class));
+    }
+
+    @Test
+    void tupleToObject_withRecord_IllegalArgumentException() {
+        Tuple tuple = Mockito.mock(Tuple.class);
+        Mockito.doReturn(1L).when(tuple).get("id");
+        Mockito.doReturn(1L).when(tuple).get("name");
+        Mockito.doReturn("customer@mail.com").when(tuple).get("customerEmail");
+
+        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> ProjectionMappers.tupleToObject(tuple, CustomerAutoCompleteRecord.class));
+
+        String expectedMessage = """
+                Error mapping query result to projection record: CustomerAutoCompleteRecord
+                
+                Expected constructor types:
+                  [Long, String, String, String]
+                
+                Query result types:
+                  [Long, Long, String, null]
+                """;
+
+        Assertions.assertEquals(expectedMessage, exception.getCause().getMessage());
     }
 }

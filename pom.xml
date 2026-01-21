@@ -72,7 +72,7 @@
 
     <dependencies>
     </dependencies>
-         
+
     <build>
         <plugins>
             <!-- Sources -->
@@ -127,4 +127,44 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <!-- Code Coverage -->
+                    <plugin>
+                        <groupId>com.github.hazendaz.maven</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>5.0.0</version>
+                        <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <repoToken>${env.COVERALLS_REPO_TOKEN}</repoToken>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.14</version>
+
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>**/projection-examples/**</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
