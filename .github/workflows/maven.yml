@@ -37,11 +37,11 @@ jobs:
         cache: maven
 
     - name: Test & Coverage with Maven
-      run: mvn -B test --file pom.xml
-
-    - name: Upload coverage to Coveralls
-      if: matrix.java-version == '21'
-      uses: coverallsapp/github-action@v2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: target/site/jacoco/jacoco.xml
+      run: |
+        if [ "${{ matrix.java-version }}" = "21" ]; then
+          mvn -B test jacoco:report coveralls:report -Pci --file pom.xml
+        else
+          mvn -B test --file pom.xml
+        fi
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
