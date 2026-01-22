@@ -32,4 +32,11 @@ public interface ProjectionFilterExpression {
             PathResolver pathResolver
     );
 
+    /**
+     * <p>Generates a string representation of this filter expression for logging purposes.</p>
+     *
+     * @return A string suitable for logging that describes this filter expression
+     */
+    String toLogString();
+
 }

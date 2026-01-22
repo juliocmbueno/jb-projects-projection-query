@@ -88,6 +88,14 @@ public class ProjectionProcessor {
      * @return A list of results mapped to the target projection class.
      */
     public <FROM, TO> List<TO> execute(ProjectionQuery<FROM, TO> projectionQuery){
+        log.info(
+                "Executing ProjectionQuery [from={}, to={}, distinct={}, paging={}]",
+                projectionQuery.fromClass().getSimpleName(),
+                projectionQuery.toClass().getSimpleName(),
+                projectionQuery.isDistinct(),
+                projectionQuery.hasPaging()
+        );
+
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
         Root<FROM> from = criteriaQuery.from(projectionQuery.fromClass());
@@ -97,12 +105,19 @@ public class ProjectionProcessor {
         applyFilters(projectionQuery, criteriaBuilder, criteriaQuery, from);
         applyOrders(projectionQuery, criteriaBuilder, criteriaQuery, from);
 
-        log.debug("teste 11111111111111");
         TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
         applyComment(typedQuery, projectionQuery);
-
         applyPaging(projectionQuery, typedQuery);
+
+        long start = System.nanoTime();
         List<Tuple> tuples = typedQuery.getResultList();
+        long elapsed = (System.nanoTime() - start) / 1_000_000;
+
+        log.debug(
+                "ProjectionQuery executed in {} ms ({} results)",
+                elapsed,
+                tuples.size()
+        );
 
         return mapTuplesToProjectionClass(tuples, projectionQuery.toClass());
     }
@@ -120,6 +135,7 @@ public class ProjectionProcessor {
                 .stream()
                 .map(order -> {
                     Path<?> path = projectionQuery.resolvePath(from, order.path());
+                    log.trace("ProjectionQuery order added: {} {}", order.path(), order.direction());
                     return order.direction().toOrder(criteriaBuilder, path);
                 })
                 .toList();
@@ -127,6 +143,8 @@ public class ProjectionProcessor {
         if(!orders.isEmpty()){
             criteriaQuery.orderBy(orders);
         }
+
+        log.debug("ProjectionQuery orders applied: {}", orders.size());
     }
 
     private <FROM, TO> void addSelects(ProjectionQuery<FROM, TO> projectionQuery, CriteriaQuery<Tuple> criteriaQuery, Root<?> from) {
@@ -144,7 +162,14 @@ public class ProjectionProcessor {
 
         for (var filter : projectionQuery.getFilters()) {
             predicates.add(filter.toPredicate(criteriaBuilder, criteriaQuery, from, projectionQuery.getPathResolver()));
+            log.trace("ProjectionQuery filter added: {}", filter.toLogString());
         }
+
+        log.debug(
+                "ProjectionQuery filters summary: {} specifications, {} filters",
+                projectionQuery.getSpecifications().size(),
+                projectionQuery.getFilters().size()
+        );
 
         if(!predicates.isEmpty()){
             criteriaQuery.where(predicates.toArray(new Predicate[]{}));
@@ -157,6 +182,7 @@ public class ProjectionProcessor {
             int size = projectionQuery.getPaging().size();
             typedQuery.setFirstResult(first);
             typedQuery.setMaxResults(size);
+            log.debug("ProjectionQuery paging applied: first={}, size={}", first, size);
         }
     }
 

@@ -61,4 +61,13 @@ public record ProjectionCompoundFilter(
         return operator.toPredicate(cb, predicates);
     }
 
+    @Override
+    public String toLogString() {
+        String filtersLogString = filters.stream()
+                .map(ProjectionFilterExpression::toLogString)
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
+
+        return String.format("%s (%s)", operator.name(), filtersLogString);
+    }
 }
