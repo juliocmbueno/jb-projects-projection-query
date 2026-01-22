@@ -1,5 +1,8 @@
 package br.com.jbProjects.annotations;
 
+import br.com.jbProjects.processor.selectOperator.handler.DefaultSelectOperatorHandler;
+import br.com.jbProjects.processor.selectOperator.handler.ProjectionSelectOperatorHandler;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -23,31 +26,9 @@ public @interface ProjectionField {
     String value() default "";
 
     /**
-     * Aggregation functions to be applied to the field.
-     *
-     * @return boolean indicating if sum aggregation is applied
+     * Custom select operator handler class to be used for this field.
+     * @return An implementation of {@link ProjectionSelectOperatorHandler}. Default is {@link DefaultSelectOperatorHandler}
      */
-    boolean sum() default false;
-
-    /**
-     * The maximum value of the field.
-     *
-     * @return boolean indicating if max aggregation is applied
-     */
-    boolean max() default false;
-
-    /**
-     * The minimum value of the field.
-     *
-     * @return boolean indicating if min aggregation is applied
-     */
-    boolean min() default false;
-
-    /**
-     * The count of the field.
-     *
-     * @return boolean indicating if count aggregation is applied
-     */
-    boolean count() default false;
+    Class<? extends ProjectionSelectOperatorHandler> selectHandler() default DefaultSelectOperatorHandler.class;
 
 }

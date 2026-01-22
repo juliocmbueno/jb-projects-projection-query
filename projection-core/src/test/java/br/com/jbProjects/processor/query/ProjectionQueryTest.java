@@ -4,6 +4,8 @@ import br.com.jbProjects.annotations.ProjectionJoin;
 import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerName;
+import br.com.jbProjects.processor.filter.CompoundOperator;
+import br.com.jbProjects.processor.filter.ProjectionCompoundFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.order.OrderDirection;
@@ -49,7 +51,8 @@ class ProjectionQueryTest {
     @Test
     public void specification(){
         ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery.fromTo(Customer.class, CustomerName.class);
-        ProjectionSpecification<Customer> specification = (criteriaBuilder, query, root) -> criteriaBuilder.equal(root.get("id"), 1);
+        ProjectionSpecification<Customer> specification = (criteriaBuilder, query, root,pathResolver) ->
+                criteriaBuilder.equal(pathResolver.resolve(root, "id"), 1);
 
         projectionQuery.specification(specification);
 
@@ -85,7 +88,7 @@ class ProjectionQueryTest {
 
         List<ProjectionOrder> orders = (List<ProjectionOrder>) ReflectionTestUtils.getField(projectionQuery, "orders");
         assertEquals(1, orders.size());
-        ProjectionOrder order = orders.getFirst();
+        ProjectionOrder order = orders.get(0);
         assertEquals("name", order.path());
         assertEquals(OrderDirection.ASC, order.direction());
     }
@@ -98,7 +101,7 @@ class ProjectionQueryTest {
 
         List<ProjectionFilter> filters = (List<ProjectionFilter>) ReflectionTestUtils.getField(projectionQuery, "filters");
         assertEquals(1, filters.size());
-        ProjectionFilter filter = filters.getFirst();
+        ProjectionFilter filter = filters.get(0);
         assertEquals("name", filter.path());
         assertEquals("EQUAL", filter.operator());
         assertEquals("John Doe", filter.value());
@@ -112,9 +115,28 @@ class ProjectionQueryTest {
 
         List<ProjectionFilter> filters = (List<ProjectionFilter>) ReflectionTestUtils.getField(projectionQuery, "filters");
         assertEquals(1, filters.size());
-        ProjectionFilter filter = filters.getFirst();
+        ProjectionFilter filter = filters.get(0);
         assertEquals("name", filter.path());
         assertEquals("EQUAL", filter.operator());
         assertEquals("John Doe", filter.value());
+    }
+
+    @Test
+    public void filter_compound(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .filter(
+                        CompoundOperator.AND,
+                        new ProjectionFilter("name", "EQUAL", "John Doe"),
+                        new ProjectionFilter("age", "GREATER_THAN", 18)
+                );
+
+        List<Object> filters = (List<Object>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        assertEquals(1, filters.size());
+        Object filterObj = filters.get(0);
+        assertInstanceOf(ProjectionCompoundFilter.class, filterObj);
+        ProjectionCompoundFilter compoundFilter = (ProjectionCompoundFilter) filterObj;
+        assertEquals(CompoundOperator.AND, compoundFilter.operator());
+        assertEquals(2, compoundFilter.filters().size());
     }
 }

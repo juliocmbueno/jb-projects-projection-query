@@ -1,4 +1,4 @@
-# ProjectionQuery
+# ProjectionQuery [![Test Pipeline](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml/badge.svg)](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml) [![Coverage Status](https://coveralls.io/repos/github/juliocmbueno/jb-projects-projection-query/badge.svg?branch=main)](https://coveralls.io/github/juliocmbueno/jb-projects-projection-query?branch=main)
 
 **ProjectionQuery** is a lightweight, type-safe, and framework-agnostic query projection library for Java.  
 It provides an API for building database projections dynamically — without exposing entity models and without relying on complicated frameworks.
@@ -38,7 +38,7 @@ The main module containing:
 
 This module is fully independent and can be used in **any** Java application — with or without frameworks.
 
-### **projection-spring** (coming soon)
+### **projection-spring**
 Provides integration with Spring Data:
 
 - Automatic projection query execution
@@ -54,7 +54,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
-    <version>1.1.2</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -63,7 +63,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-spring-data</artifactId>
-    <version>1.1.2</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -81,14 +81,20 @@ public record CustomerBasicData(
 ) { }
 ```
 
+> In the following examples, we assume a JPA context in which the `ProjectionProcessor` receives an `EntityManager` instance, responsible for executing the queries.
+
 Example using a projection class:
 ```java
+ProjectionProcessor processor = new ProjectionProcessor(entityManager);
 List<CustomerBasicData> customers = processor.execute(CustomerBasicData.class);
 ```
 
 Example using a fully configured ProjectionQuery:
 ```java
-ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery.fromTo(Customer.class, CustomerBasicData.class)
+ProjectionProcessor processor = new ProjectionProcessor(entityManager);
+
+ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery
+    .fromTo(Customer.class, CustomerBasicData.class)
     .filter("address.city.name", ProjectionFilterOperator.EQUAL, "São Paulo")
     .order("name", OrderDirection.ASC)
     .paging(0, 20)

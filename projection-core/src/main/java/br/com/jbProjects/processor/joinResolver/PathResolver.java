@@ -14,7 +14,8 @@ public interface PathResolver {
      *
      * @param root The root entity from which to start the path resolution.
      * @param path The property path to resolve.
+     * @param <T> The type of the property being resolved.
      * @return The resolved Path object.
      */
-    Path<?> resolve(Root<?> root, String path);
+    <T> Path<T> resolve(Root<?> root, String path);
 }

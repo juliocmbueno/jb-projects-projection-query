@@ -33,6 +33,15 @@ class ProjectionFilterOperatorProviderTest {
         assertEquals("Operator already registered: EQUAL", exception.getMessage());
     }
 
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    public void register_with_null_ProjectionFilterOperatorHandler(){
+        ProjectionFilterOperatorProvider provider = ProjectionFilterOperatorProvider.getInstance();
+        ProjectionFilterOperatorHandler dummyHandler = (cb, path, value) -> null;
+
+        assertThrows(NullPointerException.class, () -> provider.register("EQUAL", null));
+    }
+
     @Test
     public void get_unknownOperator_throwsException(){
         ProjectionFilterOperatorProvider provider = ProjectionFilterOperatorProvider.getInstance();

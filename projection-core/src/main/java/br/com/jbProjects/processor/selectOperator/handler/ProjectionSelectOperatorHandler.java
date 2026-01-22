@@ -1,6 +1,6 @@
 package br.com.jbProjects.processor.selectOperator.handler;
 
-import br.com.jbProjects.annotations.ProjectionField;
+import br.com.jbProjects.processor.joinResolver.PathResolver;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
@@ -12,21 +12,22 @@ import jakarta.persistence.criteria.Root;
  * specific projection operations defined by the ProjectionField annotation.</p>
  */
 public interface ProjectionSelectOperatorHandler {
+
     /**
-     * Checks if the handler supports the given ProjectionField annotation.
+     * Indicates whether the projection operation involves aggregation.
      *
-     * @param annotation the ProjectionField annotation to check
-     * @return true if the handler supports the annotation, false otherwise
+     * @return true if the operation is an aggregation function, false otherwise
      */
-    boolean supports(ProjectionField annotation);
+    boolean aggregate();
 
     /**
      * Applies the projection operation defined by the handler.
      *
+     * @param pathResolver PathResolver to resolve the field path
      * @param cb CriteriaBuilder used to create the Expression
      * @param root Root entity from which the field is selected
      * @param fieldName Name of the field to apply the projection on
      * @return Expression representing the projection operation
      */
-    Expression<?> apply(CriteriaBuilder cb, Root<?> root, String fieldName);
+    Expression<?> apply(PathResolver pathResolver, CriteriaBuilder cb, Root<?> root, String fieldName);
 }

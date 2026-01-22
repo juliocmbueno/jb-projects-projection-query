@@ -3,12 +3,13 @@ package br.com.jbProjects.domain.projections;
 import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.annotations.ProjectionField;
 import br.com.jbProjects.domain.Customer;
+import br.com.jbProjects.processor.selectOperator.handler.CountHandler;
 
 /**
  * Projection example demonstrating the use of aggregated attributes.
  *
  * <p>This projection maps the {@code age} field normally while also defining
- * an aggregated attribute using {@code count = true}. In this case,
+ * an aggregated attribute using {@code selectHandler = CountHandler.class}. In this case,
  * the projection engine will generate a {@code COUNT(id)} expression and map
  * the result into the {@code count} property.</p>
  *
@@ -29,6 +30,6 @@ import br.com.jbProjects.domain.Customer;
 @Projection(of = Customer.class)
 public record CustomerWithAggregateAttribute(
         @ProjectionField Integer age,
-        @ProjectionField(value = "id", count = true) Long count
+        @ProjectionField(value = "id", selectHandler = CountHandler.class) Long count
 ) {
 }

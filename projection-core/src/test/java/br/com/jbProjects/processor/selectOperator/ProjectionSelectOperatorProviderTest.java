@@ -1,10 +1,6 @@
 package br.com.jbProjects.processor.selectOperator;
 
-import br.com.jbProjects.annotations.ProjectionField;
 import br.com.jbProjects.processor.selectOperator.handler.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,23 +23,14 @@ class ProjectionSelectOperatorProviderTest {
     @Test
     public void register_duplicateOperator_throwsException(){
         ProjectionSelectOperatorProvider provider = ProjectionSelectOperatorProvider.getInstance();
-        ProjectionSelectOperatorHandler dummyHandler = new ProjectionSelectOperatorHandler() {
-            @Override
-            public boolean supports(ProjectionField annotation) {
-                return false;
-            }
 
-            @Override
-            public Expression<?> apply(CriteriaBuilder cb, Root<?> root, String fieldName) {
-                return null;
-            }
-        };
+        CountHandler countHandler = new CountHandler();
 
         IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, () ->
-                provider.register("COUNT", dummyHandler)
+                provider.register(countHandler)
         );
 
-        Assertions.assertEquals("Operator already registered: COUNT", exception.getMessage());
+        Assertions.assertEquals("Operator already registered: "+countHandler.getClass().getName(), exception.getMessage());
     }
 
     @Test
@@ -59,18 +46,9 @@ class ProjectionSelectOperatorProviderTest {
     }
 
     @Test
-    public void get_withString(){
-        ProjectionSelectOperatorProvider provider = ProjectionSelectOperatorProvider.getInstance();
-        ProjectionSelectOperatorHandler handler = provider.get("COUNT");
-
-        Assertions.assertNotNull(handler, "Handler for COUNT should not be null");
-        Assertions.assertInstanceOf(CountHandler.class, handler, "Handler should be an instance of CountHandler");
-    }
-
-    @Test
     public void get_withOperator(){
         ProjectionSelectOperatorProvider provider = ProjectionSelectOperatorProvider.getInstance();
-        ProjectionSelectOperatorHandler handler = provider.get(ProjectionSelectOperator.MIN);
+        ProjectionSelectOperatorHandler handler = provider.get(MinHandler.class);
 
         Assertions.assertNotNull(handler, "Handler for MIN should not be null");
         Assertions.assertInstanceOf(MinHandler.class, handler, "Handler should be an instance of MinHandler");
@@ -82,20 +60,23 @@ class ProjectionSelectOperatorProviderTest {
         var operators = provider.availableOperators();
 
         Assertions.assertNotNull(operators, "Available operators should not be null");
-        Assertions.assertTrue(operators.contains("COUNT"));
-        Assertions.assertTrue(operators.contains("MIN"));
-        Assertions.assertTrue(operators.contains("MAX"));
-        Assertions.assertTrue(operators.contains("SUM"));
+        Assertions.assertTrue(operators.contains(CountHandler.class.getName()));
+        Assertions.assertTrue(operators.contains(MinHandler.class.getName()));
+        Assertions.assertTrue(operators.contains(MaxHandler.class.getName()));
+        Assertions.assertTrue(operators.contains(SumHandler.class.getName()));
     }
 
     @Test
     public void operators(){
         List<ProjectionSelectOperatorHandler> operators = ProjectionSelectOperatorProvider.getInstance().operators();
-        Assertions.assertEquals(4, operators.size());
+        Assertions.assertEquals(7, operators.size());
+        Assertions.assertTrue(operators.stream().anyMatch(item -> item.getClass().equals(DefaultSelectOperatorHandler.class)));
         Assertions.assertTrue(operators.stream().anyMatch(item -> item.getClass().equals(CountHandler.class)));
         Assertions.assertTrue(operators.stream().anyMatch(item -> item.getClass().equals(MinHandler.class)));
         Assertions.assertTrue(operators.stream().anyMatch(item -> item.getClass().equals(MaxHandler.class)));
         Assertions.assertTrue(operators.stream().anyMatch(item -> item.getClass().equals(SumHandler.class)));
+        Assertions.assertTrue(operators.stream().anyMatch(item -> item.getClass().equals(AbsHandler.class)));
+        Assertions.assertTrue(operators.stream().anyMatch(item -> item.getClass().equals(AvgHandler.class)));
     }
 
 }

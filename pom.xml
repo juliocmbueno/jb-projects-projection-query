@@ -6,7 +6,7 @@
 
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projectionQuery</artifactId>
-    <version>1.0.0</version>
+    <version>3.0.0</version>
     <packaging>pom</packaging>
     <name>projection-query</name>
     <description>Type-safe dynamic projection spring data for Java</description>
@@ -35,7 +35,7 @@
     </scm>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -127,4 +127,47 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <!-- Code Coverage -->
+                    <plugin>
+                        <groupId>com.github.hazendaz.maven</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>5.0.0</version>
+                        <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <repoToken>${env.COVERALLS_REPO_TOKEN}</repoToken>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.14</version>
+
+                        <configuration>
+                            <excludes>
+                                <exclude>br/com/jbProjects/Application.class</exclude>
+                                <exclude>br/com/jbProjects/domain/**</exclude>
+                            </excludes>
+                        </configuration>
+                        
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

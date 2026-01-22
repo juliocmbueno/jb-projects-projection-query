@@ -28,15 +28,17 @@ public class BetweenHandler implements ProjectionFilterOperatorHandler {
      */
     @Override
     public Predicate toPredicate(CriteriaBuilder cb, Path<?> path, Object value) {
-        if(!(value instanceof BetweenValues(Comparable<?> start, Comparable<?> end))){
+        if(!(value instanceof BetweenValues)){
             throw new IllegalArgumentException(
                     "Between operator requires BetweenValues. Provided: " + value
             );
         }
+
+        var betweenValues = (BetweenValues) value;
         return cb.between(
                 (Path<Comparable>) path,
-                (Comparable) start,
-                (Comparable) end
+                (Comparable) betweenValues.start(),
+                (Comparable) betweenValues.end()
         );
     }
 }

@@ -76,7 +76,7 @@ public class ProjectionProcessorTest extends BaseSpringBootTest {
         List<CustomerProjectionData> customers = projectionProcessor.execute(query);
         Assertions.assertEquals(1, customers.size());
 
-        CustomerProjectionData data = customers.getFirst();
+        CustomerProjectionData data = customers.get(0);
         Assertions.assertEquals(customerJane.getId(), data.id());
         Assertions.assertEquals(customerJane.getName(), data.name());
     }

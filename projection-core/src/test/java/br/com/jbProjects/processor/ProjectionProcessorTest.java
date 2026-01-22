@@ -7,6 +7,8 @@ import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.*;
 import br.com.jbProjects.config.testModel.state.domain.State;
 import br.com.jbProjects.processor.filter.BetweenValues;
+import br.com.jbProjects.processor.filter.CompoundOperator;
+import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.query.ProjectionQuery;
@@ -98,7 +100,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
         List<CustomerAutoCompleteClass> customers = processor.execute(CustomerAutoCompleteClass.class);
         Assertions.assertEquals(1, customers.size());
 
-        CustomerAutoCompleteClass result = customers.getFirst();
+        CustomerAutoCompleteClass result = customers.get(0);
         Assertions.assertEquals(result.getId(), customer.getId());
         Assertions.assertEquals(result.getName(), customer.getName());
         Assertions.assertEquals(result.getCustomerEmail(), customer.getEmail());
@@ -110,7 +112,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
         List<CustomerAutoCompleteRecord> customers = processor.execute(CustomerAutoCompleteRecord.class);
         Assertions.assertEquals(1, customers.size());
 
-        CustomerAutoCompleteRecord result = customers.getFirst();
+        CustomerAutoCompleteRecord result = customers.get(0);
         Assertions.assertEquals(result.id(), customer.getId());
         Assertions.assertEquals(result.name(), customer.getName());
         Assertions.assertEquals(result.customerEmail(), customer.getEmail());
@@ -128,11 +130,12 @@ class ProjectionProcessorTest extends BaseJpaTest {
             List<CustomerAutoCompleteRecord> customers = processor.execute(
                     ProjectionQuery
                             .fromTo(Customer.class, CustomerAutoCompleteRecord.class)
-                            .specification((criteriaBuilder, query, root) -> criteriaBuilder.equal(root.get("name"), otherCustomer.getName()))
+                            .specification((criteriaBuilder, query, root, pathResolver) ->
+                                    criteriaBuilder.equal(pathResolver.resolve(root, "name"), otherCustomer.getName()))
             );
             Assertions.assertEquals(1, customers.size());
 
-            CustomerAutoCompleteRecord result = customers.getFirst();
+            CustomerAutoCompleteRecord result = customers.get(0);
             Assertions.assertEquals(result.id(), otherCustomer.getId());
             Assertions.assertEquals(result.name(), otherCustomer.getName());
             Assertions.assertEquals(result.customerEmail(), otherCustomer.getEmail());
@@ -183,7 +186,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
             );
 
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(result.getFirst().name(), otherCustomer.getName());
+            Assertions.assertEquals(result.get(0).name(), otherCustomer.getName());
 
         }finally {
             remove(otherCustomer);
@@ -205,12 +208,12 @@ class ProjectionProcessorTest extends BaseJpaTest {
             List<CustomerCount> result = processor.execute(
                     ProjectionQuery
                             .fromTo(Customer.class, CustomerCount.class)
-                            .specification((criteriaBuilder, query, root) ->
-                                    criteriaBuilder.like(root.get("name"), "Customer Count%"))
+                            .specification((criteriaBuilder, query, root, pathResolver) ->
+                                    criteriaBuilder.like(pathResolver.resolve(root, "name"), "Customer Count%"))
             );
 
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(5, result.getFirst().quantity());
+            Assertions.assertEquals(5, result.get(0).quantity());
 
         }finally {
             customers.forEach(this::remove);
@@ -235,7 +238,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
         try{
             List<CustomerMinAge> result = processor.execute(CustomerMinAge.class);
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(1, result.getFirst().minAge());
+            Assertions.assertEquals(1, result.get(0).minAge());
 
         }finally {
             remove(customer_age_3);
@@ -262,11 +265,59 @@ class ProjectionProcessorTest extends BaseJpaTest {
         try{
             List<CustomerMaxAge> result = processor.execute(CustomerMaxAge.class);
             Assertions.assertEquals(1, result.size());
-            Assertions.assertEquals(3, result.getFirst().maxAge());
+            Assertions.assertEquals(3, result.get(0).maxAge());
 
         }finally {
             remove(customer_age_3);
             remove(customer_age_2);
+            remove(customer_age_1);
+
+        }
+    }
+
+    @Test
+    void execute_withProjectionQuery_avgResult() {
+        Customer customer_age_1 = new Customer();
+        customer_age_1.setAge(10);
+        persist(customer_age_1);
+
+        Customer customer_age_2 = new Customer();
+        customer_age_2.setAge(20);
+        persist(customer_age_2);
+
+        Customer customer_age_3 = new Customer();
+        customer_age_3.setAge(60);
+        persist(customer_age_3);
+
+        try{
+            List<CustomerAvgAge> result = processor.execute(CustomerAvgAge.class);
+            Assertions.assertEquals(1, result.size());
+            Assertions.assertEquals(30.0, result.get(0).avgAge().doubleValue());
+
+        }finally {
+            remove(customer_age_3);
+            remove(customer_age_2);
+            remove(customer_age_1);
+
+        }
+    }
+
+    @Test
+    void execute_withProjectionQuery_absResult() {
+        Customer customer_age_1 = new Customer();
+        customer_age_1.setAge(-10);
+        persist(customer_age_1);
+
+        try{
+            List<CustomerAbsAge> result = processor.execute(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerAbsAge.class)
+                            .filter("id", ProjectionFilterOperator.EQUAL, customer_age_1.getId())
+            );
+            Assertions.assertEquals(1, result.size());
+            Assertions.assertEquals(10, result.get(0).absAge());
+
+        }finally {
             remove(customer_age_1);
 
         }
@@ -289,13 +340,13 @@ class ProjectionProcessorTest extends BaseJpaTest {
         try{
             List<CustomerSumId> result = processor.execute(
                     ProjectionQuery.fromTo(Customer.class, CustomerSumId.class)
-                            .specification((criteriaBuilder, query, root) ->
-                                    criteriaBuilder.equal(root.get("name"), "sum id"))
+                            .specification((criteriaBuilder, query, root, pathResolver) ->
+                                    criteriaBuilder.equal(pathResolver.resolve(root, "name"), "sum id"))
             );
             Assertions.assertEquals(1, result.size());
 
             Long expected = customer_1.getId() + customer_2.getId() + customer_3.getId();
-            Assertions.assertEquals(expected, result.getFirst().sumId());
+            Assertions.assertEquals(expected, result.get(0).sumId());
 
         }finally {
             remove(customer_3);
@@ -327,8 +378,8 @@ class ProjectionProcessorTest extends BaseJpaTest {
                     .execute(
                             ProjectionQuery
                                     .fromTo(Customer.class, CustomerCountByAge.class)
-                                    .specification((criteriaBuilder, query, root) ->
-                                            criteriaBuilder.equal(root.get("name"), "count by age"))
+                                    .specification((criteriaBuilder, query, root, pathResolver) ->
+                                            criteriaBuilder.equal(pathResolver.resolve(root, "name"), "count by age"))
                     )
                     .stream()
                     .sorted(Comparator.comparing(CustomerCountByAge::age))
@@ -336,7 +387,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
 
             Assertions.assertEquals(2, results.size());
 
-            CustomerCountByAge countByAge = results.getFirst();
+            CustomerCountByAge countByAge = results.get(0);
             Assertions.assertEquals(10, countByAge.age());
             Assertions.assertEquals(2, countByAge.quantity(), "Exists two customers with age equals 10");
 
@@ -358,12 +409,12 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 .execute(
                         ProjectionQuery
                                 .fromTo(Customer.class, CustomerNameAndCityAttributes.class)
-                                .specification((criteriaBuilder, query, root) ->
-                                        criteriaBuilder.equal(root.get("id"), customer.getId()))
+                                .specification((criteriaBuilder, query, root, pathResolver) ->
+                                        criteriaBuilder.equal(pathResolver.resolve(root, "id"), customer.getId()))
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerNameAndCityAttributes result = results.getFirst();
+        CustomerNameAndCityAttributes result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
         Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
         Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
@@ -378,12 +429,12 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 .execute(
                         ProjectionQuery
                                 .fromTo(Customer.class, CustomerNameAndCityJoinWithAlias.class)
-                                .specification((criteriaBuilder, query, root) ->
-                                        criteriaBuilder.equal(root.get("id"), customer.getId()))
+                                .specification((criteriaBuilder, query, root, pathResolver) ->
+                                        criteriaBuilder.equal(pathResolver.resolve(root, "id"), customer.getId()))
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerNameAndCityJoinWithAlias result = results.getFirst();
+        CustomerNameAndCityJoinWithAlias result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
         Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
         Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
@@ -401,7 +452,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -426,7 +477,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -451,7 +502,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -476,7 +527,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -501,7 +552,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -526,7 +577,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -551,7 +602,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -578,7 +629,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -603,7 +654,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -628,7 +679,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                 );
 
         Assertions.assertEquals(1, results.size());
-        CustomerName result = results.getFirst();
+        CustomerName result = results.get(0);
         Assertions.assertEquals(customer.getName(), result.name());
 
         // filter not valid
@@ -665,7 +716,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                     );
 
             Assertions.assertEquals(2, results.size());
-            CustomerNameAndCityAttributes result = results.getFirst();
+            CustomerNameAndCityAttributes result = results.get(0);
             Assertions.assertEquals(customerFromAnapolis.getName(), result.name());
 
             result = results.get(1);
@@ -681,7 +732,7 @@ class ProjectionProcessorTest extends BaseJpaTest {
                     );
 
             Assertions.assertEquals(2, results.size());
-            result = results.getFirst();
+            result = results.get(0);
             Assertions.assertEquals(customerFromGoiania.getName(), result.name());
 
             result = results.get(1);
@@ -691,6 +742,58 @@ class ProjectionProcessorTest extends BaseJpaTest {
             remove(customerFromAnapolis);
             remove(customerFromGoiania);
         }
+    }
 
+    @Test
+    public void execute_withIdProjectionAndFilterProperty(){
+        processor.execute(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerWithCityId.class)
+                        .filter("secondaryAddress.city.id", ProjectionFilterOperator.EQUAL, 1)
+        );
+    }
+
+    @Test
+    public void execute_withCompoundFilter(){
+        Customer customer1 = new Customer();
+        customer1.setName("Customer withCompoundFilter - 1");
+        customer1.setAge(5);
+        persist(customer1);
+
+        Customer customer2 = new Customer();
+        customer2.setName("Customer withCompoundFilter - 2");
+        customer2.setAge(15);
+        persist(customer2);
+
+        Customer customer3 = new Customer();
+        customer3.setName("Customer withCompoundFilter - 3");
+        customer3.setAge(18);
+        persist(customer3);
+
+        try{
+            List<CustomerName> customers = processor.execute(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerName.class)
+                            .filter("name", "like", "Customer withCompoundFilter%")
+                            .filter(
+                                    CompoundOperator.OR,
+                                    ProjectionFilter.of("age", "equal", 15),
+                                    ProjectionFilter.of("age", "equal", 18)
+                            )
+            );
+
+            Assertions.assertEquals(2, customers.size());
+
+            CustomerName customerTemp = customers.stream().filter(temp -> temp.name().equals(customer2.getName())).findFirst().orElse(null);
+            Assertions.assertNotNull(customerTemp, "Customer 2 must be in the result");
+
+            customerTemp = customers.stream().filter(temp -> temp.name().equals(customer3.getName())).findFirst().orElse(null);
+            Assertions.assertNotNull(customerTemp, "Customer 3 must be in the result");
+
+        }finally {
+            remove(customer3);
+            remove(customer2);
+            remove(customer1);
+        }
     }
 }

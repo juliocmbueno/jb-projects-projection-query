@@ -1,6 +1,6 @@
 package br.com.jbProjects.processor.selectOperator.handler;
 
-import br.com.jbProjects.annotations.ProjectionField;
+import br.com.jbProjects.processor.joinResolver.PathResolver;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Path;
@@ -18,13 +18,8 @@ class MinHandlerTest {
     private final MinHandler handler = new MinHandler();
 
     @Test
-    public void supports(){
-        ProjectionField fieldSupported = Mockito.mock(ProjectionField.class);
-        Mockito.doReturn(true).when(fieldSupported).min();
-        Assertions.assertTrue(handler.supports(fieldSupported));
-
-        ProjectionField fieldNotSupported = Mockito.mock(ProjectionField.class);
-        Assertions.assertFalse(handler.supports(fieldNotSupported));
+    public void aggregate(){
+        Assertions.assertTrue(handler.aggregate());
     }
 
     @Test
@@ -32,13 +27,14 @@ class MinHandlerTest {
         Root<?> root = Mockito.mock(Root.class);
         Path<Number> pathAge = Mockito.mock(Path.class);
 
-        Mockito.doReturn(pathAge).when(root).get("age");
+        PathResolver pathResolver = Mockito.mock(PathResolver.class);
+        Mockito.doReturn(pathAge).when(pathResolver).resolve(root, "age");
 
         CriteriaBuilder cb = Mockito.mock(CriteriaBuilder.class);
         Expression<?> expression = Mockito.mock(Expression.class);
         Mockito.doReturn(expression).when(cb).min(pathAge);
 
-        Expression<?> result = handler.apply(cb, root, "age");
+        Expression<?> result = handler.apply(pathResolver, cb, root, "age");
         Assertions.assertEquals(expression, result);
     }
 

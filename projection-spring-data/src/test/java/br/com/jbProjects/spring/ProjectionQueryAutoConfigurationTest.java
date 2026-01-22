@@ -3,7 +3,6 @@ package br.com.jbProjects.spring;
 import br.com.jbProjects.processor.ProjectionProcessor;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperatorProvider;
-import br.com.jbProjects.processor.selectOperator.ProjectionSelectOperator;
 import br.com.jbProjects.processor.selectOperator.ProjectionSelectOperatorProvider;
 import br.com.jbProjects.spring.configTest.BaseSpringBootTest;
 import org.junit.jupiter.api.Assertions;
@@ -38,6 +37,6 @@ public class ProjectionQueryAutoConfigurationTest extends BaseSpringBootTest {
 
     @Test
     public void selectOperatorProvider(){
-        Assertions.assertEquals(ProjectionSelectOperator.values().length, selectOperatorProvider.availableOperators().size());
+        Assertions.assertEquals(7, selectOperatorProvider.availableOperators().size());
     }
 }
