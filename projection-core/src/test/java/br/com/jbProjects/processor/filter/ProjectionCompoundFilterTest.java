@@ -106,6 +106,6 @@ class ProjectionCompoundFilterTest {
         );
 
         String logString = compoundFilter.toLogString();
-        assertEquals("AND (age greater_than ?, name like ?)", logString);
+        assertEquals("AND (age greater_than, name like)", logString);
     }
 }

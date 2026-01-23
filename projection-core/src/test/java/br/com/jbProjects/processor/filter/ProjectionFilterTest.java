@@ -52,6 +52,6 @@ class ProjectionFilterTest {
     public void toLogString() {
         ProjectionFilter filter = new ProjectionFilter("age", "GREATER_THAN", 30);
         String logString = filter.toLogString();
-        assertEquals("age GREATER_THAN ?", logString);
+        assertEquals("age GREATER_THAN", logString);
     }
 }
