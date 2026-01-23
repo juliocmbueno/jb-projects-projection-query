@@ -49,4 +49,9 @@ public record ProjectionFilter(
 
         return handler.toPredicate(cb, resolvedPath, value);
     }
+
+    @Override
+    public String toLogString() {
+        return String.format("%s %s", path, operator);
+    }
 }

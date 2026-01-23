@@ -94,4 +94,18 @@ class ProjectionCompoundFilterTest {
         assertTrue(compoundFilter.filters().contains(filter1));
         assertTrue(compoundFilter.filters().contains(filter2));
     }
+
+    @Test
+    public void toLogString(){
+        ProjectionFilterExpression filter1 = new ProjectionFilter("age", "greater_than", 30);
+        ProjectionFilterExpression filter2 = new ProjectionFilter("name", "like", "John%");
+
+        ProjectionCompoundFilter compoundFilter = new ProjectionCompoundFilter(
+                CompoundOperator.AND,
+                List.of(filter1, filter2)
+        );
+
+        String logString = compoundFilter.toLogString();
+        assertEquals("AND (age greater_than, name like)", logString);
+    }
 }
