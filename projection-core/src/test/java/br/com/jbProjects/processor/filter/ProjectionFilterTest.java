@@ -48,4 +48,10 @@ class ProjectionFilterTest {
         assertEquals(20, filter.value());
     }
 
+    @Test
+    public void toLogString() {
+        ProjectionFilter filter = new ProjectionFilter("age", "GREATER_THAN", 30);
+        String logString = filter.toLogString();
+        assertEquals("age GREATER_THAN ?", logString);
+    }
 }

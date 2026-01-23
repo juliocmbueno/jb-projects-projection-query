@@ -52,6 +52,6 @@ public record ProjectionFilter(
 
     @Override
     public String toLogString() {
-        return String.format("%s %s ?", path, operator);
+        return String.format("%s %s", path, operator);
     }
 }

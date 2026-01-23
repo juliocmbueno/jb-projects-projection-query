@@ -113,7 +113,7 @@ public class ProjectionProcessor {
         List<Tuple> tuples = typedQuery.getResultList();
         long elapsed = (System.nanoTime() - start) / 1_000_000;
 
-        log.debug(
+        log.info(
                 "ProjectionQuery executed in {} ms ({} results)",
                 elapsed,
                 tuples.size()
