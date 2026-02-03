@@ -26,6 +26,7 @@ public class BetweenHandler implements ProjectionFilterOperatorHandler {
      * @return Predicate equivalent to "path BETWEEN start AND end"
      * @throws IllegalArgumentException if the value is not an instance of BetweenValues
      */
+    @SuppressWarnings({"unchecked", "PatternVariableCanBeUsed"})
     @Override
     public Predicate toPredicate(CriteriaBuilder cb, Path<?> path, Object value) {
         if(!(value instanceof BetweenValues)){
@@ -35,10 +36,14 @@ public class BetweenHandler implements ProjectionFilterOperatorHandler {
         }
 
         var betweenValues = (BetweenValues) value;
+
+        Path<? extends Comparable<Object>> comparablePath =
+                (Path<? extends Comparable<Object>>) path;
+
         return cb.between(
-                (Path<Comparable>) path,
-                (Comparable) betweenValues.start(),
-                (Comparable) betweenValues.end()
+                comparablePath,
+                (Comparable<Object>) betweenValues.start(),
+                (Comparable<Object>) betweenValues.end()
         );
     }
 }

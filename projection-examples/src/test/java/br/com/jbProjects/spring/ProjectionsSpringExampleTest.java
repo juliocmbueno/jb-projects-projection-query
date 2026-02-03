@@ -48,6 +48,11 @@ class ProjectionsSpringExampleTest extends BaseApplicationTest {
     }
 
     @Test
+    public void fetchWithFiltersUtilities(){
+        examples.fetchWithFiltersUtilities();
+    }
+
+    @Test
     public void fetchWithAggregateAttributes() {
         examples.fetchWithAggregateAttributes();
     }
@@ -65,5 +70,10 @@ class ProjectionsSpringExampleTest extends BaseApplicationTest {
     @Test
     public void fetchWithCompoundFilter(){
         examples.fetchWithCompoundFilter();
+    }
+
+    @Test
+    public void fetchWithCompoundFilterUsingOperator(){
+        examples.fetchWithCompoundFilterUsingOperator();
     }
 }

@@ -3,6 +3,19 @@ package br.com.jbProjects.processor.filter;
 /**
  * Created by julio.bueno on 25/11/2025.
  * <p>Enumeration of filter operators that can be used in ProjectionFilter.</p>
+ * <p>Supported operators:</p>
+ * <ul>
+ *     <li>EQUAL</li>
+ *     <li>NOT_EQUAL</li>
+ *     <li>GREATER_THAN</li>
+ *     <li>LESS_THAN</li>
+ *     <li>GREATER_THAN_OR_EQUAL</li>
+ *     <li>LESS_THAN_OR_EQUAL</li>
+ *     <li>LIKE</li>
+ *     <li>IN</li>
+ *     <li>NOT_IN</li>
+ *     <li>BETWEEN</li>
+ * </ul>
  */
 public enum ProjectionFilterOperator {
     /**

@@ -122,13 +122,33 @@ class ProjectionQueryTest {
     }
 
     @Test
-    public void filter_compound(){
+    public void filter_compound_with_operator(){
         ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
                 .fromTo(Customer.class, CustomerName.class)
                 .filter(
                         CompoundOperator.AND,
-                        new ProjectionFilter("name", "EQUAL", "John Doe"),
-                        new ProjectionFilter("age", "GREATER_THAN", 18)
+                        ProjectionFilter.of("name", "EQUAL", "John Doe"),
+                        ProjectionFilter.of("age", "GREATER_THAN", 18)
+                );
+
+        List<Object> filters = (List<Object>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        assertEquals(1, filters.size());
+        Object filterObj = filters.get(0);
+        assertInstanceOf(ProjectionCompoundFilter.class, filterObj);
+        ProjectionCompoundFilter compoundFilter = (ProjectionCompoundFilter) filterObj;
+        assertEquals(CompoundOperator.AND, compoundFilter.operator());
+        assertEquals(2, compoundFilter.filters().size());
+    }
+
+    @Test
+    public void filter_withProjectionFilterExpression(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .filter(
+                        ProjectionCompoundFilter.and(
+                                ProjectionFilter.of("name", "EQUAL", "John Doe"),
+                                ProjectionFilter.of("age", "GREATER_THAN", 18)
+                        )
                 );
 
         List<Object> filters = (List<Object>) ReflectionTestUtils.getField(projectionQuery, "filters");

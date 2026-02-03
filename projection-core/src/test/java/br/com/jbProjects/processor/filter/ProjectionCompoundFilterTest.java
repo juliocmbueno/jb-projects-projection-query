@@ -96,6 +96,38 @@ class ProjectionCompoundFilterTest {
     }
 
     @Test
+    public void and(){
+        ProjectionFilterExpression filter1 = new ProjectionFilter("field1", "equal", "value1");
+        ProjectionFilterExpression filter2 = new ProjectionFilter("field2", "greaterThan", 10);
+
+        ProjectionCompoundFilter compoundFilter = ProjectionCompoundFilter.and(
+                filter1,
+                filter2
+        );
+
+        assertEquals(CompoundOperator.AND, compoundFilter.operator());
+        assertEquals(2, compoundFilter.filters().size());
+        assertTrue(compoundFilter.filters().contains(filter1));
+        assertTrue(compoundFilter.filters().contains(filter2));
+    }
+
+    @Test
+    public void or(){
+        ProjectionFilterExpression filter1 = new ProjectionFilter("field1", "equal", "value1");
+        ProjectionFilterExpression filter2 = new ProjectionFilter("field2", "greaterThan", 10);
+
+        ProjectionCompoundFilter compoundFilter = ProjectionCompoundFilter.or(
+                filter1,
+                filter2
+        );
+
+        assertEquals(CompoundOperator.OR, compoundFilter.operator());
+        assertEquals(2, compoundFilter.filters().size());
+        assertTrue(compoundFilter.filters().contains(filter1));
+        assertTrue(compoundFilter.filters().contains(filter2));
+    }
+
+    @Test
     public void toLogString(){
         ProjectionFilterExpression filter1 = new ProjectionFilter("age", "greater_than", 30);
         ProjectionFilterExpression filter2 = new ProjectionFilter("name", "like", "John%");

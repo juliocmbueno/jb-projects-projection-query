@@ -104,6 +104,7 @@ public class ProjectionQuery<FROM, TO> {
      * @param operator Filter operator
      * @param value    Value to filter by
      * @return The current ProjectionQuery instance for method chaining
+     * @see ProjectionFilterOperator
      */
     public ProjectionQuery<FROM, TO> filter(String path, ProjectionFilterOperator operator, Object value) {
         filter(path, operator.name(), value);
@@ -115,7 +116,7 @@ public class ProjectionQuery<FROM, TO> {
      * <p>It's possible to use nested paths to access fields in related entities.</p>
      * <p> ex: "name" or "address.city.name" </p>
      * @param path     Property path to filter on
-     * @param operator Filter operator as String
+     * @param operator Filter operator as String ({@link ProjectionFilterOperator} names or custom operators registered in {@link ProjectionFilterOperatorProvider})
      * @param value    Value to filter by
      * @return The current ProjectionQuery instance for method chaining
      */
@@ -133,6 +134,17 @@ public class ProjectionQuery<FROM, TO> {
      */
     public ProjectionQuery<FROM, TO> filter(CompoundOperator operator, ProjectionFilterExpression... filters) {
         this.filters.add(ProjectionCompoundFilter.of(operator, filters));
+        return this;
+    }
+
+    /**
+     * <p>Adds a filter expression to the projection query.</p>
+     *
+     * @param filter ProjectionFilterExpression to add
+     * @return The current ProjectionQuery instance for method chaining
+     */
+    public ProjectionQuery<FROM, TO> filter(ProjectionFilterExpression filter) {
+        this.filters.add(filter);
         return this;
     }
 
