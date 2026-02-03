@@ -18,7 +18,7 @@ Include:
 
 | Version | Status    |
 | ------- | --------- |
-| 1.x     | Supported |
+| 3.x     | Supported |
 
 ---
 
