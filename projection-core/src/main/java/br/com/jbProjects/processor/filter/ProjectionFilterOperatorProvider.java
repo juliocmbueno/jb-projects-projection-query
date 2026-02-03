@@ -12,6 +12,7 @@ import java.util.Set;
  * Created by julio.bueno on 25/11/2025.
  * <p>Provider for Projection Filter Operator Handlers</p>
  * <p>By default, the class is created with all operations of {@link ProjectionFilterOperator}</p>
+ * <p>New operators can be registered using the {@link #register(String, ProjectionFilterOperatorHandler)} method.</p>
  */
 public class ProjectionFilterOperatorProvider {
 

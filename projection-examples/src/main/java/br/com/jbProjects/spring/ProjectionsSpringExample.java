@@ -4,8 +4,8 @@ import br.com.jbProjects.domain.Customer;
 import br.com.jbProjects.domain.projections.*;
 import br.com.jbProjects.processor.ProjectionProcessor;
 import br.com.jbProjects.processor.filter.CompoundOperator;
-import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.filter.ProjectionFilters;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.springframework.stereotype.Component;
@@ -134,6 +134,31 @@ public class ProjectionsSpringExample {
     }
 
     /**
+     * Example of fetching projections using filter utilities.
+     *
+     * <p>This approach utilizes the {@link ProjectionFilters} utility class
+     * to create filter expressions in a more readable manner.</p>
+     *
+     * <p>Example of the SQL generated (simplified):</p>
+     *
+     * <pre>{@code
+     * select
+     *   c.id   as id,
+     *   c.name as name,
+     *   c.email as contactEmail
+     * from Customer c
+     * where c.name like 'John%'
+     * }</pre>
+     */
+    public void fetchWithFiltersUtilities(){
+        List<CustomerBasicDataRecord> example = projectionProcessor.execute(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerBasicDataRecord.class)
+                        .filter(ProjectionFilters.like("name", "John*"))
+        );
+    }
+
+    /**
      * Example of fetching projections using filters applied to nested attributes.
      *
      * <p>This demonstrates how the projection engine resolves deep property paths
@@ -247,9 +272,44 @@ public class ProjectionsSpringExample {
                         .fromTo(Customer.class, CustomerBasicDataClass.class)
                         .filter("age", ProjectionFilterOperator.GREATER_THAN_OR_EQUAL, 18)
                         .filter(
+                                ProjectionFilters.or(
+                                        ProjectionFilters.equal("mainAddress.city.id", 1),
+                                        ProjectionFilters.equal("secondaryAddress.city.id", 2)
+                                )
+                        )
+        );
+    }
+
+    /**
+     * Example of fetching projections using a compound filter.
+     *
+     * <p>Simplified example of the SQL generated:</p>
+     *
+     * <pre>{@code
+     * select
+     *  customer.id,
+     *  customer.name,
+     *  customer.email
+     * from Customer customer
+     * inner join Address mainAddress on customer.mainAddress = mainAddress.id
+     * inner join Address secondaryAddress on customer.secondaryAddress = secondaryAddress.id
+     * where
+     *  customer.age >= 18
+     *  and (
+     *      mainAddress.city = 1
+     *      or secondaryAddress.city = 2
+     * )
+     * }</pre>
+     */
+    public void fetchWithCompoundFilterUsingOperator(){
+        List<CustomerBasicDataClass> example = projectionProcessor.execute(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerBasicDataClass.class)
+                        .filter("age", ProjectionFilterOperator.GREATER_THAN_OR_EQUAL, 18)
+                        .filter(
                                 CompoundOperator.OR,
-                                ProjectionFilter.of("mainAddress.city.id", ProjectionFilterOperator.EQUAL, 1),
-                                ProjectionFilter.of("secondaryAddress.city.id", ProjectionFilterOperator.EQUAL, 2)
+                                ProjectionFilters.equal("mainAddress.city.id", 1),
+                                ProjectionFilters.equal("secondaryAddress.city.id", 2)
                         )
         );
     }

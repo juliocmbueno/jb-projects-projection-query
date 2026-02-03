@@ -40,6 +40,24 @@ public record ProjectionCompoundFilter(
     }
 
     /**
+     * Creates a ProjectionCompoundFilter instance with AND operator.
+     * @param filters The filter expressions to be combined.
+     * @return A new ProjectionCompoundFilter instance with AND operator.
+     */
+    public static ProjectionCompoundFilter and(ProjectionFilterExpression... filters) {
+        return new ProjectionCompoundFilter(CompoundOperator.AND, List.of(filters));
+    }
+
+    /**
+     * Creates a ProjectionCompoundFilter instance with OR operator.
+     * @param filters The filter expressions to be combined.
+     * @return A new ProjectionCompoundFilter instance with OR operator.
+     */
+    public static ProjectionCompoundFilter or(ProjectionFilterExpression... filters) {
+        return new ProjectionCompoundFilter(CompoundOperator.OR, List.of(filters));
+    }
+
+    /**
      * Creates a ProjectionCompoundFilter instance.
      * @param operator The {@link CompoundOperator} to combine the filters.
      * @param filters The filter expressions to be combined.
