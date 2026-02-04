@@ -76,4 +76,9 @@ class ProjectionsSpringExampleTest extends BaseApplicationTest {
     public void fetchWithCompoundFilterUsingOperator(){
         examples.fetchWithCompoundFilterUsingOperator();
     }
+
+    @Test
+    public void fetchWithPageableResult(){
+        examples.fetchWithPageableResult();
+    }
 }

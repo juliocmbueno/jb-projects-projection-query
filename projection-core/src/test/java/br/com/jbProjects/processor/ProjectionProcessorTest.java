@@ -4,6 +4,7 @@ import br.com.jbProjects.config.helper.BaseJpaTest;
 import br.com.jbProjects.config.testModel.address.domain.Address;
 import br.com.jbProjects.config.testModel.city.domain.City;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
+import br.com.jbProjects.config.testModel.customer.domain.CustomerProfile;
 import br.com.jbProjects.config.testModel.customer.projections.*;
 import br.com.jbProjects.config.testModel.state.domain.State;
 import br.com.jbProjects.processor.filter.BetweenValues;
@@ -11,6 +12,7 @@ import br.com.jbProjects.processor.filter.CompoundOperator;
 import br.com.jbProjects.processor.filter.ProjectionFilter;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.order.OrderDirection;
+import br.com.jbProjects.processor.pageable.ProjectionPage;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -794,6 +796,152 @@ class ProjectionProcessorTest extends BaseJpaTest {
             remove(customer3);
             remove(customer2);
             remove(customer1);
+        }
+    }
+
+    @Test
+    public void executePageable() {
+        Customer customer1 = new Customer();
+        customer1.setName("Customer withCompoundFilter - 1");
+        customer1.setAge(5);
+        persist(customer1);
+
+        Customer customer2 = new Customer();
+        customer2.setName("Customer withCompoundFilter - 2");
+        customer2.setAge(15);
+        persist(customer2);
+
+        Customer customer3 = new Customer();
+        customer3.setName("Customer withCompoundFilter - 3");
+        customer3.setAge(18);
+        persist(customer3);
+
+        try{
+
+            // first page
+            ProjectionPage<CustomerName> page = processor.executePageable(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerName.class)
+                            .filter("name", "like", "Customer withCompoundFilter%")
+                            .order("age", OrderDirection.ASC)
+                            .paging(0, 1)
+            );
+
+            Assertions.assertEquals(1, page.content().size());
+            Assertions.assertEquals(3, page.totalElements());
+            Assertions.assertEquals(0, page.pageNumber());
+            Assertions.assertEquals(1, page.pageSize());
+            Assertions.assertTrue(page.hasNext());
+            Assertions.assertFalse(page.hasPrevious());
+
+            CustomerName customerTemp = page.content().get(0);
+            Assertions.assertEquals(customer1.getName(), customerTemp.name());
+
+            // next page
+            page = processor.executePageable(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerName.class)
+                            .filter("name", "like", "Customer withCompoundFilter%")
+                            .order("age", OrderDirection.ASC)
+                            .paging(1, 1)
+            );
+
+            Assertions.assertEquals(1, page.content().size());
+            Assertions.assertEquals(3, page.totalElements());
+            Assertions.assertEquals(1, page.pageNumber());
+            Assertions.assertEquals(1, page.pageSize());
+            Assertions.assertTrue(page.hasNext());
+            Assertions.assertTrue(page.hasPrevious());
+
+            customerTemp = page.content().get(0);
+            Assertions.assertEquals(customer2.getName(), customerTemp.name());
+
+            // last page
+            page = processor.executePageable(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerName.class)
+                            .filter("name", "like", "Customer withCompoundFilter%")
+                            .order("age", OrderDirection.ASC)
+                            .paging(2, 1)
+            );
+
+            Assertions.assertEquals(1, page.content().size());
+            Assertions.assertEquals(3, page.totalElements());
+            Assertions.assertEquals(2, page.pageNumber());
+            Assertions.assertEquals(1, page.pageSize());
+            Assertions.assertFalse(page.hasNext());
+            Assertions.assertTrue(page.hasPrevious());
+
+            customerTemp = page.content().get(0);
+            Assertions.assertEquals(customer3.getName(), customerTemp.name());
+
+        }finally {
+            remove(customer3);
+            remove(customer2);
+            remove(customer1);
+        }
+    }
+
+    @Test
+    public void executePageable_withoutPaging() {
+        IllegalStateException exception = Assertions.assertThrowsExactly(IllegalStateException.class, () -> processor.executePageable(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerName.class)
+                        .filter("id", ProjectionFilterOperator.EQUAL, customer.getId())
+        ));
+
+        Assertions.assertEquals("ProjectionQuery must have paging to execute pageable.", exception.getMessage());
+    }
+
+    @Test
+    public void executePageable_withNoResult() {
+        ProjectionPage<CustomerName> page = processor.executePageable(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerName.class)
+                        .filter("id", ProjectionFilterOperator.EQUAL, -1L)
+                        .paging(0, 10)
+        );
+
+        Assertions.assertTrue(page.isEmpty());
+        Assertions.assertEquals(0, page.content().size());
+        Assertions.assertEquals(0, page.totalElements());
+        Assertions.assertEquals(0, page.pageNumber());
+        Assertions.assertEquals(10, page.pageSize());
+        Assertions.assertFalse(page.hasNext());
+        Assertions.assertFalse(page.hasPrevious());
+    }
+
+    @Test
+    public void executePageable_withDistinct() {
+        Customer customer = new Customer();
+        customer.setName("Customer withDistinct");
+        persist(customer);
+
+        CustomerProfile customerProfile = new CustomerProfile();
+        customerProfile.setCustomer(customer);
+        customerProfile.setName("Profile 1");
+        persist(customerProfile);
+
+        CustomerProfile customerProfile2 = new CustomerProfile();
+        customerProfile2.setCustomer(customer);
+        customerProfile2.setName("Profile 2");
+        persist(customerProfile2);
+
+        try{
+            ProjectionPage<CustomerName> page = processor.executePageable(
+                    ProjectionQuery
+                            .fromTo(Customer.class, CustomerName.class)
+                            .filter("profiles.name", "like", "Profile%")
+                            .paging(0, 10)
+                            .distinct()
+            );
+
+            Assertions.assertEquals(1, page.content().size());
+
+        }finally {
+            remove(customerProfile2);
+            remove(customerProfile);
+            remove(customer);
         }
     }
 }

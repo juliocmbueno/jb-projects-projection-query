@@ -7,6 +7,7 @@ import br.com.jbProjects.processor.filter.CompoundOperator;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.filter.ProjectionFilters;
 import br.com.jbProjects.processor.order.OrderDirection;
+import br.com.jbProjects.processor.pageable.ProjectionPage;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.springframework.stereotype.Component;
 
@@ -312,5 +313,28 @@ public class ProjectionsSpringExample {
                                 ProjectionFilters.equal("secondaryAddress.city.id", 2)
                         )
         );
+    }
+
+    /**
+     * Example of fetching projections with pageable result.
+     *
+     * @see ProjectionPage
+     */
+    public void fetchWithPageableResult(){
+        ProjectionPage<CustomerBasicDataRecord> page = projectionProcessor.executePageable(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerBasicDataRecord.class)
+                        .order("name", OrderDirection.ASC)
+                        .paging(0, 20)
+        );
+
+        List<CustomerBasicDataRecord> content = page.content();
+        long totalElements = page.totalElements();
+        int totalPages = page.totalPages();
+        int pageNumber = page.pageNumber();
+        int pageSize = page.pageSize();
+        boolean hasNext = page.hasNext();
+        boolean hasPrevious = page.hasPrevious();
+        boolean isEmpty = page.isEmpty();
     }
 }

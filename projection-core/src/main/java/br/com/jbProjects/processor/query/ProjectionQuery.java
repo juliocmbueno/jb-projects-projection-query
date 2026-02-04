@@ -199,4 +199,19 @@ public class ProjectionQuery<FROM, TO> {
     public Path<?> resolvePath(Root<FROM> from, String path){
         return this.pathResolver.resolve(from, path);
     }
+
+    /**
+     * <p>Creates a copy of the current ProjectionQuery instance.</p>
+     *
+     * @return A new ProjectionQuery instance with the same configuration
+     */
+    public ProjectionQuery<FROM, TO> copy(){
+        ProjectionQuery<FROM, TO> copy = new ProjectionQuery<>(this.fromClass, this.toClass);
+        copy.specifications.addAll(this.specifications);
+        copy.filters.addAll(this.filters);
+        copy.orders.addAll(this.orders);
+        copy.distinct = this.distinct;
+        copy.paging = this.paging;
+        return copy;
+    }
 }

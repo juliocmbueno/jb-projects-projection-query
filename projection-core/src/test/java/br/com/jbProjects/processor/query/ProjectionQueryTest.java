@@ -159,4 +159,39 @@ class ProjectionQueryTest {
         assertEquals(CompoundOperator.AND, compoundFilter.operator());
         assertEquals(2, compoundFilter.filters().size());
     }
+
+    @Test
+    public void copy(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .distinct()
+                .paging(5, 10)
+                .order("name", OrderDirection.DESC)
+                .filter("age", ProjectionFilterOperator.GREATER_THAN, 21)
+                .specification((criteriaBuilder, query, root, pathResolver) ->
+                        criteriaBuilder.equal(pathResolver.resolve(root, "id"), 1));
+
+        ProjectionQuery<Customer, CustomerName> copy = projectionQuery.copy();
+
+        assertEquals(projectionQuery.fromClass(), copy.fromClass());
+        assertEquals(projectionQuery.toClass(), copy.toClass());
+        assertEquals(projectionQuery.isDistinct(), copy.isDistinct());
+        assertEquals(projectionQuery.hasPaging(), copy.hasPaging());
+        if (projectionQuery.hasPaging()) {
+            assertEquals(projectionQuery.getPaging().first(), copy.getPaging().first());
+            assertEquals(projectionQuery.getPaging().size(), copy.getPaging().size());
+        }
+
+        List<ProjectionOrder> originalOrders = (List<ProjectionOrder>) ReflectionTestUtils.getField(projectionQuery, "orders");
+        List<ProjectionOrder> copiedOrders = (List<ProjectionOrder>) ReflectionTestUtils.getField(copy, "orders");
+        assertEquals(originalOrders, copiedOrders);
+
+        List<Object> originalFilters = (List<Object>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        List<Object> copiedFilters = (List<Object>) ReflectionTestUtils.getField(copy, "filters");
+        assertEquals(originalFilters, copiedFilters);
+
+        List<ProjectionSpecification<Customer>> originalSpecifications = (List<ProjectionSpecification<Customer>>) ReflectionTestUtils.getField(projectionQuery, "specifications");
+        List<ProjectionSpecification<Customer>> copiedSpecifications = (List<ProjectionSpecification<Customer>>) ReflectionTestUtils.getField(copy, "specifications");
+        assertEquals(originalSpecifications, copiedSpecifications);
+    }
 }

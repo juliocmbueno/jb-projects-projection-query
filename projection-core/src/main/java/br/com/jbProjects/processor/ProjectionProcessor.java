@@ -2,6 +2,7 @@ package br.com.jbProjects.processor;
 
 import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.mapper.ProjectionMappers;
+import br.com.jbProjects.processor.pageable.ProjectionPage;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import br.com.jbProjects.processor.query.ProjectionSelectInfo;
 import br.com.jbProjects.processor.query.ProjectionSpecification;
@@ -122,7 +123,74 @@ public class ProjectionProcessor {
         return mapTuplesToProjectionClass(tuples, projectionQuery.toClass());
     }
 
-    private <TO, FROM> void applyComment(TypedQuery<Tuple> typedQuery, ProjectionQuery<FROM, TO> projectionQuery) {
+    /**
+     * Executes a pageable projection query and returns a paginated result.
+     *
+     * @param projectionQuery The projection query containing all configurations including paging.
+     * @param <FROM>          The source entity type.
+     * @param <TO>            The target projection type.
+     * @return A {@link ProjectionPage} containing the paginated results.
+     * @throws IllegalStateException if the projection query does not have paging configured.
+     */
+    public <FROM, TO> ProjectionPage<TO> executePageable(ProjectionQuery<FROM, TO> projectionQuery){
+        if(!projectionQuery.hasPaging()){
+            throw new IllegalStateException("ProjectionQuery must have paging to execute pageable.");
+        }
+
+        List<TO> items = execute(projectionQuery);
+        if(items.isEmpty()){
+            return ProjectionPage.empty(projectionQuery.getPaging());
+        }
+
+        ProjectionQuery<FROM, TO> projectionCount = projectionQuery.copy();
+
+        log.info(
+                "Executing ProjectionQuery Pageable count [from={}, to={}, distinct={}]",
+                projectionCount.fromClass().getSimpleName(),
+                projectionCount.toClass().getSimpleName(),
+                projectionCount.isDistinct()
+        );
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<FROM> from = criteriaQuery.from(projectionCount.fromClass());
+
+        addSelects(projectionCount, criteriaQuery, from);
+        applyFilters(projectionCount, criteriaBuilder, criteriaQuery, from);
+
+        criteriaQuery.multiselect(List.of());
+        criteriaQuery.groupBy(List.of());
+
+        Expression<Long> countExpression = projectionCount.isDistinct() ? criteriaBuilder.countDistinct(from) : criteriaBuilder.count(from);
+        criteriaQuery.select(countExpression);
+
+        TypedQuery<Long> typedQuery = entityManager.createQuery(criteriaQuery);
+
+        long start = System.nanoTime();
+        Long singleResult = typedQuery.getSingleResult();
+        long elapsed = (System.nanoTime() - start) / 1_000_000;
+
+        log.info(
+                "ProjectionQuery Pageable count executed in {} ms",
+                elapsed
+        );
+
+        ProjectionPage<TO> page = ProjectionPage.of(items, singleResult, projectionCount.getPaging());
+
+        log.debug(
+                "Page created: pageNumber={}, pageSize={}, totalElements={}, totalPages={}, hasNext={}, hasPrevious={}",
+                page.pageNumber(),
+                page.pageSize(),
+                page.totalElements(),
+                page.totalPages(),
+                page.hasNext(),
+                page.hasPrevious()
+        );
+
+        return page;
+    }
+
+    private <TO, FROM> void applyComment(TypedQuery<?> typedQuery, ProjectionQuery<FROM, TO> projectionQuery) {
         try{
             org.hibernate.query.Query<?> hibernateQuery = typedQuery.unwrap(org.hibernate.query.Query.class);
             hibernateQuery.setComment("ProjectionQuery created from " + projectionQuery.fromClass().getSimpleName() + " to " + projectionQuery.toClass().getSimpleName());
@@ -147,13 +215,13 @@ public class ProjectionProcessor {
         log.debug("ProjectionQuery orders applied: {}", orders.size());
     }
 
-    private <FROM, TO> void addSelects(ProjectionQuery<FROM, TO> projectionQuery, CriteriaQuery<Tuple> criteriaQuery, Root<?> from) {
+    private <FROM, TO> void addSelects(ProjectionQuery<FROM, TO> projectionQuery, CriteriaQuery<?> criteriaQuery, Root<?> from) {
         ProjectionSelectInfo selectInfo = new ProjectionSelectInfo(projectionQuery, entityManager.getCriteriaBuilder(), from);
         criteriaQuery.multiselect(selectInfo.getSelections());
         criteriaQuery.groupBy(selectInfo.getGroupByFields());
     }
 
-    private static <FROM, TO> void applyFilters(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {
+    private static <FROM, TO> void applyFilters(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<?> criteriaQuery, Root<FROM> from) {
         List<Predicate> predicates = new ArrayList<>();
 
         for (ProjectionSpecification<FROM> spec : projectionQuery.getSpecifications()) {
