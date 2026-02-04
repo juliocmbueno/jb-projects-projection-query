@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -138,13 +139,13 @@ public class ProjectionQuery<FROM, TO> {
     }
 
     /**
-     * <p>Adds a filter expression to the projection query.</p>
+     * <p>Adds a filters expression to the projection query.</p>
      *
-     * @param filter ProjectionFilterExpression to add
+     * @param filters ProjectionFilterExpression to add
      * @return The current ProjectionQuery instance for method chaining
      */
-    public ProjectionQuery<FROM, TO> filter(ProjectionFilterExpression filter) {
-        this.filters.add(filter);
+    public ProjectionQuery<FROM, TO> filter(ProjectionFilterExpression... filters) {
+        Collections.addAll(this.filters, filters);
         return this;
     }
 
