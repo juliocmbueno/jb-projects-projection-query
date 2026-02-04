@@ -19,12 +19,6 @@ import java.util.List;
  * defined in {@link ProjectionPaging}. The page index is zero-based.
  * </p>
  *
- * <p>
- * Unlike Spring Data {@code Page}, this abstraction is framework-agnostic
- * and does not depend on Spring APIs, making it suitable for use in
- * core and infrastructure layers.
- * </p>
- *
  * @param <T> the type of the content elements
  *
  * @param content the list of elements in the current page (never {@code null})
