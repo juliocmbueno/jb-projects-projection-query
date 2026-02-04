@@ -4,10 +4,7 @@ import br.com.jbProjects.annotations.ProjectionJoin;
 import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerName;
-import br.com.jbProjects.processor.filter.CompoundOperator;
-import br.com.jbProjects.processor.filter.ProjectionCompoundFilter;
-import br.com.jbProjects.processor.filter.ProjectionFilter;
-import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.filter.*;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.order.ProjectionOrder;
 import br.com.jbProjects.util.ProjectionUtils;
@@ -158,5 +155,63 @@ class ProjectionQueryTest {
         ProjectionCompoundFilter compoundFilter = (ProjectionCompoundFilter) filterObj;
         assertEquals(CompoundOperator.AND, compoundFilter.operator());
         assertEquals(2, compoundFilter.filters().size());
+    }
+
+    @Test
+    public void filter_withMultipleFilters(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .filter(
+                        ProjectionFilters.equal("name", "John Doe"),
+                        ProjectionFilters.greaterThan("age", 18)
+                );
+
+        List<Object> filters = (List<Object>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        assertEquals(2, filters.size());
+
+        ProjectionFilter filter1 = (ProjectionFilter) filters.get(0);
+        assertEquals("name", filter1.path());
+        assertEquals("EQUAL", filter1.operator());
+        assertEquals("John Doe", filter1.value());
+
+        ProjectionFilter filter2 = (ProjectionFilter) filters.get(1);
+        assertEquals("age", filter2.path());
+        assertEquals("GREATER_THAN", filter2.operator());
+        assertEquals(18, filter2.value());
+    }
+
+    @Test
+    public void copy(){
+        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery
+                .fromTo(Customer.class, CustomerName.class)
+                .distinct()
+                .paging(5, 10)
+                .order("name", OrderDirection.DESC)
+                .filter("age", ProjectionFilterOperator.GREATER_THAN, 21)
+                .specification((criteriaBuilder, query, root, pathResolver) ->
+                        criteriaBuilder.equal(pathResolver.resolve(root, "id"), 1));
+
+        ProjectionQuery<Customer, CustomerName> copy = projectionQuery.copy();
+
+        assertEquals(projectionQuery.fromClass(), copy.fromClass());
+        assertEquals(projectionQuery.toClass(), copy.toClass());
+        assertEquals(projectionQuery.isDistinct(), copy.isDistinct());
+        assertEquals(projectionQuery.hasPaging(), copy.hasPaging());
+        if (projectionQuery.hasPaging()) {
+            assertEquals(projectionQuery.getPaging().first(), copy.getPaging().first());
+            assertEquals(projectionQuery.getPaging().size(), copy.getPaging().size());
+        }
+
+        List<ProjectionOrder> originalOrders = (List<ProjectionOrder>) ReflectionTestUtils.getField(projectionQuery, "orders");
+        List<ProjectionOrder> copiedOrders = (List<ProjectionOrder>) ReflectionTestUtils.getField(copy, "orders");
+        assertEquals(originalOrders, copiedOrders);
+
+        List<Object> originalFilters = (List<Object>) ReflectionTestUtils.getField(projectionQuery, "filters");
+        List<Object> copiedFilters = (List<Object>) ReflectionTestUtils.getField(copy, "filters");
+        assertEquals(originalFilters, copiedFilters);
+
+        List<ProjectionSpecification<Customer>> originalSpecifications = (List<ProjectionSpecification<Customer>>) ReflectionTestUtils.getField(projectionQuery, "specifications");
+        List<ProjectionSpecification<Customer>> copiedSpecifications = (List<ProjectionSpecification<Customer>>) ReflectionTestUtils.getField(copy, "specifications");
+        assertEquals(originalSpecifications, copiedSpecifications);
     }
 }

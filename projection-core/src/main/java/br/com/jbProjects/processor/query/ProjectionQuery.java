@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -138,13 +139,13 @@ public class ProjectionQuery<FROM, TO> {
     }
 
     /**
-     * <p>Adds a filter expression to the projection query.</p>
+     * <p>Adds a filters expression to the projection query.</p>
      *
-     * @param filter ProjectionFilterExpression to add
+     * @param filters ProjectionFilterExpression to add
      * @return The current ProjectionQuery instance for method chaining
      */
-    public ProjectionQuery<FROM, TO> filter(ProjectionFilterExpression filter) {
-        this.filters.add(filter);
+    public ProjectionQuery<FROM, TO> filter(ProjectionFilterExpression... filters) {
+        Collections.addAll(this.filters, filters);
         return this;
     }
 
@@ -198,5 +199,20 @@ public class ProjectionQuery<FROM, TO> {
      */
     public Path<?> resolvePath(Root<FROM> from, String path){
         return this.pathResolver.resolve(from, path);
+    }
+
+    /**
+     * <p>Creates a copy of the current ProjectionQuery instance.</p>
+     *
+     * @return A new ProjectionQuery instance with the same configuration
+     */
+    public ProjectionQuery<FROM, TO> copy(){
+        ProjectionQuery<FROM, TO> copy = new ProjectionQuery<>(this.fromClass, this.toClass);
+        copy.specifications.addAll(this.specifications);
+        copy.filters.addAll(this.filters);
+        copy.orders.addAll(this.orders);
+        copy.distinct = this.distinct;
+        copy.paging = this.paging;
+        return copy;
     }
 }

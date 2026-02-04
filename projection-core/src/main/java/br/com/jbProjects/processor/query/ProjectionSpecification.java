@@ -1,7 +1,6 @@
 package br.com.jbProjects.processor.query;
 
 import br.com.jbProjects.processor.joinResolver.PathResolver;
-import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -25,7 +24,7 @@ public interface ProjectionSpecification<FROM> {
      */
     Predicate toPredicate(
             CriteriaBuilder criteriaBuilder,
-            CriteriaQuery<Tuple> query,
+            CriteriaQuery<?> query,
             Root<FROM> root,
             PathResolver pathResolver
     );

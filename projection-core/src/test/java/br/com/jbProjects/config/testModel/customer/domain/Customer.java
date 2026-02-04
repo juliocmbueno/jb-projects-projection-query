@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by julio.bueno on 21/11/2025.
  */
@@ -33,5 +36,8 @@ public class Customer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Address secondaryAddress;
+
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerProfile.class)
+    private Set<CustomerProfile> profiles = new HashSet<>();
 
 }
