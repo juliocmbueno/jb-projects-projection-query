@@ -31,9 +31,10 @@ The main module containing:
 
 - `ProjectionQuery` - It serves as the entry point for the projection engine, allowing you to define filters, specifications, ordering, and pagination in a fluent way. It encapsulates all the configuration required to execute a projection.
 - `ProjectionProcessor` - Core engine for executing projection queries
+- `ProjectionPage` - A wrapper for paginated projection results, containing the list of items and pagination metadata.
 - `@Projection` - Indicates that the annotated class is a projection for a specific entity.
 - `@ProjectionField` - Indicates that the annotated field is a projection field with optional aggregation functions.
-- `@ProjectionJoin` Indicates a join to be used in a projection. Should be used when there is a need to change the join type or define an alias for the join
+- `@ProjectionJoin` - Indicates a join to be used in a projection. Should be used when there is a need to change the join type or define an alias for the join.
 - Utility abstractions for type-safe projections
 
 This module is fully independent and can be used in **any** Java application — with or without frameworks.
@@ -83,13 +84,13 @@ public record CustomerBasicData(
 
 > In the following examples, we assume a JPA context in which the `ProjectionProcessor` receives an `EntityManager` instance, responsible for executing the queries.
 
-Example using a projection class:
+**1. Example using a projection class:**
 ```java
 ProjectionProcessor processor = new ProjectionProcessor(entityManager);
 List<CustomerBasicData> customers = processor.execute(CustomerBasicData.class);
 ```
 
-Example using a fully configured ProjectionQuery:
+**2. Example using a fully configured ProjectionQuery:**
 ```java
 ProjectionProcessor processor = new ProjectionProcessor(entityManager);
 
@@ -101,6 +102,17 @@ ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery
     .distinct();
 
 List<CustomerBasicData> customers = processor.execute(query);
+```
+
+**3. Example using ProjectionPage result:**
+```java
+ProjectionProcessor processor = new ProjectionProcessor(entityManager);
+
+ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery
+    .fromTo(Customer.class, CustomerBasicData.class)
+    .paging(0, 20);
+
+ProjectionPage<CustomerBasicData> page = processor.executePageable(query);
 ```
 
 ---
