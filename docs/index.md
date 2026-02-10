@@ -27,6 +27,7 @@ The project is split into multiple modules:
 
 ### standalone usage
 > In the following installation, be sure to use the latest version.
+
 ```xml
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
