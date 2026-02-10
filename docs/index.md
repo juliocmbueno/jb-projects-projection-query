@@ -25,9 +25,9 @@ The project is split into multiple modules:
 
 ##  Installation (Maven) [↑](#summary)
 
-### standalone usage
 > In the following installation, be sure to use the latest version.
 
+### standalone usage
 ```xml
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
