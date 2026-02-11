@@ -118,7 +118,13 @@ ProjectionPage<CustomerBasicData> page = processor.executePageable(query);
 ---
 ## Examples
 
-The `projection-examples` module contains sample use cases and demonstration scenarios for using Projection Query.
+The `projection-examples` module contains sample use cases and demonstration scenarios for using ProjectionQuery.
+
+📚 **Official Documentation:**  
+Before exploring the examples, you may want to check the full documentation available at:  
+👉 https://juliocmbueno.github.io/jb-projects-projection-query/
+
+The documentation provides a structured guide covering projections, filters, pagination, execution, custom handlers, logging, and Spring Boot integration.
 
 ### Explore the examples
 
