@@ -85,7 +85,7 @@ If you prefer, you can also use the filtering operator as a string.
 ProjectionQuery<Customer, CustomerProjection> query = ProjectionQuery
     .fromTo(Customer.class, CustomerProjection.class)
     .filter(
-        ProjectionFilters.of("name", 'like', "John%")
+        ProjectionFilters.of("name", "like", "John%")
     );
 ```
 
@@ -153,7 +153,7 @@ Or using the filtering operator as a string:
 ```java
 ProjectionQuery<Customer, CustomerProjection> query = ProjectionQuery
     .fromTo(Customer.class, CustomerProjection.class)
-    .filter("name", 'like', "John%");
+    .filter("name", "like", "John%");
 ```
 
 ---
