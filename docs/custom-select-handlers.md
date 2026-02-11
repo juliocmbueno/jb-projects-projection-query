@@ -6,6 +6,9 @@
 - [Pagination and Sorting](pagination.md)
 - [Executing Queries](execution.md)
 - Custom Select Handlers
+  - [Creating a Custom Select Handler](#creating-a-custom-select-handler-)
+  - [Registering the Custom Select Handler](#registering-the-custom-select-handler-)
+  - [Using the Custom Select Handler in Projections](#using-the-custom-select-handler-in-projections-)
 - [Custom Filters Handlers](custom-filters-handlers.md)
 - [Logging and Debug](logging.md)
 
