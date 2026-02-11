@@ -12,7 +12,7 @@
 - [Pagination and Sorting](pagination.md)
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
-- [Custom Filter Handlers](custom-filters-handlers.md)
+- [Custom Filter Handlers](custom-filter-handlers.md)
 - [Logging and Debug](logging.md)
 
 ## Filters and Specifications
@@ -100,7 +100,7 @@ from customer
 where name like 'John%'
 ```
 
-The library was designed to be extensible. Custom filter operators can be created by implementing `ProjectionFilterOperatorHandler` and registering them through the `ProjectionFilterOperatorProvider`.. This topic will be covered in detail in the [Custom Filter Handlers](custom-filters-handlers.md) section.
+The library was designed to be extensible. Custom filter operators can be created by implementing `ProjectionFilterOperatorHandler` and registering them through the `ProjectionFilterOperatorProvider`.. This topic will be covered in detail in the [Custom Filter Handlers](custom-filter-handlers.md) section.
 
 ---
 

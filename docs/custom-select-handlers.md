@@ -9,7 +9,7 @@
   - [Creating a Custom Select Handler](#creating-a-custom-select-handler-)
   - [Registering the Custom Select Handler](#registering-the-custom-select-handler-)
   - [Using the Custom Select Handler in Projections](#using-the-custom-select-handler-in-projections-)
-- [Custom Filter Handlers](custom-filters-handlers.md)
+- [Custom Filter Handlers](custom-filter-handlers.md)
 - [Logging and Debug](logging.md)
 
 ## Custom Select Handlers
@@ -89,4 +89,4 @@ select
 from customer
 ```
 
-[← Executing Queries](execution.md) · [↑ Back to top](#summary) · [Next → Custom Filter Handlers](custom-filters-handlers.md)
+[← Executing Queries](execution.md) · [↑ Back to top](#summary) · [Next → Custom Filter Handlers](custom-filter-handlers.md)

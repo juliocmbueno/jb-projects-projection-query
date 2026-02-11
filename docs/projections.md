@@ -10,7 +10,7 @@
 - [Pagination and Sorting](pagination.md)
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
-- [Custom Filter Handlers](custom-filters-handlers.md)
+- [Custom Filter Handlers](custom-filter-handlers.md)
 - [Logging and Debug](logging.md)
 
 ## Projection Classes

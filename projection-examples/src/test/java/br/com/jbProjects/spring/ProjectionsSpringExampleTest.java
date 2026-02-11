@@ -81,9 +81,4 @@ class ProjectionsSpringExampleTest extends BaseApplicationTest {
     public void fetchWithPageableResult(){
         examples.fetchWithPageableResult();
     }
-
-    @Test
-    public void teste(){
-        examples.teste();
-    }
 }
