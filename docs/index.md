@@ -24,7 +24,7 @@ The project is split into multiple modules:
 - **projection-spring** — Spring Data integration.
 - **projection-examples** — Sample use cases and demonstration scenarios.
 
-Project Repository: https://github.com/juliocmbueno/jb-projects-projection-query
+Project Repository: [https://github.com/juliocmbueno/jb-projects-projection-query](https://github.com/juliocmbueno/jb-projects-projection-query)
 
 ---
 
