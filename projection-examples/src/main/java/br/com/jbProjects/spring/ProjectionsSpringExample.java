@@ -5,12 +5,10 @@ import br.com.jbProjects.domain.projections.*;
 import br.com.jbProjects.processor.ProjectionProcessor;
 import br.com.jbProjects.processor.filter.CompoundOperator;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
-import br.com.jbProjects.processor.filter.ProjectionFilterOperatorProvider;
 import br.com.jbProjects.processor.filter.ProjectionFilters;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.pageable.ProjectionPage;
 import br.com.jbProjects.processor.query.ProjectionQuery;
-import br.com.jbProjects.processor.selectOperator.ProjectionSelectOperatorProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,17 +21,9 @@ import java.util.List;
 public class ProjectionsSpringExample {
 
     private final ProjectionProcessor projectionProcessor;
-    private final ProjectionFilterOperatorProvider filterProvider;
-    private final ProjectionSelectOperatorProvider selectOperatorProvider;
 
-    public ProjectionsSpringExample(
-            ProjectionProcessor projectionProcessor,
-            ProjectionFilterOperatorProvider filterProvider,
-            ProjectionSelectOperatorProvider selectOperatorProvider
-    ){
+    public ProjectionsSpringExample(ProjectionProcessor projectionProcessor){
         this.projectionProcessor = projectionProcessor;
-        this.filterProvider = filterProvider;
-        this.selectOperatorProvider = selectOperatorProvider;
     }
 
     /**
