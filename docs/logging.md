@@ -11,6 +11,7 @@
   - [INFO — Execution lifecycle & performance](#info--execution-lifecycle--performance-)
   - [DEBUG — Query structure & decisions](#debug--query-structure--decisions-)
   - [TRACE — Detailed internal behavior](#trace--detailed-internal-behavior-)
+- [For Spring Boot users](for-springboot-users.md)
 
 ## Logging and Debug
 
@@ -65,4 +66,4 @@ TRACE ProjectionProcessor - ProjectionQuery order added: name ASC
 ```
 > ⚠️ TRACE logs are intentionally verbose and should be enabled only for troubleshooting.
 
-[← Custom Filter Handlers](custom-filter-handlers.md) · [↑ Back to top](#summary)
+[← Previous: Custom Filter Handlers](custom-filter-handlers.md) · [↑ Back to top](#summary) · [Next → For Spring Boot users](for-springboot-users.md)

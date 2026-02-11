@@ -11,6 +11,7 @@
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
 - [Logging and Debug](logging.md)
+- [For Spring Boot users](for-springboot-users.md)
 
 # ProjectionQuery [↑](#summary)
 
@@ -22,6 +23,8 @@ The project is split into multiple modules:
 - **projection-core** — The core engine containing the projection API.
 - **projection-spring** — Spring Data integration.
 - **projection-examples** — Sample use cases and demonstration scenarios.
+
+Project Repository: https://github.com/juliocmbueno/jb-projects-projection-query
 
 ---
 

@@ -11,6 +11,7 @@
   - [Registering the Custom Filter Handler](#registering-the-custom-filter-handler-)
   - [Using the Custom Filter Handler in Projections](#using-the-custom-filter-handler-in-projections-)
 - [Logging and Debug](logging.md)
+- [For Spring Boot users](for-springboot-users.md)
 
 ## Custom Filter Handlers
 

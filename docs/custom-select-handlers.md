@@ -11,6 +11,7 @@
   - [Using the Custom Select Handler in Projections](#using-the-custom-select-handler-in-projections-)
 - [Custom Filter Handlers](custom-filter-handlers.md)
 - [Logging and Debug](logging.md)
+- [For Spring Boot users](for-springboot-users.md)
 
 ## Custom Select Handlers
 

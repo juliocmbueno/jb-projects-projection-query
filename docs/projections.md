@@ -12,6 +12,7 @@
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
 - [Logging and Debug](logging.md)
+- [For Spring Boot users](for-springboot-users.md)
 
 ## Projection Classes
 
