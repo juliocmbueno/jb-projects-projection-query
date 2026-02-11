@@ -5,6 +5,7 @@ import br.com.jbProjects.domain.projections.*;
 import br.com.jbProjects.processor.ProjectionProcessor;
 import br.com.jbProjects.processor.filter.CompoundOperator;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.filter.ProjectionFilterOperatorProvider;
 import br.com.jbProjects.processor.filter.ProjectionFilters;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.pageable.ProjectionPage;
@@ -22,8 +23,12 @@ public class ProjectionsSpringExample {
 
     private final ProjectionProcessor projectionProcessor;
 
-    public ProjectionsSpringExample(ProjectionProcessor projectionProcessor){
+    public ProjectionsSpringExample(
+            ProjectionProcessor projectionProcessor,
+            ProjectionFilterOperatorProvider filterOperatorProvider
+    ){
         this.projectionProcessor = projectionProcessor;
+        filterOperatorProvider.register("likeIgnoreCase", new LikeIgnoreCaseHandler());
     }
 
     /**
@@ -336,5 +341,14 @@ public class ProjectionsSpringExample {
         boolean hasNext = page.hasNext();
         boolean hasPrevious = page.hasPrevious();
         boolean isEmpty = page.isEmpty();
+    }
+
+    public void teste(){
+        List<CustomerBasicDataRecord> page = projectionProcessor.execute(
+                ProjectionQuery
+                        .fromTo(Customer.class, CustomerBasicDataRecord.class)
+                        .filter("name", "likeIgnoreCase", "John%")
+        );
+
     }
 }

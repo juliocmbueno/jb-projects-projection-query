@@ -9,7 +9,7 @@
   - [Creating a Custom Select Handler](#creating-a-custom-select-handler-)
   - [Registering the Custom Select Handler](#registering-the-custom-select-handler-)
   - [Using the Custom Select Handler in Projections](#using-the-custom-select-handler-in-projections-)
-- [Custom Filters Handlers](custom-filters-handlers.md)
+- [Custom Filter Handlers](custom-filters-handlers.md)
 - [Logging and Debug](logging.md)
 
 ## Custom Select Handlers
@@ -65,14 +65,14 @@ ProjectionSelectOperatorProvider
 ```
 
 > **Note:** You only need to register the handler once, usually during application initialization.
-> 
+
 ### Using the Custom Select Handler in Projections [↑](#summary)
 
 After registering your custom select handler, you can use it in your projections. To do this, simply reference the handler class in the `@ProjectionField` annotation:
 
 ```java
 @Projection(of = Customer.class)
-public record CustomerWithOnlyNumbers(
+public record CustomerProjection(
         @ProjectionField Long id,
         @ProjectionField String name,
         @ProjectionField(selectHandler = OnlyNumbersHandler.class) String phoneNumber
@@ -89,4 +89,4 @@ select
 from customer
 ```
 
-[← Executing Queries](execution.md) · [↑ Back to top](#summary) · [Next → Custom Filters Handlers](custom-filters-handlers.md)
+[← Executing Queries](execution.md) · [↑ Back to top](#summary) · [Next → Custom Filter Handlers](custom-filters-handlers.md)

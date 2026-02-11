@@ -10,7 +10,7 @@
   - [Execution with ProjectionQuery](#execution-with-projectionquery-)
   - [Paginated Execution](#paginated-execution-)
 - [Custom Select Handlers](custom-select-handlers.md)
-- [Custom Filters Handlers](custom-filters-handlers.md)
+- [Custom Filter Handlers](custom-filters-handlers.md)
 - [Logging and Debug](logging.md)
 
 ## Executing Queries

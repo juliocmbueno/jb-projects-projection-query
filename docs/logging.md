@@ -6,7 +6,7 @@
 - [Pagination and Sorting](pagination.md)
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
-- [Custom Filters Handlers](custom-filters-handlers.md)
+- [Custom Filter Handlers](custom-filters-handlers.md)
 - Logging and Debug
   - [INFO — Execution lifecycle & performance](#info--execution-lifecycle--performance-)
   - [DEBUG — Query structure & decisions](#debug--query-structure--decisions-)
@@ -65,4 +65,4 @@ TRACE ProjectionProcessor - ProjectionQuery order added: name ASC
 ```
 > ⚠️ TRACE logs are intentionally verbose and should be enabled only for troubleshooting.
 
-[← Custom Filters Handlers](custom-filters-handlers.md) · [↑ Back to top](#summary)
+[← Custom Filter Handlers](custom-filters-handlers.md) · [↑ Back to top](#summary)
