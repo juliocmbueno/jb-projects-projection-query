@@ -2,12 +2,13 @@
 
 - Index
   - [ProjectionQuery](#projectionquery-)
-  - [Installation (Maven)](#installation-maven)
+  - [Installation (Maven)](#installation-maven-)
   - [Basic Usage](#basic-usage-)
 - [Defining Projection Classes](projections.md)
-- [Executing Queries](execution.md)
 - [Filters and Specifications](filters.md)
 - [Pagination and Sorting](pagination.md)
+- [Executing Queries](execution.md)
+- [Custom Select Handlers](custom-select-handlers.md)
 - [Logging and Debug](logging.md)
 
 # ProjectionQuery [↑](#summary)
