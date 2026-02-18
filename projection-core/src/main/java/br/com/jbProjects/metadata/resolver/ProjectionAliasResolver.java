@@ -1,6 +1,7 @@
 package br.com.jbProjects.metadata.resolver;
 
 import br.com.jbProjects.annotations.ProjectionJoin;
+import br.com.jbProjects.validations.ProjectionValidations;
 
 import java.util.Arrays;
 import java.util.List;
@@ -84,6 +85,7 @@ public class ProjectionAliasResolver {
      * @param declaredJoins List of join declarations containing aliases
      */
     private ProjectionAliasResolver(List<ProjectionJoin> declaredJoins){
+        ProjectionValidations.validateAliases(declaredJoins);
         this.aliasMap = declaredJoins
                 .stream()
                 .filter(join -> !join.alias().isBlank())

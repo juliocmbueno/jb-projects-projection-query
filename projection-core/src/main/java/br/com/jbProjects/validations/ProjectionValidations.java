@@ -4,10 +4,7 @@ import br.com.jbProjects.annotations.Projection;
 import br.com.jbProjects.annotations.ProjectionJoin;
 import jakarta.persistence.Entity;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,10 +62,20 @@ public class ProjectionValidations {
             return;
         }
 
-        Set<String> allPaths = Arrays.stream(projection.joins()).map(ProjectionJoin::path).collect(Collectors.toSet());
+        validateAliases(Arrays.stream(projection.joins()).toList());
+    }
+
+    /**
+     * Validates that aliases in a list of ProjectionJoin annotations are unique and do not conflict with paths.
+     *
+     * @param joins the list of ProjectionJoin annotations to validate
+     * @throws IllegalArgumentException if duplicate aliases are found or if an alias matches a path
+     */
+    public static void validateAliases(List<ProjectionJoin> joins) {
+        Set<String> allPaths = joins.stream().map(ProjectionJoin::path).collect(Collectors.toSet());
         Map<String, String> aliasToPath = new HashMap<>();
 
-        for (ProjectionJoin join : projection.joins()) {
+        for (ProjectionJoin join : joins) {
             String alias = join.alias();
             String path = join.path();
 
