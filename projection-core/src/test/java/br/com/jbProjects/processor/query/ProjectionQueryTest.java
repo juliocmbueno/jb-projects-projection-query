@@ -1,13 +1,11 @@
 package br.com.jbProjects.processor.query;
 
-import br.com.jbProjects.annotations.ProjectionJoin;
 import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerName;
 import br.com.jbProjects.processor.filter.*;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.order.ProjectionOrder;
-import br.com.jbProjects.util.ProjectionUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -66,15 +64,6 @@ class ProjectionQueryTest {
         projectionQuery.distinct();
 
         assertTrue(projectionQuery.isDistinct());
-    }
-
-    @Test
-    public void getDeclaredJoins(){
-        ProjectionQuery<Customer, CustomerName> projectionQuery = ProjectionQuery.fromTo(Customer.class, CustomerName.class);
-
-        List<ProjectionJoin> declaredJoins = projectionQuery.getDeclaredJoins();
-        List<ProjectionJoin> expected = ProjectionUtils.getDeclaredJoins(Customer.class);
-        assertEquals(expected, declaredJoins);
     }
 
     @Test

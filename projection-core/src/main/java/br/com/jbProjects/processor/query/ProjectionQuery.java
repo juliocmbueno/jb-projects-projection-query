@@ -1,13 +1,12 @@
 package br.com.jbProjects.processor.query;
 
-import br.com.jbProjects.annotations.ProjectionJoin;
+import br.com.jbProjects.metadata.cache.ProjectionMetadataCache;
+import br.com.jbProjects.metadata.model.ProjectionMetadata;
 import br.com.jbProjects.processor.filter.*;
 import br.com.jbProjects.processor.joinResolver.DefaultPathResolver;
 import br.com.jbProjects.processor.joinResolver.PathResolver;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.order.ProjectionOrder;
-import br.com.jbProjects.util.ProjectionUtils;
-import br.com.jbProjects.validations.ProjectionValidations;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import lombok.Getter;
@@ -55,10 +54,11 @@ public class ProjectionQuery<FROM, TO> {
     private ProjectionPaging paging;
 
     private ProjectionQuery(Class<FROM> fromClass, Class<TO> toClass) {
-        ProjectionValidations.validateProjectionClass(toClass);
         this.fromClass = fromClass;
         this.toClass = toClass;
-        this.pathResolver = new DefaultPathResolver(getDeclaredJoins());
+
+        ProjectionMetadata metaData = ProjectionMetadataCache.get(toClass);
+        this.pathResolver = new DefaultPathResolver(metaData);
     }
 
     /**
@@ -179,15 +179,6 @@ public class ProjectionQuery<FROM, TO> {
      */
     public boolean hasPaging(){
         return this.paging != null;
-    }
-
-    /**
-     * <p>Retrieves the declared joins from the target projection class.</p>
-     *
-     * @return List of ProjectionJoin annotations
-     */
-    public List<ProjectionJoin> getDeclaredJoins(){
-        return ProjectionUtils.getDeclaredJoins(toClass);
     }
 
     /**

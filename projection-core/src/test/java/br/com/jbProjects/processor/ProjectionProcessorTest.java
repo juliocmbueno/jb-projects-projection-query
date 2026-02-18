@@ -444,6 +444,23 @@ class ProjectionProcessorTest extends BaseJpaTest {
     }
 
     @Test
+    void execute_withProjectionQuery_filterWithAlias() {
+        List<CustomerNameAndCityJoinWithAlias> results = processor
+                .execute(
+                        ProjectionQuery
+                                .fromTo(Customer.class, CustomerNameAndCityJoinWithAlias.class)
+                                .filter("cityState.id", ProjectionFilterOperator.EQUAL, state.getId())
+                );
+
+        Assertions.assertEquals(1, results.size());
+        CustomerNameAndCityJoinWithAlias result = results.get(0);
+        Assertions.assertEquals(customer.getName(), result.name());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getId(), result.cityId());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getName(), result.cityName());
+        Assertions.assertEquals(customer.getMainAddress().getCity().getState().getName(), result.state());
+    }
+
+    @Test
     void execute_withProjectionQuery_filterEqual() {
         // filter valid
         List<CustomerName> results = processor

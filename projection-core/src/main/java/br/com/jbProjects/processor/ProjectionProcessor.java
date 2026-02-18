@@ -6,7 +6,6 @@ import br.com.jbProjects.processor.pageable.ProjectionPage;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import br.com.jbProjects.processor.query.ProjectionSelectInfo;
 import br.com.jbProjects.processor.query.ProjectionSpecification;
-import br.com.jbProjects.validations.ProjectionValidations;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
@@ -73,10 +72,7 @@ public class ProjectionProcessor {
      * @throws IllegalArgumentException if the projection class is not properly annotated.
      */
     public <T> List<T> execute(Class<T> projectionClass){
-        ProjectionValidations.validateProjectionClass(projectionClass);
-
         Projection projection = projectionClass.getAnnotation(Projection.class);
-
         return execute(ProjectionQuery.fromTo(projection.of(), projectionClass));
     }
 

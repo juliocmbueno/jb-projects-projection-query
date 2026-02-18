@@ -1,6 +1,9 @@
 package br.com.jbProjects.processor.joinResolver;
 
 import br.com.jbProjects.annotations.ProjectionJoin;
+import br.com.jbProjects.metadata.model.JoinMetadata;
+import br.com.jbProjects.metadata.model.ProjectionMetadata;
+import br.com.jbProjects.metadata.resolver.ProjectionAliasResolver;
 import jakarta.persistence.criteria.*;
 
 import java.util.Arrays;
@@ -45,35 +48,25 @@ public class DefaultPathResolver implements PathResolver {
     
     private final Map<String, Join<?,?>> joinCache = new HashMap<>();
     private final Map<String, JoinType> annotationJoins;
-    private final Map<String, String> pathsByAlias;
+    private final ProjectionAliasResolver aliasResolver;
     private final IdentifierResolver identifierResolver = new DefaultIdentifierResolver();
 
     /**
      * Constructs a DefaultPathResolver with the provided projection join definitions.
      *
-     * @param definedJoins List of ProjectionJoin annotations defining join paths and types.
+     * @param metaData The projection metadata containing join definitions and alias mappings.
      */
-    public DefaultPathResolver(List<ProjectionJoin> definedJoins) {
-        annotationJoins = createAnnotationJoins(definedJoins);
-        pathsByAlias = createPathByAlias(definedJoins);
+    public DefaultPathResolver(ProjectionMetadata metaData) {
+        annotationJoins = createAnnotationJoins(metaData.joins());
+        aliasResolver = ProjectionAliasResolver.of(metaData.aliasMap());
     }
 
-    private Map<String, JoinType> createAnnotationJoins(List<ProjectionJoin> definedJoins){
+    private Map<String, JoinType> createAnnotationJoins(List<JoinMetadata> definedJoins){
         return definedJoins
                 .stream()
                 .collect(Collectors.toMap(
-                        ProjectionJoin::path,
-                        ProjectionJoin::type)
-                );
-    }
-
-    private Map<String, String> createPathByAlias(List<ProjectionJoin> definedJoins){
-        return definedJoins
-                .stream()
-                .filter(join -> !join.alias().isBlank())
-                .collect(Collectors.toMap(
-                        ProjectionJoin::alias,
-                        ProjectionJoin::path)
+                        JoinMetadata::path,
+                        JoinMetadata::type)
                 );
     }
 
@@ -87,7 +80,7 @@ public class DefaultPathResolver implements PathResolver {
      */
     @Override
     public <T> Path<T> resolve(Root<?> root, String path) {
-        String resolved = resolveAlias(path);
+        String resolved = aliasResolver.resolve(path);
         String[] parts = resolved.split("\\.");
         From<?, ?> current = root;
 
@@ -121,33 +114,6 @@ public class DefaultPathResolver implements PathResolver {
         }
 
         return current.get(parts[parts.length - 1]);
-    }
-
-    private String resolveAlias(String fullPath){
-        while (true) {
-            String resolved = resolveSingleAlias(fullPath);
-            if (resolved.equals(fullPath)) {
-                return resolved;
-            }
-            fullPath = resolved;
-        }
-    }
-
-    private String resolveSingleAlias(String fullPath) {
-        String[] parts = fullPath.split("\\.");
-        String first = parts[0];
-
-        if (!pathsByAlias.containsKey(first)) {
-            return fullPath;
-        }
-
-        String mapped = pathsByAlias.get(first);
-
-        if (parts.length == 1) {
-            return mapped;
-        }
-
-        return mapped + "." + String.join(".", Arrays.copyOfRange(parts, 1, parts.length));
     }
 
     private Join<?,?> joinPart(From<?,?> root, String fullPath, String attribute) {
