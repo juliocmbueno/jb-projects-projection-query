@@ -1,14 +1,15 @@
 package br.com.jbProjects.processor.query;
 
 import br.com.jbProjects.annotations.ProjectionField;
+import br.com.jbProjects.metadata.cache.ProjectionMetadataCache;
+import br.com.jbProjects.metadata.model.FieldMetadata;
+import br.com.jbProjects.metadata.model.ProjectionMetadata;
 import br.com.jbProjects.processor.joinResolver.PathResolver;
 import br.com.jbProjects.processor.selectOperator.ProjectionSelectOperatorProvider;
 import br.com.jbProjects.processor.selectOperator.handler.ProjectionSelectOperatorHandler;
-import br.com.jbProjects.util.ProjectionUtils;
 import jakarta.persistence.criteria.*;
 import lombok.Getter;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -52,40 +53,35 @@ public class ProjectionSelectInfo {
             CriteriaBuilder criteriaBuilder,
             Root<?> from
     ){
-        List<Field> fields = ProjectionUtils.getProjectionFieldsAnnotations(projectionQuery.toClass());
+        ProjectionMetadata metaData = ProjectionMetadataCache.get(projectionQuery.toClass());
         pathResolver = projectionQuery.getPathResolver();
-        selections = processSelections(fields, criteriaBuilder, from);
-        groupByFields = processGroupByFields(fields, from);
+        selections = processSelections(metaData.fields(), criteriaBuilder, from);
+        groupByFields = processGroupByFields(metaData.fields(), from);
     }
 
-    private Selection<?>[] processSelections(List<Field> fields, CriteriaBuilder criteriaBuilder, Root<?> from) {
+    private Selection<?>[] processSelections(List<FieldMetadata> fields, CriteriaBuilder criteriaBuilder, Root<?> from) {
         return fields.stream()
                 .map(field -> {
-                    ProjectionField projectionField = field.getAnnotation(ProjectionField.class);
-
-                    String fieldColumnName = ProjectionUtils.getFieldColumnName(field);
-
                     ProjectionSelectOperatorHandler handler = ProjectionSelectOperatorProvider
                             .getInstance()
-                            .get(projectionField.selectHandler());
+                            .get(field.selectHandler());
 
-                    Expression<?> expression = handler.apply(pathResolver, criteriaBuilder, from, fieldColumnName);
+                    Expression<?> expression = handler.apply(pathResolver, criteriaBuilder, from, field.value());
 
-                    return expression.alias(field.getName());
+                    return expression.alias(field.projectionFieldName());
                 })
                 .toArray(Selection<?>[]::new);
     }
 
-    private Path<?>[] processGroupByFields(List<Field> fields, Root<?> from) {
-        boolean hasAggregate =
-                fields.stream()
-                        .map(field -> field.getAnnotation(ProjectionField.class))
-                        .map(ProjectionField::selectHandler)
-                        .map(handlerClass ->
-                                ProjectionSelectOperatorProvider
-                                        .getInstance()
-                                        .get(handlerClass))
-                        .anyMatch(ProjectionSelectOperatorHandler::aggregate);
+    private Path<?>[] processGroupByFields(List<FieldMetadata> fields, Root<?> from) {
+        boolean hasAggregate = fields
+                .stream()
+                .map(FieldMetadata::selectHandler)
+                .map(handlerClass ->
+                        ProjectionSelectOperatorProvider
+                                .getInstance()
+                                .get(handlerClass))
+                .anyMatch(ProjectionSelectOperatorHandler::aggregate);
 
         if (!hasAggregate) {
             return new Path<?>[0];
@@ -93,18 +89,15 @@ public class ProjectionSelectInfo {
 
         return fields.stream()
                 .filter(field -> {
-                    ProjectionField projectionField =
-                            field.getAnnotation(ProjectionField.class);
-
                     ProjectionSelectOperatorHandler handler =
                             ProjectionSelectOperatorProvider
                                     .getInstance()
-                                    .get(projectionField.selectHandler());
+                                    .get(field.selectHandler());
 
                     return !handler.aggregate();
                 })
                 .map(field ->
-                        from.get(ProjectionUtils.getFieldColumnName(field)))
+                        from.get(field.value()))
                 .toArray(Path<?>[]::new);
     }
 }

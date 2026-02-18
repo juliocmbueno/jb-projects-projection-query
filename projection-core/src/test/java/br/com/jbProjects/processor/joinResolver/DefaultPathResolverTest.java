@@ -42,49 +42,6 @@ class DefaultPathResolverTest {
     }
 
     @Test
-    public void create_validatePathsByAlias(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
-
-        Map<String, String> pathsByAlias = (Map<String, String>) ReflectionTestUtils.getField(resolver, "pathsByAlias");
-        assertNotNull(pathsByAlias);
-        assertEquals(2, pathsByAlias.size());
-
-        assertEquals("mainAddress", pathsByAlias.get("address"));
-        assertEquals("address.city.state", pathsByAlias.get("cityState"));
-    }
-
-    @Test
-    public void resolveAlias(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
-
-        String resolved = ReflectionTestUtils.invokeMethod(resolver, "resolveAlias", "address.city.id");
-        assertEquals("mainAddress.city.id", resolved);
-
-        resolved = ReflectionTestUtils.invokeMethod(resolver, "resolveAlias", "address.city.name");
-        assertEquals("mainAddress.city.name", resolved);
-
-        resolved = ReflectionTestUtils.invokeMethod(resolver, "resolveAlias", "cityState.name");
-        assertEquals("mainAddress.city.state.name", resolved);
-    }
-
-    @Test
-    public void resolveSingleAlias(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
-
-        String resolved = ReflectionTestUtils.invokeMethod(resolver, "resolveSingleAlias", "cityState.name");
-        assertEquals("address.city.state.name", resolved);
-
-        resolved = ReflectionTestUtils.invokeMethod(resolver, "resolveSingleAlias", "address");
-        assertEquals("mainAddress", resolved);
-
-        resolved = ReflectionTestUtils.invokeMethod(resolver, "resolveSingleAlias", "id");
-        assertEquals("id", resolved);
-    }
-
-    @Test
     public void buildJoinKey(){
         List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
         DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);

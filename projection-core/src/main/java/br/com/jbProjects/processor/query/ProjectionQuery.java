@@ -7,7 +7,6 @@ import br.com.jbProjects.processor.joinResolver.PathResolver;
 import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.order.ProjectionOrder;
 import br.com.jbProjects.util.ProjectionUtils;
-import br.com.jbProjects.validations.ProjectionValidations;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import lombok.Getter;
@@ -55,7 +54,6 @@ public class ProjectionQuery<FROM, TO> {
     private ProjectionPaging paging;
 
     private ProjectionQuery(Class<FROM> fromClass, Class<TO> toClass) {
-        ProjectionValidations.validateProjectionClass(toClass);
         this.fromClass = fromClass;
         this.toClass = toClass;
         this.pathResolver = new DefaultPathResolver(getDeclaredJoins());

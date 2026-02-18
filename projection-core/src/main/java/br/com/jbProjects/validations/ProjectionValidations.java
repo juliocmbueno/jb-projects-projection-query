@@ -58,7 +58,7 @@ public class ProjectionValidations {
      * @param clazz the projection class to validate
      * @throws IllegalArgumentException if duplicate aliases are found or if an alias matches a path
      */
-    public static void validateAliases(Class<?> clazz) {
+    private static void validateAliases(Class<?> clazz) {
         Projection projection = clazz.getAnnotation(Projection.class);
 
         if (projection.joins().length == 0) {
