@@ -92,4 +92,21 @@ public class ProjectionValidations {
             }
         }
     }
+
+    /**
+     * Validates that aliases in a map are unique and do not conflict with paths.
+     *
+     * @param aliasMap the map of aliases to paths to validate
+     * @throws IllegalArgumentException if duplicate aliases are found or if an alias matches a path
+     */
+    public static void validadeAlias(Map<String, String> aliasMap) {
+        Set<String> allPaths = new HashSet<>(aliasMap.values());
+        Set<String> aliases = aliasMap.keySet();
+
+        for (String alias : aliases) {
+            if (allPaths.contains(alias)) {
+                throw new IllegalArgumentException("Alias '" + alias + "' cannot be equal a path");
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package br.com.jbProjects.metadata.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by julio.bueno on 18/02/2026.
@@ -22,12 +23,14 @@ import java.util.List;
  *
  * @param joins List of resolved join metadata with aliases substituted
  * @param fields List of resolved field metadata with aliases substituted
+ * @param aliasMap Map of original join paths to their corresponding aliases used in the projection
  *
  * @see ProjectionMetadata
  * @see br.com.jbProjects.metadata.resolver.ProjectionStructureResolver
  */
 public record ProjectionStructure(
         List<JoinMetadata> joins,
-        List<FieldMetadata> fields
+        List<FieldMetadata> fields,
+        Map<String, String> aliasMap
 ) {
 }

@@ -1,17 +1,16 @@
 package br.com.jbProjects.processor.joinResolver;
 
-import br.com.jbProjects.annotations.ProjectionJoin;
 import br.com.jbProjects.config.helper.ReflectionTestUtils;
 import br.com.jbProjects.config.testModel.city.domain.City;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerNameAndCityAttributes;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerNameAndCityJoinWithAlias;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerWithCityId;
-import br.com.jbProjects.util.ProjectionUtils;
+import br.com.jbProjects.metadata.cache.ProjectionMetadataCache;
+import br.com.jbProjects.metadata.model.ProjectionMetadata;
 import jakarta.persistence.criteria.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,8 +24,8 @@ class DefaultPathResolverTest {
 
     @Test
     public void create_validateAnnotationJoins(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerNameAndCityJoinWithAlias.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         Map<String, JoinType> annotationJoins = (Map<String, JoinType>) ReflectionTestUtils.getField(resolver, "annotationJoins");
         assertNotNull(annotationJoins);
@@ -36,15 +35,15 @@ class DefaultPathResolverTest {
         assertNotNull(joinType);
         assertEquals(JoinType.INNER, joinType);
 
-        joinType = annotationJoins.get("address.city.state");
+        joinType = annotationJoins.get("mainAddress.city.state");
         assertNotNull(joinType);
         assertEquals(JoinType.INNER, joinType);
     }
 
     @Test
     public void buildJoinKey(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerNameAndCityJoinWithAlias.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         From<?, ?> from = Mockito.mock(From.class);
         Mockito.doReturn("to-string").when(from).toString();
@@ -55,8 +54,8 @@ class DefaultPathResolverTest {
 
     @Test
     public void resolveJoinType(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityAttributes.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerNameAndCityAttributes.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         // mainAddress hierarchy
         JoinType joinType = ReflectionTestUtils.invokeMethod(resolver, "resolveJoinType", "mainAddress");
@@ -81,8 +80,8 @@ class DefaultPathResolverTest {
 
     @Test
     public void joinPart(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityAttributes.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerNameAndCityAttributes.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         //
         From<?, ?> from = Mockito.mock(From.class);
@@ -107,8 +106,8 @@ class DefaultPathResolverTest {
 
     @Test
     public void joinPart_validatedJoinCache(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityAttributes.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerNameAndCityAttributes.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         //
         From<?, ?> from = Mockito.mock(From.class);
@@ -131,8 +130,8 @@ class DefaultPathResolverTest {
 
     @Test
     public void resolve(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityAttributes.class);
-        DefaultPathResolver resolver = new DefaultPathResolver(declaredJoins);
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerNameAndCityAttributes.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         Root<?> root = Mockito.mock(Root.class);
         Path<?> pathName = Mockito.mock(Path.class);
@@ -144,8 +143,8 @@ class DefaultPathResolverTest {
 
     @Test
     public void resolve_withJoin(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityAttributes.class);
-        DefaultPathResolver resolver = Mockito.spy(new DefaultPathResolver(declaredJoins));
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerNameAndCityAttributes.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         Root<?> root = Mockito.mock(Root.class);
         Join<?, ?> joinMainAddress = Mockito.mock(Join.class);
@@ -184,8 +183,8 @@ class DefaultPathResolverTest {
 
     @Test
     public void resolve_withExplicitJoin(){
-        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerWithCityId.class);
-        DefaultPathResolver resolver = Mockito.spy(new DefaultPathResolver(declaredJoins));
+        ProjectionMetadata metadata = ProjectionMetadataCache.get(CustomerWithCityId.class);
+        DefaultPathResolver resolver = new DefaultPathResolver(metadata);
 
         Root<?> root = Mockito.mock(Root.class);
         Join<?, ?> joinMainAddress = Mockito.mock(Join.class);

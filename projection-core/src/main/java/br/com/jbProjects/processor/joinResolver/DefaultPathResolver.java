@@ -1,6 +1,8 @@
 package br.com.jbProjects.processor.joinResolver;
 
 import br.com.jbProjects.annotations.ProjectionJoin;
+import br.com.jbProjects.metadata.model.JoinMetadata;
+import br.com.jbProjects.metadata.model.ProjectionMetadata;
 import br.com.jbProjects.metadata.resolver.ProjectionAliasResolver;
 import jakarta.persistence.criteria.*;
 
@@ -52,19 +54,19 @@ public class DefaultPathResolver implements PathResolver {
     /**
      * Constructs a DefaultPathResolver with the provided projection join definitions.
      *
-     * @param definedJoins List of ProjectionJoin annotations defining join paths and types.
+     * @param metaData The projection metadata containing join definitions and alias mappings.
      */
-    public DefaultPathResolver(List<ProjectionJoin> definedJoins) {
-        annotationJoins = createAnnotationJoins(definedJoins);
-        aliasResolver = ProjectionAliasResolver.of(definedJoins);
+    public DefaultPathResolver(ProjectionMetadata metaData) {
+        annotationJoins = createAnnotationJoins(metaData.joins());
+        aliasResolver = ProjectionAliasResolver.of(metaData.aliasMap());
     }
 
-    private Map<String, JoinType> createAnnotationJoins(List<ProjectionJoin> definedJoins){
+    private Map<String, JoinType> createAnnotationJoins(List<JoinMetadata> definedJoins){
         return definedJoins
                 .stream()
                 .collect(Collectors.toMap(
-                        ProjectionJoin::path,
-                        ProjectionJoin::type)
+                        JoinMetadata::path,
+                        JoinMetadata::type)
                 );
     }
 

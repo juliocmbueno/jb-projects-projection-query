@@ -23,16 +23,45 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ProjectionAliasResolverTest {
 
     @Test
-    public void create(){
+    public void ofWithProjectionJoin(){
         List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
         ProjectionAliasResolver aliasResolver = ProjectionAliasResolver.of(declaredJoins);
         assertNotNull(aliasResolver);
 
-        Map<String, String> aliasMap = (Map<String, String>) ReflectionTestUtils.getField(aliasResolver, "aliasMap");
+        Map<String, String> aliasMap = aliasResolver.getAliasMap();
         assertNotNull(aliasMap);
         assertEquals(2, aliasMap.size());
         assertEquals("mainAddress", aliasMap.get("address"));
         assertEquals("address.city.state", aliasMap.get("cityState"));
+    }
+
+    @Test
+    public void ofWithMap(){
+        List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(CustomerNameAndCityJoinWithAlias.class);
+        Map<String, String> aliasMapOrigin = ProjectionAliasResolver.of(declaredJoins).getAliasMap();
+
+        ProjectionAliasResolver aliasResolver = ProjectionAliasResolver.of(aliasMapOrigin);
+        assertNotNull(aliasResolver);
+
+        Map<String, String> aliasMap = aliasResolver.getAliasMap();
+        assertEquals(aliasMap.size(), aliasMapOrigin.size());
+        aliasMap.forEach((key, value) -> assertEquals(aliasMapOrigin.get(key), value));
+    }
+
+    @Test
+    public void ofWithNullMap(){
+        IllegalArgumentException illegalArgumentException = Assertions.assertThrows(IllegalArgumentException.class, () -> ProjectionAliasResolver.of((Map<String, String>) null));
+        Assertions.assertEquals("Alias map cannot be null", illegalArgumentException.getMessage());
+    }
+
+    @Test
+    public void ofWithInvalidMap(){
+        Map<String, String> invalidMap = Map.of(
+                "address", "mainAddress",
+                "mainAddress", "address"
+        );
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ProjectionAliasResolver.of(invalidMap), "The resolver should detect circular alias definitions and throw an exception");
     }
 
     @Test
@@ -73,7 +102,6 @@ class ProjectionAliasResolverTest {
         resolved = ReflectionTestUtils.invokeMethod(aliasResolver, "resolveSingleAlias", "id");
         assertEquals("id", resolved);
     }
-
 }
 
 @Projection(

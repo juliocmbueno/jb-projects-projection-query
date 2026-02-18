@@ -79,6 +79,20 @@ public class ProjectionAliasResolver {
     /**
      * Private constructor to enforce factory method usage.
      *
+     * <p>Directly accepts a pre-built alias map, allowing for flexible
+     * construction in cases where the map is already available or needs to
+     * be constructed differently.
+     *
+     * @param aliasMap Map of aliases to their corresponding paths
+     */
+    private ProjectionAliasResolver(Map<String, String> aliasMap) {
+        ProjectionValidations.validadeAlias(aliasMap);
+        this.aliasMap = aliasMap;
+    }
+
+    /**
+     * Private constructor to enforce factory method usage.
+     *
      * <p>Builds the alias map by extracting all non-empty aliases from the
      * provided join declarations.
      *
@@ -106,6 +120,23 @@ public class ProjectionAliasResolver {
      */
     public static ProjectionAliasResolver of(List<ProjectionJoin> declaredJoins) {
         return new ProjectionAliasResolver(declaredJoins);
+    }
+
+    /**
+     * Factory method for creating a new ProjectionAliasResolver with a pre-built alias map.
+     *
+     * <p>This method allows for direct construction of the resolver when an alias map
+     * is already available, providing flexibility in how the resolver is created.
+     *
+     * @param aliasMap Map of aliases to their corresponding paths
+     * @return A new ProjectionAliasResolver instance
+     */
+    public static ProjectionAliasResolver of(Map<String, String> aliasMap) {
+        if(aliasMap == null) {
+            throw new IllegalArgumentException("Alias map cannot be null");
+        }
+
+        return new ProjectionAliasResolver(aliasMap);
     }
 
     /**
@@ -192,5 +223,18 @@ public class ProjectionAliasResolver {
         }
 
         return mapped + "." + String.join(".", Arrays.copyOfRange(parts, 1, parts.length));
+    }
+
+    /**
+     * Retrieves an unmodifiable copy of the alias map.
+     *
+     * <p>This method returns a defensive copy of the internal alias map to
+     * prevent external modification. The returned map is immutable, ensuring
+     * thread safety and encapsulation.
+     *
+     * @return An unmodifiable Map containing alias-to-path mappings
+     */
+    public Map<String, String> getAliasMap() {
+        return Map.copyOf(aliasMap);
     }
 }

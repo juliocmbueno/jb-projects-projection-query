@@ -36,6 +36,7 @@ import br.com.jbProjects.validations.ProjectionValidations;
  * Class<?> entityClass = metadata.entityClass();
  * List<FieldMetadata> fields = metadata.fields();
  * List<JoinMetadata> joins = metadata.joins();
+ * Map<String, String> aliasMap = metadata.aliasMap();
  * }</pre>
  *
  * @see ProjectionMetadata
@@ -75,7 +76,8 @@ public class ProjectionMetadataFactory {
                 projectionClass,
                 projection.of(),
                 structure.joins(),
-                structure.fields()
+                structure.fields(),
+                structure.aliasMap()
         );
     }
 }

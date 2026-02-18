@@ -1,6 +1,7 @@
 package br.com.jbProjects.metadata.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by julio.bueno on 18/02/2026.
@@ -30,6 +31,7 @@ import java.util.List;
  * // Access projection information
  * Class<?> projectionClass = metadata.projectionClass(); // CustomerDTO.class
  * Class<?> entityClass = metadata.entityClass();         // Customer.class
+ * Map<String, String> aliasMap = metadata.aliasMap();   // e.g., "mainAddress" -> "customer.address"
  *
  * // Iterate over fields
  * for (FieldMetadata field : metadata.fields()) {
@@ -48,6 +50,7 @@ import java.util.List;
  * @param entityClass The JPA entity class this projection maps from
  * @param joins List of configured joins for this projection
  * @param fields List of fields to be selected in the projection
+ * @param aliasMap Map of aliases to their corresponding paths for resolving field paths
  *
  * @see FieldMetadata
  * @see JoinMetadata
@@ -57,6 +60,7 @@ public record ProjectionMetadata(
         Class<?> projectionClass,
         Class<?> entityClass,
         List<JoinMetadata> joins,
-        List<FieldMetadata> fields
+        List<FieldMetadata> fields,
+        Map<String, String> aliasMap
 ) {
 }

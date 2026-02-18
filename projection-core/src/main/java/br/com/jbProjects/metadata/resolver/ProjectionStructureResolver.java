@@ -97,7 +97,11 @@ public class ProjectionStructureResolver {
         List<JoinMetadata> joins = resolveJoins(declaredJoins, aliasResolver);
         List<FieldMetadata> fields = resolveFields(projectionClass, aliasResolver);
 
-        return new ProjectionStructure(joins, fields);
+        return new ProjectionStructure(
+                joins,
+                fields,
+                aliasResolver.getAliasMap()
+        );
     }
 
     /**
