@@ -46,6 +46,11 @@ import br.com.jbProjects.validations.ProjectionValidations;
 public class ProjectionMetadataFactory {
 
     /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private ProjectionMetadataFactory() {}
+
+    /**
      * Creates a {@link ProjectionMetadata} instance for the specified projection class.
      *
      * <p>This method performs the complete metadata extraction process:

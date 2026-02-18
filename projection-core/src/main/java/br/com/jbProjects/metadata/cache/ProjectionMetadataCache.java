@@ -52,6 +52,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectionMetadataCache {
 
     /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private ProjectionMetadataCache() {}
+
+    /**
      * Internal cache storing projection metadata indexed by projection class.
      * Uses ConcurrentHashMap for thread-safe access without locking overhead.
      */
