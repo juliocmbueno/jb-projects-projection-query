@@ -15,4 +15,8 @@ public class ProjectionMetadataCache {
     public static ProjectionMetadata get(Class<?> projectionClass) {
         return CACHE.computeIfAbsent(projectionClass, ProjectionMetadataFactory::of);
     }
+
+    static void clearForTesting() {
+        CACHE.clear();
+    }
 }

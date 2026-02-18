@@ -14,6 +14,11 @@ import java.util.List;
  */
 public class ProjectionStructureResolver {
 
+    /**
+     * Private constructor to prevent instantiation, as this class is intended
+     */
+    private ProjectionStructureResolver() {}
+
     public static ProjectionStructure resolve(Class<?> projectionClass) {
         List<ProjectionJoin> declaredJoins = ProjectionUtils.getDeclaredJoins(projectionClass);
 
