@@ -49,7 +49,7 @@ public class DefaultPathResolver implements PathResolver {
     private final Map<String, Join<?,?>> joinCache = new HashMap<>();
     private final Map<String, JoinType> annotationJoins;
     private final ProjectionAliasResolver aliasResolver;
-    private final IdentifierResolver identifierResolver = new DefaultIdentifierResolver();
+    private final IdentifierResolver identifierResolver = DefaultIdentifierResolver.getInstance();
 
     /**
      * Constructs a DefaultPathResolver with the provided projection join definitions.

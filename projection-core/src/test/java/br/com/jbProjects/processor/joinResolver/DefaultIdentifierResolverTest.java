@@ -20,7 +20,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void isIdentifier_byConvention() {
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         boolean result = resolver.isIdentifier(Customer.class, "id");
         assertTrue(result, "'id' should be recognized as an identifier by convention");
@@ -31,7 +31,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void isIdentifier_byAnnotation() {
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         boolean result = resolver.isIdentifier(CustomerWithCodeId.class, "code");
         assertTrue(result, "'code' should be recognized as an identifier by @Id annotation");
@@ -42,7 +42,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void isIdentifier_byMethodAnnotation() {
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         boolean result = resolver.isIdentifier(CustomerWithMethodId.class, "code");
         assertTrue(result, "'code' should be recognized as an identifier by @Id annotation on getter method");
@@ -53,7 +53,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void propertyName_startWithGet(){
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         Method method = ReflectionTestUtils.findMethodAssignable(DefaultIdentifierResolverTestUtils.class, "getId");
 
@@ -63,7 +63,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void propertyName_startWithIs(){
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         Method method = ReflectionTestUtils.findMethodAssignable(DefaultIdentifierResolverTestUtils.class, "isActive");
 
@@ -73,7 +73,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void propertyName_other() {
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         Method method = ReflectionTestUtils.findMethodAssignable(DefaultIdentifierResolverTestUtils.class, "calculateValue");
 
@@ -84,7 +84,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void isAnnotatedWithId_IdClass() {
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         Field field = ReflectionTestUtils.findField(DefaultIdentifierResolverTestUtils.class, "fieldWithId");
 
@@ -94,7 +94,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void isAnnotatedWithId_EmbeddedIdClass() {
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         Field field = ReflectionTestUtils.findField(DefaultIdentifierResolverTestUtils.class, "fieldWithEmbeddedId");
 
@@ -104,7 +104,7 @@ class DefaultIdentifierResolverTest {
 
     @Test
     public void isAnnotatedWithId_normalField() {
-        DefaultIdentifierResolver resolver = new DefaultIdentifierResolver();
+        DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
 
         Field field = ReflectionTestUtils.findField(DefaultIdentifierResolverTestUtils.class, "normalField");
 
