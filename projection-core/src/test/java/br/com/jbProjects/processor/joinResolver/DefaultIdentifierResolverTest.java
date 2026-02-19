@@ -18,6 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class DefaultIdentifierResolverTest {
 
+    @Test void getInstance_shouldReturnSingleton() {
+        DefaultIdentifierResolver instance1 = DefaultIdentifierResolver.getInstance();
+        DefaultIdentifierResolver instance2 = DefaultIdentifierResolver.getInstance();
+
+        assertSame(instance1, instance2, "getInstance should return the same singleton instance");
+    }
+
     @Test
     public void isIdentifier_byConvention() {
         DefaultIdentifierResolver resolver = DefaultIdentifierResolver.getInstance();
