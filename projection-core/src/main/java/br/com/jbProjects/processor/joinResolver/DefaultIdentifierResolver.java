@@ -58,10 +58,21 @@ public class DefaultIdentifierResolver implements IdentifierResolver {
 
     private final Map<Class<?>, Set<String>> cache = new ConcurrentHashMap<>();
 
+    private static final DefaultIdentifierResolver INSTANCE = new DefaultIdentifierResolver();
+
     /**
-     * Constructs a DefaultIdentifierResolver.
+     * Private constructor to enforce singleton pattern. This class is designed to be used as a shared instance across the application, and there is no need for multiple instances.
      */
-    public DefaultIdentifierResolver(){}
+    private DefaultIdentifierResolver(){}
+
+    /**
+     * Returns the singleton instance of DefaultIdentifierResolver.
+     *
+     * @return The shared instance of DefaultIdentifierResolver
+     */
+    public static DefaultIdentifierResolver getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Determines whether the given attribute represents an identifier of the
