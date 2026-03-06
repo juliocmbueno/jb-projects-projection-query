@@ -1,2 +1,5 @@
 title: ProjectionQuery
 google_analytics: G-82Y1RDXYF5
+
+plugins:
+  - jekyll-seo-tag
