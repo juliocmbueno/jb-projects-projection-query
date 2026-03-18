@@ -9,7 +9,8 @@
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
 ## Pagination and Sorting
@@ -65,5 +66,7 @@ order by
     age desc, 
     name asc
 ```
+
+---
 
 [← Previous: Filters and Specifications](filters.md) · [↑ Back to top](#summary) · [Next → Executing Queries](execution.md)

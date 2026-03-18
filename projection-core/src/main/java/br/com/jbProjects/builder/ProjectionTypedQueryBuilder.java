@@ -173,10 +173,11 @@ public class ProjectionTypedQueryBuilder {
      * Long totalRows = countQuery.getSingleResult();
      * }</pre>
      *
-     * <p><b>Note:</b> This method creates a copy of the projection query to avoid
-     * modifying the original query definition.
+     * <p><b>Note:</b> This method creates a copy of the query to avoid
+     * modifying the original, making it safe to use concurrently or reuse the
+     * original query after calling this method.
      *
-     * @param projectionQuery The projection query to count results for
+     * @param projectionQuery The projection query to count results for (will not be modified)
      * @param entityManager The EntityManager to create the query from
      * @param <FROM> The source entity type
      * @param <TO> The target projection type (not used in count query)

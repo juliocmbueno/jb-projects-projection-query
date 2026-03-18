@@ -11,7 +11,8 @@
   - [Paginated Execution](#paginated-execution-)
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
 ## Executing Queries
@@ -72,5 +73,7 @@ ProjectionPage<CustomerProjection> page = processor.executePageable(query);
 `ProjectionPage` contains the result list along with pagination metadata, such as the total number of records, current page index, page size, and related information.
 
 > In the case of a paginated query, `ProjectionProcessor` executes one query to count the total number of records matching the applied filters and another query to fetch the records for the requested page.
+
+---
 
 [← Previous: Pagination and Sorting](pagination.md) · [↑ Back to top](#summary) · [Next → Custom Select Handlers](custom-select-handlers.md)

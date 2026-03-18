@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.engine.jdbc.internal.BasicFormatterImpl;
 import org.hibernate.engine.jdbc.internal.Formatter;
 
+import java.util.Objects;
+
 /**
  * Created by julio.bueno on 12/03/2026.
  * <p>Debug and development utilities for ProjectionQuery.</p>
@@ -34,7 +36,7 @@ import org.hibernate.engine.jdbc.internal.Formatter;
  *   <li>Safe to use in any environment</li>
  * </ul>
  *
- * <p><b>Setup:</b>
+ * <p><b>Setup: (check compatible version)</b>
  * <pre>{@code
  * <dependency>
  *     <groupId>io.hypersistence</groupId>
@@ -123,7 +125,7 @@ public class ProjectionProcessorDebug {
      * @throws IllegalArgumentException if entityManager is null
      */
     public ProjectionProcessorDebug(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+        this.entityManagerFactory = Objects.requireNonNull( entityManagerFactory, "EntityManagerFactory must not be null");
     }
 
     /**
@@ -204,10 +206,9 @@ public class ProjectionProcessorDebug {
      * @throws NullPointerException if typedQuery is null
      */
     String extractSQLWithHypersistence(TypedQuery<?> typedQuery){
-        org.hibernate.query.Query<?> hibernateQuery = typedQuery.unwrap(org.hibernate.query.Query.class);
-        String sql = SQLExtractor.from(hibernateQuery);
+        String sql = SQLExtractor.from(typedQuery);
         String formattedSQL = formatter.format(sql);
-        log.info("Generated SQL:{}", formatter.format(formattedSQL));
+        log.info("Generated SQL:{}", formattedSQL);
         return formattedSQL;
     }
 
@@ -277,6 +278,7 @@ public class ProjectionProcessorDebug {
             │  For Zero-Cost Preview:                                       │
             │  Add Hypersistence Utils dependency                           │
             │                                                               │
+            │  Note: check compatible version                               │
             │  <dependency>                                                 │
             │    <groupId>io.hypersistence</groupId>                        │
             │    <artifactId>hypersistence-utils-hibernate-63</artifactId>  │

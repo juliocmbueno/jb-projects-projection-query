@@ -10,7 +10,8 @@
   - [Creating a Custom Filter Handler](#creating-a-custom-filter-handler-)
   - [Registering the Custom Filter Handler](#registering-the-custom-filter-handler-)
   - [Using the Custom Filter Handler in Projections](#using-the-custom-filter-handler-in-projections-)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
 ## Custom Filter Handlers
@@ -74,4 +75,6 @@ FROM customer
 WHERE LOWER(name) LIKE 'john%';
 ```
 
-[← Previous: Custom Select Handlers](custom-select-handlers.md) · [↑ Back to top](#summary) · [Next → Logging and Debug](logging.md)
+---
+
+[← Previous: Custom Select Handlers](custom-select-handlers.md) · [↑ Back to top](#summary) · [Next → Logging](logging.md)

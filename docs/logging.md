@@ -7,13 +7,14 @@
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- Logging and Debug
+- Logging
   - [INFO — Execution lifecycle & performance](#info--execution-lifecycle--performance-)
   - [DEBUG — Query structure & decisions](#debug--query-structure--decisions-)
   - [TRACE — Detailed internal behavior](#trace--detailed-internal-behavior-)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
-## Logging and Debug
+## Logging
 
 The logging system was designed with a framework-first mindset, ensuring:
 
@@ -66,4 +67,6 @@ TRACE ProjectionProcessor - ProjectionQuery order added: name ASC
 ```
 > ⚠️ TRACE logs are intentionally verbose and should be enabled only for troubleshooting.
 
-[← Previous: Custom Filter Handlers](custom-filter-handlers.md) · [↑ Back to top](#summary) · [Next → For Spring Boot users](for-springboot-users.md)
+---
+
+[← Previous: Custom Filter Handlers](custom-filter-handlers.md) · [↑ Back to top](#summary) · [Next → Debug](debug.md)

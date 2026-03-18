@@ -13,7 +13,8 @@
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
 ## Filters and Specifications
@@ -243,5 +244,7 @@ where
     age >= 18
     and name like 'John%'
 ```
+
+---
 
 [← Previous: Defining Projection Classes](projections.md) · [↑ Back to top](#summary) · [Next → Pagination and Sorting](pagination.md)

@@ -6,6 +6,7 @@ import br.com.jbProjects.config.helper.TestUtils;
 import br.com.jbProjects.config.testModel.customer.domain.Customer;
 import br.com.jbProjects.config.testModel.customer.projections.CustomerNameAndCityAttributes;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
+import br.com.jbProjects.processor.order.OrderDirection;
 import br.com.jbProjects.processor.query.ProjectionQuery;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -28,6 +29,7 @@ class ProjectionProcessorDebugTest extends BaseJpaTest {
         ProjectionQuery<Customer, CustomerNameAndCityAttributes> projectionQuery = ProjectionQuery
                 .fromTo(Customer.class, CustomerNameAndCityAttributes.class)
                 .filter("id", ProjectionFilterOperator.EQUAL, -1L)
+                .order("name", OrderDirection.ASC)
                 .paging(0, 10);
 
         String sql = processorDebug.previewSQL(projectionQuery);
@@ -62,6 +64,8 @@ class ProjectionProcessorDebugTest extends BaseJpaTest {
                         on s2_0.id=c3_0.state_id
                 where
                     c1_0.id=?
+                order by
+                    1
                 offset
                     ? rows
                 fetch
@@ -99,6 +103,7 @@ class ProjectionProcessorDebugTest extends BaseJpaTest {
                 │  For Zero-Cost Preview:                                       │
                 │  Add Hypersistence Utils dependency                           │
                 │                                                               │
+                │  Note: check compatible version                               │
                 │  <dependency>                                                 │
                 │    <groupId>io.hypersistence</groupId>                        │
                 │    <artifactId>hypersistence-utils-hibernate-63</artifactId>  │
