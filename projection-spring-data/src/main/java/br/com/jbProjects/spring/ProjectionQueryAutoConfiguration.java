@@ -1,9 +1,11 @@
 package br.com.jbProjects.spring;
 
 import br.com.jbProjects.processor.ProjectionProcessor;
+import br.com.jbProjects.processor.ProjectionProcessorDebug;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperatorProvider;
 import br.com.jbProjects.processor.selectOperator.ProjectionSelectOperatorProvider;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -86,6 +88,19 @@ public class ProjectionQueryAutoConfiguration {
     @ConditionalOnMissingBean
     public ProjectionProcessor projectionProcessor(EntityManager entityManager) {
         return new ProjectionProcessor(entityManager);
+    }
+
+    /**
+     * Registers the ProjectionProcessorDebug bean if none is already defined
+     * in the application context.
+     *
+     * @param entityManagerFactory the EntityManagerFactory used to create an EntityManager
+     * @return a new instance of ProjectionProcessorDebug
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public ProjectionProcessorDebug projectionProcessorDebug(EntityManagerFactory entityManagerFactory) {
+        return new ProjectionProcessorDebug(entityManagerFactory);
     }
 
 }
