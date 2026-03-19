@@ -4,7 +4,7 @@
 [![Test Pipeline](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml/badge.svg)](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml) 
 [![Docs](https://img.shields.io/badge/docs-guide-blue)](https://juliocmbueno.github.io/jb-projects-projection-query/)
 [![Coverage Status](https://coveralls.io/repos/github/juliocmbueno/jb-projects-projection-query/badge.svg?branch=main)](https://coveralls.io/github/juliocmbueno/jb-projects-projection-query?branch=main)
-[![Version](https://img.shields.io/badge/version-3.4.1-blue)](https://central.sonatype.com/namespace/io.github.juliocmbueno)
+[![Version](https://img.shields.io/badge/version-3.5.0-blue)](https://central.sonatype.com/namespace/io.github.juliocmbueno)
 
 ![Java](https://img.shields.io/badge/Java-17%2B-orange) 
 ![License](https://img.shields.io/badge/license-Apache%202.0-green)
@@ -65,7 +65,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-core</artifactId>
-    <version>3.4.1</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
@@ -74,7 +74,7 @@ Provides integration with Spring Data:
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
     <artifactId>projection-spring-data</artifactId>
-    <version>3.4.1</version>
+    <version>3.5.0</version>
 </dependency>
 ```
 
