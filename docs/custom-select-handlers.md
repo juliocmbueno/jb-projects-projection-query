@@ -10,7 +10,8 @@
   - [Registering the Custom Select Handler](#registering-the-custom-select-handler-)
   - [Using the Custom Select Handler in Projections](#using-the-custom-select-handler-in-projections-)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
 ## Custom Select Handlers
@@ -89,5 +90,7 @@ select
     regexp_replace(phone_number, '[^0-9]', 'g') as phone_number
 from customer
 ```
+
+---
 
 [← Executing Queries](execution.md) · [↑ Back to top](#summary) · [Next → Custom Filter Handlers](custom-filter-handlers.md)

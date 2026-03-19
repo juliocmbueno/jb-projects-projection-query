@@ -1,6 +1,7 @@
 package br.com.jbProjects.spring;
 
 import br.com.jbProjects.processor.ProjectionProcessor;
+import br.com.jbProjects.processor.ProjectionProcessorDebug;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperator;
 import br.com.jbProjects.processor.filter.ProjectionFilterOperatorProvider;
 import br.com.jbProjects.processor.selectOperator.ProjectionSelectOperatorProvider;
@@ -18,6 +19,9 @@ public class ProjectionQueryAutoConfigurationTest extends BaseSpringBootTest {
     private ProjectionProcessor projectionProcessor;
 
     @Autowired
+    private ProjectionProcessorDebug projectionProcessorDebug;
+
+    @Autowired
     private ProjectionFilterOperatorProvider filterOperatorProvider;
 
     @Autowired
@@ -26,6 +30,7 @@ public class ProjectionQueryAutoConfigurationTest extends BaseSpringBootTest {
     @Test
     public void verify(){
         Assertions.assertNotNull(projectionProcessor);
+        Assertions.assertNotNull(projectionProcessorDebug);
         Assertions.assertNotNull(filterOperatorProvider);
         Assertions.assertNotNull(selectOperatorProvider);
     }

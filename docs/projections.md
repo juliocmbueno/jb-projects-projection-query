@@ -11,7 +11,8 @@
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
 ## Projection Classes
@@ -169,5 +170,7 @@ Currently, the following aggregate selection and transformation operators are su
 - SumHandler
 
 The library is designed to be extensible. Custom handlers can be created by implementing `ProjectionSelectOperatorHandler` and registering them via `ProjectionSelectOperatorProvider`. This topic will be covered in detail in the [Custom Select Handlers](custom-select-handlers.md) section.
+
+---
 
 [← Previous: Index](index.md) · [↑ Back to top](#summary) · [Next → Filters and Specifications](filters.md)

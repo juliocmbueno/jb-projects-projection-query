@@ -10,7 +10,8 @@
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - [For Spring Boot users](for-springboot-users.md)
 
 # ProjectionQuery [↑](#summary)
@@ -97,10 +98,13 @@ ProjectionQuery<Customer, CustomerBasicData> query = ProjectionQuery
 
 ProjectionPage<CustomerBasicData> page = processor.executePageable(query);
 ```
+
 ---
 
 > This is a basic introduction. More advanced topics such as 
 > specifications, complex filters, sorting, pagination, and integration with Spring Data JPA
 > are covered in the next sections.
+
+---
 
 [↑ Back to top](#summary) · [Next → Defining Projection Classes](projections.md)

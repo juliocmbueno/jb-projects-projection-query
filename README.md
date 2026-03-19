@@ -1,12 +1,21 @@
-# ProjectionQuery [![Test Pipeline](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml/badge.svg)](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml) [![Coverage Status](https://coveralls.io/repos/github/juliocmbueno/jb-projects-projection-query/badge.svg?branch=main)](https://coveralls.io/github/juliocmbueno/jb-projects-projection-query?branch=main)
+# ProjectionQuery 
+
+
+[![Test Pipeline](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml/badge.svg)](https://github.com/juliocmbueno/jb-projects-projection-query/actions/workflows/maven.yml) 
+[![Docs](https://img.shields.io/badge/docs-guide-blue)](https://juliocmbueno.github.io/jb-projects-projection-query/)
+[![Coverage Status](https://coveralls.io/repos/github/juliocmbueno/jb-projects-projection-query/badge.svg?branch=main)](https://coveralls.io/github/juliocmbueno/jb-projects-projection-query?branch=main)
+[![Version](https://img.shields.io/badge/version-3.4.1-blue)](https://central.sonatype.com/namespace/io.github.juliocmbueno)
+
+![Java](https://img.shields.io/badge/Java-17%2B-orange) 
+![License](https://img.shields.io/badge/license-Apache%202.0-green)
 
 **ProjectionQuery** is a lightweight, type-safe, and framework-agnostic query projection library for Java.  
-It provides an API for building database projections dynamically — without exposing entity models and without relying on complicated frameworks.
+It provides an API for building database projections dynamically — without exposing entity models or relying on complex frameworks.
 
 The project is split into multiple modules:
 
 - **projection-core** — The core engine containing the projection API.
-- **projection-spring** — Spring Data integration.
+- **projection-spring-data** — Spring Data integration.
 - **projection-examples** — Sample use cases and demonstration scenarios.
 
 ---
@@ -31,6 +40,7 @@ The main module containing:
 
 - `ProjectionQuery` - It serves as the entry point for the projection engine, allowing you to define filters, specifications, ordering, and pagination in a fluent way. It encapsulates all the configuration required to execute a projection.
 - `ProjectionProcessor` - Core engine for executing projection queries
+- `ProjectionProcessorDebug` - Utility for debugging and logging generated SQL queries
 - `ProjectionPage` - A wrapper for paginated projection results, containing the list of items and pagination metadata.
 - `@Projection` - Indicates that the annotated class is a projection for a specific entity.
 - `@ProjectionField` - Indicates that the annotated field is a projection field with optional aggregation functions.
@@ -48,9 +58,9 @@ Provides integration with Spring Data:
 
 ---
 
-##  Installation (Maven)
+## 📦 Installation (Maven)
 
-### standalone usage
+### Core (Standalone)
 ```xml
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
@@ -59,7 +69,7 @@ Provides integration with Spring Data:
 </dependency>
 ```
 
-### spring usage
+### Spring Data Integration
 ```xml
 <dependency>
     <groupId>io.github.juliocmbueno</groupId>
@@ -69,7 +79,7 @@ Provides integration with Spring Data:
 ```
 
 ---
-## Basic Usage
+## 🚀 Quick Start
 
 First, create a class that will represent your query.
 ```java
@@ -138,11 +148,18 @@ The documentation provides a structured guide covering projections, filters, pag
   See the [ProjectionsSpringExample](https://github.com/juliocmbueno/jb-projects-projection-query/blob/main/projection-examples/src/main/java/br/com/jbProjects/spring/ProjectionsSpringExample.java) class for examples using Spring-managed beans.
 
 ---
-## Documentation
-Full Javadoc is available inside the `projection-core` module and will also be published to Maven Central once the artifacts are public.
+## 📚 Documentation & API
+
+- 📖 User Guide – Learn how to use ProjectionQuery in practice  
+  https://juliocmbueno.github.io/jb-projects-projection-query/
+
+
+- 🔧 API Reference (Javadoc) – Complete technical documentation  
+  - Core: https://javadoc.io/doc/io.github.juliocmbueno/projection-core
+  - Spring Data: https://javadoc.io/doc/io.github.juliocmbueno/projection-spring-data
 
 ---
-## Licence
+## License
 ProjectionQuery is licensed under the Apache License 2.0.
 
 See the LICENSE file for full details.

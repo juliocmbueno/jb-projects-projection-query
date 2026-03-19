@@ -1,19 +1,17 @@
 package br.com.jbProjects.processor;
 
 import br.com.jbProjects.annotations.Projection;
+import br.com.jbProjects.builder.ProjectionTypedQueryBuilder;
 import br.com.jbProjects.mapper.ProjectionMappers;
 import br.com.jbProjects.processor.pageable.ProjectionPage;
 import br.com.jbProjects.processor.query.ProjectionQuery;
-import br.com.jbProjects.processor.query.ProjectionSelectInfo;
-import br.com.jbProjects.processor.query.ProjectionSpecification;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -52,6 +50,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProjectionProcessor {
 
+    private final ProjectionTypedQueryBuilder queryBuilder = new ProjectionTypedQueryBuilder();
     private final EntityManager entityManager;
 
     /**
@@ -60,7 +59,7 @@ public class ProjectionProcessor {
      * @param entityManager The EntityManager used for executing queries.
      */
     public ProjectionProcessor(EntityManager entityManager){
-        this.entityManager = entityManager;
+        this.entityManager = Objects.requireNonNull(entityManager, "EntityManager must not be null");;
     }
 
     /**
@@ -85,26 +84,7 @@ public class ProjectionProcessor {
      * @return A list of results mapped to the target projection class.
      */
     public <FROM, TO> List<TO> execute(ProjectionQuery<FROM, TO> projectionQuery){
-        log.info(
-                "Executing ProjectionQuery [from={}, to={}, distinct={}, paging={}]",
-                projectionQuery.fromClass().getSimpleName(),
-                projectionQuery.toClass().getSimpleName(),
-                projectionQuery.isDistinct(),
-                projectionQuery.hasPaging()
-        );
-
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
-        Root<FROM> from = criteriaQuery.from(projectionQuery.fromClass());
-
-        criteriaQuery.distinct(projectionQuery.isDistinct());
-        addSelects(projectionQuery, criteriaQuery, from);
-        applyFilters(projectionQuery, criteriaBuilder, criteriaQuery, from);
-        applyOrders(projectionQuery, criteriaBuilder, criteriaQuery, from);
-
-        TypedQuery<Tuple> typedQuery = entityManager.createQuery(criteriaQuery);
-        applyComment(typedQuery, projectionQuery);
-        applyPaging(projectionQuery, typedQuery);
+        TypedQuery<Tuple> typedQuery = queryBuilder.build(projectionQuery, entityManager);
 
         long start = System.nanoTime();
         List<Tuple> tuples = typedQuery.getResultList();
@@ -138,29 +118,7 @@ public class ProjectionProcessor {
             return ProjectionPage.empty(projectionQuery.getPaging());
         }
 
-        ProjectionQuery<FROM, TO> projectionCount = projectionQuery.copy();
-
-        log.info(
-                "Executing ProjectionQuery Pageable count [from={}, to={}, distinct={}]",
-                projectionCount.fromClass().getSimpleName(),
-                projectionCount.toClass().getSimpleName(),
-                projectionCount.isDistinct()
-        );
-
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<FROM> from = criteriaQuery.from(projectionCount.fromClass());
-
-        addSelects(projectionCount, criteriaQuery, from);
-        applyFilters(projectionCount, criteriaBuilder, criteriaQuery, from);
-
-        criteriaQuery.multiselect(List.of());
-        criteriaQuery.groupBy(List.of());
-
-        Expression<Long> countExpression = projectionCount.isDistinct() ? criteriaBuilder.countDistinct(from) : criteriaBuilder.count(from);
-        criteriaQuery.select(countExpression);
-
-        TypedQuery<Long> typedQuery = entityManager.createQuery(criteriaQuery);
+        TypedQuery<Long> typedQuery = queryBuilder.buildCountQuery(projectionQuery, entityManager);
 
         long start = System.nanoTime();
         Long singleResult = typedQuery.getSingleResult();
@@ -171,7 +129,7 @@ public class ProjectionProcessor {
                 elapsed
         );
 
-        ProjectionPage<TO> page = ProjectionPage.of(items, singleResult, projectionCount.getPaging());
+        ProjectionPage<TO> page = ProjectionPage.of(items, singleResult, projectionQuery.getPaging());
 
         log.debug(
                 "Page created: pageNumber={}, pageSize={}, totalElements={}, totalPages={}, hasNext={}, hasPrevious={}",
@@ -186,71 +144,7 @@ public class ProjectionProcessor {
         return page;
     }
 
-    private <TO, FROM> void applyComment(TypedQuery<?> typedQuery, ProjectionQuery<FROM, TO> projectionQuery) {
-        try{
-            org.hibernate.query.Query<?> hibernateQuery = typedQuery.unwrap(org.hibernate.query.Query.class);
-            hibernateQuery.setComment("ProjectionQuery created from " + projectionQuery.fromClass().getSimpleName() + " to " + projectionQuery.toClass().getSimpleName());
-        }catch (Exception ignored){}
-    }
-
-    private <TO, FROM> void applyOrders(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<Tuple> criteriaQuery, Root<FROM> from) {
-        List<Order> orders = projectionQuery
-                .getOrders()
-                .stream()
-                .map(order -> {
-                    Path<?> path = projectionQuery.resolvePath(from, order.path());
-                    log.trace("ProjectionQuery order added: {} {}", order.path(), order.direction());
-                    return order.direction().toOrder(criteriaBuilder, path);
-                })
-                .toList();
-
-        if(!orders.isEmpty()){
-            criteriaQuery.orderBy(orders);
-        }
-
-        log.debug("ProjectionQuery orders applied: {}", orders.size());
-    }
-
-    private <FROM, TO> void addSelects(ProjectionQuery<FROM, TO> projectionQuery, CriteriaQuery<?> criteriaQuery, Root<?> from) {
-        ProjectionSelectInfo selectInfo = new ProjectionSelectInfo(projectionQuery, entityManager.getCriteriaBuilder(), from);
-        criteriaQuery.multiselect(selectInfo.getSelections());
-        criteriaQuery.groupBy(selectInfo.getGroupByFields());
-    }
-
-    private static <FROM, TO> void applyFilters(ProjectionQuery<FROM, TO> projectionQuery, CriteriaBuilder criteriaBuilder, CriteriaQuery<?> criteriaQuery, Root<FROM> from) {
-        List<Predicate> predicates = new ArrayList<>();
-
-        for (ProjectionSpecification<FROM> spec : projectionQuery.getSpecifications()) {
-            predicates.add(spec.toPredicate(criteriaBuilder, criteriaQuery, from, projectionQuery.getPathResolver()));
-        }
-
-        for (var filter : projectionQuery.getFilters()) {
-            predicates.add(filter.toPredicate(criteriaBuilder, criteriaQuery, from, projectionQuery.getPathResolver()));
-            log.trace("ProjectionQuery filter added: {}", filter.toLogString());
-        }
-
-        log.debug(
-                "ProjectionQuery filters summary: {} specifications, {} filters",
-                projectionQuery.getSpecifications().size(),
-                projectionQuery.getFilters().size()
-        );
-
-        if(!predicates.isEmpty()){
-            criteriaQuery.where(predicates.toArray(new Predicate[]{}));
-        }
-    }
-
-    private static <FROM, TO> void applyPaging(ProjectionQuery<FROM, TO> projectionQuery, TypedQuery<Tuple> typedQuery) {
-        if(projectionQuery.hasPaging()){
-            int first = projectionQuery.getPaging().first();
-            int size = projectionQuery.getPaging().size();
-            typedQuery.setFirstResult(first);
-            typedQuery.setMaxResults(size);
-            log.debug("ProjectionQuery paging applied: first={}, size={}", first, size);
-        }
-    }
-
-    private static <T> List<T> mapTuplesToProjectionClass(List<Tuple> tuples, Class<T> projectionClass) {
+    private <T> List<T> mapTuplesToProjectionClass(List<Tuple> tuples, Class<T> projectionClass) {
         return tuples
                 .stream()
                 .map(tuple -> ProjectionMappers.tupleToObject(tuple, projectionClass))

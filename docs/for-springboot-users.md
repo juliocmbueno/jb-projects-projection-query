@@ -7,7 +7,8 @@
 - [Executing Queries](execution.md)
 - [Custom Select Handlers](custom-select-handlers.md)
 - [Custom Filter Handlers](custom-filter-handlers.md)
-- [Logging and Debug](logging.md)
+- [Logging](logging.md)
+- [Debug](debug.md)
 - For Spring Boot users
 
 ## For Spring Boot users
@@ -29,19 +30,24 @@ Example:
 public class MyService {
 
     private final ProjectionProcessor projectionProcessor;
+    private final ProjectionProcessorDebug projectionProcessorDebug;
     private final ProjectionFilterOperatorProvider filterProvider;
     private final ProjectionSelectOperatorProvider selectOperatorProvider;
 
     public MyService(
             ProjectionProcessor projectionProcessor,
+            ProjectionProcessorDebug projectionProcessorDebug,
             ProjectionFilterOperatorProvider filterProvider,
             ProjectionSelectOperatorProvider selectOperatorProvider
     ){
         this.projectionProcessor = projectionProcessor;
+        this.projectionProcessorDebug = projectionProcessorDebug;
         this.filterProvider = filterProvider;
         this.selectOperatorProvider = selectOperatorProvider;
     }
 }
 ```
 
-[← Logging and Debug](logging.md) · [↑ Back to top](#summary)
+---
+
+[← Debug](debug.md) · [↑ Back to top](#summary)

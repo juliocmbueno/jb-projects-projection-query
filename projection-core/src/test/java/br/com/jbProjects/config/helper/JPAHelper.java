@@ -12,14 +12,18 @@ public class JPAHelper {
     private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("testPU");
     private static EntityManager em = emf.createEntityManager();
 
+    public static EntityManagerFactory entityManagerFactory() {
+        if (emf == null || !emf.isOpen()) {
+            emf = Persistence.createEntityManagerFactory("testPU");
+        }
+
+        return emf;
+    }
+
+    @SuppressWarnings("resource")
     public static EntityManager entityManager() {
         if (em == null || !em.isOpen()) {
-
-            if (emf == null || !emf.isOpen()) {
-                emf = Persistence.createEntityManagerFactory("testPU");
-            }
-
-            em = emf.createEntityManager();
+            em = entityManagerFactory().createEntityManager();
         }
 
         return em;
