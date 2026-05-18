@@ -1,6 +1,7 @@
 package br.com.jbProjects.processor.filter;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -14,16 +15,18 @@ class CompoundOperatorTest {
     @Test
     public void testAndOperator(){
         CriteriaBuilder cb = Mockito.mock(CriteriaBuilder.class);
+        Predicate predicate = Mockito.mock(Predicate.class);
         CompoundOperator operator = CompoundOperator.AND;
-        operator.toPredicate(cb, List.of());
+        operator.toPredicate(cb, List.of(predicate));
         Mockito.verify(cb, Mockito.times(1)).and(Mockito.any());
     }
 
     @Test
     public void testOrOperator() {
         CriteriaBuilder cb = Mockito.mock(CriteriaBuilder.class);
+        Predicate predicate = Mockito.mock(Predicate.class);
         CompoundOperator operator = CompoundOperator.OR;
-        operator.toPredicate(cb, List.of());
+        operator.toPredicate(cb, List.of(predicate));
         Mockito.verify(cb, Mockito.times(1)).or(Mockito.any());
     }
 
