@@ -64,7 +64,7 @@ class ProjectionCompoundFilterTest {
         // Stubbing
         Mockito.doReturn(predicateEquals).when(cb).equal(Mockito.eq(path), Mockito.anyInt());
         Mockito.doReturn(path).when(pathResolver).resolve(Mockito.eq(root), Mockito.anyString());
-        Mockito.doReturn(predicateOr).when(cb).or(Mockito.any());
+        Mockito.when(cb.or(Mockito.any(Predicate[].class))).thenReturn(predicateOr);
 
         // Test
         ProjectionCompoundFilter filter = new ProjectionCompoundFilter(
@@ -74,6 +74,7 @@ class ProjectionCompoundFilterTest {
                         new ProjectionFilter("path_2", "EQUAL", 20)
                 )
         );
+
         Predicate filterPredicate = filter.toPredicate(cb, query, root, pathResolver);
         assertEquals(predicateOr, filterPredicate);
     }
